@@ -1,0 +1,53 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+
+
+ <div class="">
+     {% if not subjects %}
+     <br>
+
+     {% else %}
+
+        <div class="subject-progress-view">
+        {% for subject in subjects %}
+        <div class="subject-select-card">
+            <div class="booked-class-ody">
+                <a href="{% url 'knec-exams-list' subject.subject.id grade %}"><h6><i class="bi bi-bookmark-plus"></i> {{ subject.subject }} </h6></a>
+                <small><i class="bi bi-gear"> </i> Grade {{ grade }}</small>
+            </div>
+            <br>
+            <div class="kid-in-card">
+                <small class="text-muted">Test Info.</small><br>
+                <small >Test Size  <span class="badge bg-info" style="margin-left: 30px;">{{ subject.test_size }} quiz</span></small>
+                <br>
+                <small >Marks  <span class="badge bg-secondary" style="margin-left:44px;">100.0 %</span></small>
+                <br><br>
+
+
+            </div>
+            <br>
+
+            <div>
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'Users/base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+
+<br><br>
+<div class="container">
+    {% if not assignment %}
+
+
+    {% else %}
+
+    <br><br><br>
+    <h5>{{ assignment.subject }} (<small>Mr/Mrs {{ assignment.teacher.personalprofile.f_name }}</small>)</h5>
+    <h6>Deadline {{ assignment.expiry }}</h6>
+    <p>Number of questions ~ {{ assignment.test_size }} </p>
+    <p>Duration - {{ assignment.duration }} Minutes.</p>
+    <p>This test contains {{ assignment.test_size }} questions and will take {{ assignment.duration }} minutes to complete. Click
+    the button below to start. Once started the test cannot be paused nor restarted, make sure you have ample uninterrupted time.</p>
+{% if user|test_is_done:assignment.uuid %}
+        <p class="text-muted">You have already taken this test. Click the button below to view your results</p>
+        <a href="{% url 'test-detail' 'ClassTests' assignment.uuid %}"><button class="btn btn-info">View Results</button></a>
+        {% else %}
+    <form method="post">
+        {% csrf_token %}
+
+            <button class="btn btn-danger">Start Test</button>
+        {% endif %}
+    </form>
+
+</div>
+
+
+
+
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+{% endblock %}

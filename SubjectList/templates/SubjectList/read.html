@@ -1,0 +1,62 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<div class="subject-select-content-container">
+    {% if not subject %}
+
+    {% else %}
+    <br>
+    <br>
+    <br>
+    <div class="study-content">
+        <div class="study-headings ">
+            <div>
+              <h5 class="">{{ subject.subject }} Grade - {{ subject.subject.grade }}</h5>
+              <br>
+              <h6>Topic - {{ subject.topic }}</h6>
+              <h6>Sub Topic - {{ subject }}</h6>
+            </div>
+        </div>
+
+    {% if user.role == 'Student' %}
+    <div class="text-center" style="margin-top:20px;">
+        <a href="{% url 'save-progress' subject.topic subject %}"><button class="btn btn-info">Finish</button></a>
+    </div>
+    {% else %}
+    {% endif %}
+
+    <br>
+
+    {% if media == 'text' %}
+    <div class="study-content">
+        <object data="{{ subject.file1.url }}" width="95%" height="800">
+            Unsupported format
+        </object>
+    </div>
+
+    {% else %}
+
+        <div class="study-content">
+            <video src="{{ subject.file2.url }}" width="95%" preload="auto" controls>
+              
+            </video>
+        </div>
+
+
+    {% endif %}
+
+
+
+    {% endif %}
+
+    </div>
+    
+    <div style="margin-top: 40px;"></div>
+    
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'Guardian/baseg.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+
+<h6>NB <p>It is highly advisable to select only one topic in a test in order
+    to properly measure your progress. However, if you want to mix up the test feel free
+to do so.</p></h6>
+<form method="post">
+{% csrf_token %}
+    <select class="form-select" name="exam-type" aria-label="Default select example" id="exam-type" required>
+      <option></option>
+      <option value="Topical">Topical (Test on one specific topic)</option>
+      <option  value="General">General (Test from a number of topics)</option>
+    </select>
+
+    <br>
+    <br>
+{% for topic in topics %}
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="topics" value="{{ topic.id }}" id="{{ topic }}" >
+      <label class="form-check-label" for="{{ topic }}">
+        {{ topic }}
+      </label>
+    </div>
+
+{% endfor %}
+
+<br>
+<select class="form-select" aria-label="Default select example" name="size" required>
+  <option value="15">15 questions</option>
+  <option value="20">20 questions</option>
+  <option value="25">25 questions</option>
+  <option value="30">30 questions</option>
+</select>
+
+
+<br>
+<button class="btn btn-warning" type="submit">Save</button>
+
+</form>
+
+
+
+
+
+
+</div>
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const examTypeSelect = document.getElementById('exam-type');
+  const topicCheckboxes = document.querySelectorAll('input[name="topics"]');
+
+  examTypeSelect.addEventListener('change', function() {
+    const selectedExamType = examTypeSelect.value;
+    if (selectedExamType === 'Topical') {
+      for (const checkbox of topicCheckboxes) {
+        checkbox.disabled = false;
+      }
+    } else if (selectedExamType === 'General') {
+      for (const checkbox of topicCheckboxes) {
+        checkbox.disabled = false;
+      }
+    }
+
+    for (const checkbox of topicCheckboxes) {
+      checkbox.checked = false;
+    }
+  });
+
+  for (const checkbox of topicCheckboxes) {
+    checkbox.addEventListener('click', function() {
+      const selectedExamType = examTypeSelect.value;
+      if (selectedExamType === 'Topical') {
+        const checkedCheckboxes = document.querySelectorAll('input[name="topics"]:checked');
+        if (checkedCheckboxes.length > 1) {
+          alert('Only one topic can be selected for a topical exam.');
+          this.checked = false;
+        }
+      }
+    });
+  }
+});
+</script>
+
+
+{% endblock %}

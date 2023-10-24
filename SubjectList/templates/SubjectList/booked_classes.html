@@ -1,0 +1,26 @@
+{% extends 'Users/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="upcoming-classes-view">
+        {% for booking in bookings %}
+        <a href="{% url 'lobby' booking.class_name.id %}">
+            <div class="upcoming-classes-card">
+                <div class="booked-class-body">
+                    <h6>{{ booking.class_name.subject }}</h6>
+                    <p>{{ booking.class_name.topic }}</p>
+                </div>
+                <hr class="booked-classes-hr">
+                <div class="booked-class-body">
+                    <h6>{{ booking.class_name.subtopic }}</h6>
+                    <p>{{ booking.class_name.date|date:'M-d D' }} </p>
+                    <p>{{ booking.class_name.date|time:'H:i' }}  -  {{ booking.class_name.end_time|time:'H:i' }} PM</p>
+                    <small>{{ booking.class_name.duration }} Minutes</small>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+
+{% endblock %}

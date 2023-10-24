@@ -1,0 +1,30 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+<br>
+<br>
+
+<!--<h6>{{ user.role }}</h6>-->
+
+
+<br>
+
+<div class="supervisor-home-view">
+    <div class="task-card">
+        Schools Exams
+    </div>
+    <a href="{% url 'knec-config' %}">
+        <div class="task-card">
+            KNEC grade Exams
+        </div>
+    </a>
+
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+
+<div class="container">
+    <br>
+    <br>
+    <br>
+    <h6>{{ test.subject }} Grade - {{ test.subject.grade }}</h6>
+    <br>
+    <p>Test Size: {{ test.test_size }}</p>
+    <p>Test Duration: {{ test.duration }}</p>
+    <p>This test contains {{ test.test_size }} questions. You will have {{ test.duration }} minutes to complete the test. If you fail to complete
+    within the said time the test will be automatically submitted and all un-answered questions will be marked as a fail. Good luck champion.</p>
+
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger">Start</button>
+
+    </form>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+
+  <br><br><br><br>
+  <h6>You have succesfully logged out of your account.</h6>
+  <br>
+  <a class="btn btn-primary" href="{% url 'login' %}">Sign In</a> <a class="btn btn-warning" href="{% url 'register' %}">Sign Up</a>
+  <br><br>
+  <small ><a href="{% url 'password-reset' %}" class="error">forgot password ? reset.</a></small>
+
+
+</div>
+{% endblock %}

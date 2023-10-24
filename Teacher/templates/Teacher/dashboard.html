@@ -1,0 +1,125 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+
+  <div class="container">
+    <br><br><br>
+
+
+
+    <table class="table">
+
+    {% if not classes %}
+        <h6 class="alert alert-dark">You do not have any classes attached. Add a class below.</h6>
+    {% else %}
+        <thead>
+          <tr class="purple">
+            <th><h6>Class</h6></th>
+            <th><h6>Subject</h6></th>
+              <th><h6>Students</h6></th>
+            <th><h6>Action</h6></th>
+
+
+
+          </tr>
+        </thead>
+        <tbody>
+
+        {% for class in classes %}
+            <tr class="t-body">
+
+              <td ><a href="{% url 'class-task-view-select' class.class_id class.subject.id %}"><h6 style="color:purple;">{{ class.class_id }}</h6></a></td>
+
+                <td>{{ class.subject }}</td>
+              <td><span class="badge bg-info text-light">{{ class.class_id.class_size }}</span></td>
+              <td>
+                  <form method="post">
+                      {% csrf_token %}
+                      <input style="display:none;" name="del_name" value="{{ class.class_id }}">
+                      <input style="display:none;" name="del_subject" value="{{ class.subject }}">
+                    <button type="submit" class="btn btn-danger" name="delete">Delete</button>
+                </form>
+              </td>
+
+
+            </tr>
+         {% endfor %}
+        {% endif %}
+        </tbody>
+      </table>
+
+
+
+
+
+
+
+
+
+<div>
+  <br>
+  <h6>Add a Class</h6>
+    <br>
+  <form method="post">
+  {% csrf_token %}
+  <select class="form-select" id="class_id" name="class_id" aria-label="Default select example">
+    {% for class in streams %}
+      <option value="{{ class }}" >(Grade {{ class.grade }}) - {{ class }}</option>
+    {% endfor %}
+  </select>
+  <br>
+  <select class="form-select" id="subject" name="subject" aria-label="Default select example">
+    <option>Subject</option>
+  </select>
+      <br>
+
+  <button class="btn btn-warning" type="submit" name="add">Add</button>
+</form>
+
+</div>
+
+
+  </div>
+
+
+
+</script><script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    const classSelect = $('#class_id');
+    const subjectSelect = $('#subject');
+
+    classSelect.on('change', function() {
+      const selectedGrade = $(this).val();
+
+      // Make an AJAX GET request to get subjects based on the selected grade
+      $.ajax({
+        url: '/Teacher/get_subjects/',
+        type: 'GET',
+        data: { grade: selectedGrade },
+        dataType: 'json',
+        success: function(data) {
+          // Clear existing options
+          subjectSelect.html('<option>Subject</option>');
+
+          // Populate subjects
+          $.each(data.subjects, function(index, subject) {
+            subjectSelect.append($('<option>', {
+              value: subject.id,
+              text: subject.name
+            }));
+          });
+        },
+        error: function() {
+          console.error('An error occurred while fetching subjects.');
+        }
+      });
+    });
+  });
+</script>
+
+
+
+{% endblock %}

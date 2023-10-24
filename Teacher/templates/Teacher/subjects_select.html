@@ -1,0 +1,134 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+<div class="container">
+    <br><br><br>
+
+    <table class="table">
+    {% if not subjects %}
+        <h6 class="alert alert-dark">You do not have any classes attached. Add a class below.</h6>
+    {% else %}
+        <thead>
+          <tr class="purple">
+            <th><h6>Subject</h6></th>
+            <th><h6>Grade</h6></th>
+
+            <th><h6>Action</h6></th>
+
+
+
+          </tr>
+        </thead>
+        <tbody>
+
+        {% for subject in subjects %}
+            <tr class="t-body">
+
+              <td ><a href=""><h6 style="color:purple;">{{ subject }}</h6></a></td>
+
+
+              <td><span class="badge bg-info text-light">{{ subject.grade }}</span></td>
+              <td>
+                  <form method="post">
+                      {% csrf_token %}
+                      <input style="display:none;" name="del_name" value="{{ class.class_id }}">
+                      <input style="display:none;" name="del_subject" value="{{ class.subject }}">
+                    <button type="submit" class="btn btn-danger" name="purge"  value="{{ subject.id }}">Delete</button>
+                </form>
+              </td>
+
+
+            </tr>
+         {% endfor %}
+        {% endif %}
+        </tbody>
+      </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <form method="POST">
+          {% csrf_token %}
+
+           <br>
+          <h6>Add The subjects You Teach.</h6>
+
+            <p>Grade 4</p>
+              {% for subject in grade4 %}
+                <div class="form-check">
+                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
+                  <label class="form-check-label" for="{{ subject.id }}">
+                      {{ subject }}
+                  </label>
+                </div>
+              {% endfor %}
+                <br>
+                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
+                <br>
+              <br>
+          <p>Grade 5</p>
+              {% for subject in grade5 %}
+                <div class="form-check">
+                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
+                  <label class="form-check-label" for="{{ subject.id }}">
+                      {{ subject }}
+                  </label>
+                </div>
+              {% endfor %}
+              <br>
+          <br>
+                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
+                <br>
+              <br>
+          <p>Grade 6</p>
+              {% for subject in grade6 %}
+                <div class="form-check">
+                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
+                  <label class="form-check-label" for="{{ subject.id }}">
+                      {{ subject }}
+                  </label>
+                </div>
+              {% endfor %}
+              <br>
+          <br>
+                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
+                <br>
+              <br>
+          <p>Grade 7</p>
+              {% for subject in grade7 %}
+                <div class="form-check">
+                  <input class="form-check-input" name="subjects" type="checkbox" value="{{ subject.id }}" id="{{ subject.id }}">
+                  <label class="form-check-label" for="{{ subject.id }}">
+                      {{ subject }}
+                  </label>
+                </div>
+              {% endfor %}
+              <br>
+          <br>
+                    <button type="submit" class="btn btn-warning" name="profile">Add</button>
+                <br>
+              <br>
+
+      </form>
+
+</div>
+
+{% endblock %}

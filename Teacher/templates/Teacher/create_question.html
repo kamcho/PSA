@@ -1,0 +1,137 @@
+{% extends base_html %}
+{% block content %}
+
+
+
+
+  <div class="container">
+
+
+      <br>
+      <br>
+      <br>
+
+      <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+
+{% if not subjects %}
+                <a href="{% url 'subjects-selection' %}"class="btn btn-warning"> Add </a>
+              {% else %}
+          <br>
+          <br>
+
+
+          {% if user.role == 'Supervisor' %}
+              <select class="form-select"  name="type" aria-label="Default select example" required>
+                    <option value="knec">KNEC</option>
+                    <option value="knec">School Test</option>
+
+              </select>
+              <br>
+              <select class="form-select"  name="subject" id="subjectSelect" aria-label="Default select example" required>
+
+                  {% for subject in subjects %}
+                    <option value="{{ subject.id }}">{{ subject }}</option>
+                  {% endfor %}
+              </select>
+
+
+
+
+
+          {% else %}
+
+              <select class="form-select" id="subjectSelect" name="subject" aria-label="Default select example" required>
+                  <option></option>
+                  {% for subject in user.teacherprofile.subject.all %}
+                    <option value="{{ subject.id }}">{{ subject }} - Grade ({{ subject.grade }})</option>
+                  {% endfor %}
+              </select>
+          {% endif %}
+
+
+
+
+
+
+          <br>
+          <select class="form-select" id="topicSelect" name="topic" aria-label="Default select example" required>
+
+              <option >Topic</option>
+          </select>
+
+          <br>
+          <select class="form-select" aria-label="Default select example" id="subtopicSelect" name="subtopic" required>
+              <option >Subtopic</option>
+
+
+          </select>
+
+          <br>
+
+          <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Add question here</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="quiz" required></textarea>
+          </div>
+
+
+            <button class="btn btn-info">NEXT</button>
+          {% endif %}
+
+      </form>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Event handler for the subject select element
+    $('#subjectSelect').change(function() {
+      var subjectId = $(this).val();
+      $('#topicSelect').empty().append('<option selected>Loading...</option>');
+      $('#subtopicSelect').empty().append('<option selected>Subtopic</option>');
+
+      // AJAX request to load topics
+      $.ajax({
+        url: '/Teacher/load_topics/',  // Replace with the actual URL of your load_topics view
+        type: 'get',
+        data: { subject_id: subjectId },
+        success: function(response) {
+          var options = '';
+          $.each(response, function(index, topic) {
+            options += '<option value="' + topic.id + '">' + topic.name + '</option>';
+          });
+          $('#topicSelect').empty().append(options);
+        },
+        error: function(xhr, status, error) {
+          console.error(xhr.responseText);
+        }
+      });
+    });
+
+    // Event handler for the topic select element
+    $('#topicSelect').change(function() {
+      var topicId = $(this).val();
+      $('#subtopicSelect').empty().append('<option selected>Loading...</option>');
+
+      // AJAX request to load subtopics
+      $.ajax({
+        url: '/Teacher/load_subtopics/',  // Replace with the actual URL of your load_subtopics view
+        type: 'get',
+        data: { topic_id: topicId },
+        success: function(response) {
+          var options = '';
+          $.each(response, function(index, subtopic) {
+            options += '<option value="' + subtopic.id + '">' + subtopic.name + '</option>';
+          });
+          $('#subtopicSelect').empty().append(options);
+        },
+        error: function(xhr, status, error) {
+          console.error(xhr.responseText);
+        }
+      });
+    });
+  });
+</script>
+{% endblock %}

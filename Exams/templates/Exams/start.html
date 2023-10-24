@@ -1,0 +1,49 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container">
+    {% if not topic %}
+
+    {% else %}
+    <br>
+    <br>
+    <br>
+        <p>Subject - {{ topic.subject }}</p>
+        <p>Topic - {{ topic.name }}</p>
+        <p>Questions: 10</p>
+        <p>Time: 15 minutes</p>
+        <p>This is a multiple choice examination, you will have 15 minutes to complete. If you fail to submit within 15 min
+        the exam will submit itself and all un-attempted questions will be marked as incorrect. The exam will only
+        commence when you click start</p>
+
+        {% if done == 'True' %}
+
+        {% else %}
+        <form method="post">
+            {% csrf_token %}
+                <button class="btn btn-danger">Start</button>
+
+        </form>
+        {% endif %}
+    {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

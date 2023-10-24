@@ -1,0 +1,109 @@
+{% extends base_html %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+        <br>
+        <br>
+        <br>
+        <div class="profile">
+            {% if user.personalprofile.f_name != '' %}
+              <p>{{ user.personalprofile.surname }}  {{ user.personalprofile.l_name }}.  {{ user.personalprofile.f_name }} <button class="btn btn-info">{{ user.role }}</button></p>
+            {% else %}
+              <p>{{ user }} <button class="btn btn-info">{{ user.role }}</button></p>
+            {% endif %}
+        </div>
+
+
+
+
+        <div class="">
+
+
+
+
+<br>
+
+  <div class="accordion" id="changePhoneNumberAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="changePhoneNumberHeader">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#changePhoneNumberCollapse" aria-expanded="true" aria-controls="changePhoneNumberCollapse">
+          <small>Edit Profile</small>
+        </button>
+      </h2>
+      <div id="changePhoneNumberCollapse" class="accordion-collapse" aria-labelledby="changePhoneNumberHeader" data-bs-parent="#changePhoneNumberAccordion">
+        <div class="accordion-body">
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="first-name">First Name</label>
+              <input  name="first-name" id="first-name" class="form-control" value="{{ user.personalprofile.f_name }}" required>
+            </div>
+            <div class="form-group">
+              <label for="last-name">Last Name</label>
+              <input  name="last-name" class="form-control" id="last-name" value="{{ user.personalprofile.l_name }}" required>
+            </div>
+            <div class="form-group">
+              <label for="surname">Surname</label>
+              <input id="surname"  name="surname" class="form-control" value="{{ user.personalprofile.surname }}" required>
+            </div>
+            <div class="form-group">
+              <label for="phone-number">Phone Number</label>
+              <input type="tel" name="phone-number" class="form-control" id="phone-number" value="{{ user.personalprofile.phone }}" required>
+            </div>
+
+              <br>
+            <button type="submit" class="btn btn-primary" name="profile">Update Profile Info</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+            <br>
+            <br>
+        </div>
+  
+  
+        {% if  user.role == "Student" %}
+
+
+        {% elif  user.role == "Guardian"%}
+        <h6>Add Student</h6>
+        <br>
+        <p>Add a student to your view list to track the childs progress. You should be the
+        guardian of the said child.</p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="exampleFormControlInput1" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="exampleFormControlInput1" name="mail" placeholder="name@example.com">
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleFormControlInput2" class="form-label">First Name</label>
+              <input type="text" class="form-control" id="exampleFormControlInput2" name="name" placeholder="First Name">
+            </div>
+
+            <button class="btn btn-warning" name="attachment">Add</button>
+        </form>
+
+        <div style="padding-top: 30px;">
+
+        </div>
+
+
+
+
+        {% endif %}
+
+
+    
+    
+    
+
+
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+<div class="container">
+    <br><br><br>
+{% if not user.teacherprofile.subject.all %}
+                <p>You have not selected any subjects that you teach at
+                    this institution. To add subjects click the button below.
+                </p>
+                <a href="{% url 'subjects-selection' %}"><button class="btn btn-warning">Add Subjects</button></a>
+            {% else %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <br>
+        <div>
+               <select class="form-select" id="class-id" name="class-id" aria-label="Default select example">
+
+                       <option value="{{ class.class_id }}">{{ class.class_id.class_name }} <small style="color:green;">( {{ class.subject }} )</small> </option>
+
+               </select>
+           </div>
+
+            <br>
+            <div>
+               <select class="form-select"  name="exam-type" aria-label="Default select example">
+
+                       <option value="topical">Topical (Test on one specific topic)</option>
+                       <option value="general">General (Test on all topics in this subject)</option>
+
+               </select>
+           </div>
+          <br>
+    <div>
+               <select class="form-select" id="" name="selection-type" aria-label="Default select example">
+
+                       <option value="system">Let the system pick the questions</option>
+                       <option value="user">I will pick the questions</option>
+
+               </select>
+           </div>
+          <br>
+          <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Number of Questions</label>
+              <input class="form-control" type="number"  name="test-size"></input>
+          </div>
+        <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Expiry</label>
+              <input class="form-control" type="date" id="exampleFormControlTextarea1" name="date"></input>
+          </div>
+
+          <button class="btn btn-info" >Next</button>
+
+
+
+    </form>
+
+
+{% endif %}
+
+
+
+
+</div>
+
+
+
+
+
+<script>
+$(document).ready(function() {
+  $('#subject').change(function() {
+    var subjectId = $(this).val();
+    $('#class-id').empty().append('<option selected>Loading...</option>');
+
+    $.ajax({
+      url: '/Teacher/load_class/',  // Replace with the actual URL of your load_class view
+      type: 'get',
+      data: { subject: subjectId },
+      success: function(response) {
+        var options = '';
+        $.each(response, function(index, classItem) {
+          options += '<option value="' + classItem.id + '">' + classItem.name + '</option>';
+        });
+        $('#class-id').empty().append(options);
+      },
+      error: function(xhr, status, error) {
+        console.error(xhr.responseText);
+      }
+    });
+  });
+});
+
+
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+
+<div class="container">
+    {% if not exams %}
+
+    {% else %}
+        <table class="table">
+            <thead>
+              <tr>
+                <th><h6>Subject</h6></th>
+                <th><h6>Term</h6></th>
+                <th><h6>Date</h6></th>
+              </tr>
+            </thead>
+        <br>
+        <br>
+            <tbody>
+            {% for test in exams %}
+              <tr>
+
+                <td><a href="{% url 'knec-start' grade test.uuid  %}">{{ test.subject }}</a></td>
+                <td>{{ test.grade }}</td>
+                <td>{{ test.date }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+         </table>
+    {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

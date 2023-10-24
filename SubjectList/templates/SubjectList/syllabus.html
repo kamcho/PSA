@@ -1,0 +1,71 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+
+<br>
+<br>
+<br>
+<div class="">
+  {% if not syllabus %}
+
+
+  {% else %}
+  <div class="container " style="text-decoration:none !important;">
+    <h6 class="dashed-heading">{{ subject.subject }} Grade - {{ subject.subject.grade }}</h6>
+    <br>
+    <br>
+    {% for coverage in syllabus %}
+
+
+    {% if user|topic_in_progress:coverage %}
+    <div style="display:flex;width:80%;">
+      <p style="color:purple;flex: 1;">{{ coverage.order }}.) {{ coverage }}</p>
+      <input type="checkbox" style="margin-left: 0 auto;" checked>
+    </div>
+    <div>
+      {% for subtopic in coverage.topic.all %}
+      {% if user|subtopic_in_progress:subtopic %}
+
+      <div style="display:flex;width:80%;padding-left:30px;">
+        <small style="color:purple ;flex: 1;"><a href="{% url 'media' coverage subtopic %}">{{ subtopic }}</a></small>
+        <i class="bi bi-check-all" style="margin-left: 0 auto;color:purple;font-size:20px;"></i>
+      </div>
+
+      {% else %}
+      <div style="display:flex;width:80%;padding-left:30px;">
+        <small style="color:purple;flex: 1;"><a href="{% url 'media' coverage subtopic %}">{{ subtopic }}</a></small>
+        <input type="checkbox" style="margin-left: 0 auto;" disabled>
+      </div>
+      {% endif %}
+
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div style="display:flex;width:80%;">
+      <p style="flex: 1;">{{ coverage.order }}.) {{ coverage }}</p>
+      <input type="checkbox" style="margin-left: 0 auto;" disabled>
+    </div>
+    <div>
+      {% for subtopic in coverage.topic.all %}
+      <div style="display:flex;width:80%;padding-left:30px;">
+        <small style="color:purple;flex: 1;"><a href="{% url 'media' coverage subtopic %}">{{ subtopic }}</a></small>
+        <input type="checkbox" style="margin-left: 0 auto;" disabled>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <br>
+
+    {% endfor %}
+
+
+  </div>
+
+  {% endif %}
+
+
+
+  {% endblock %}

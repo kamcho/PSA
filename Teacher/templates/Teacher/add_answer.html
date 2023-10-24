@@ -1,0 +1,70 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+  <div class="container">
+
+    {% if error %}
+    <a href="{% url 'create-questions' %}"><button class="btn btn-danger">Reset</button></a>
+
+
+    {% else %}
+    <br>
+    <br>
+    <br>
+
+
+    <p>{{ quiz.quiz }}</p>
+    <form method="post">
+      {% csrf_token %}
+
+    <div class="mb-3">
+  <label class="form-label">
+    <small>selection 1 <small style="color:green;">(THIS SHOULD BE THE CORRECT CHOICE)</small></small>
+  </label>
+  <textarea class="form-control" rows="3" name="selection1" required></textarea>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">
+    <small>selection 2 <small style="color:crimson;">(THIS SHOULD BE AN INCORRECT CHOICE)</small></small>
+  </label>
+  <textarea class="form-control" rows="3" name="selection2" required></textarea>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">
+    <small>selection 3 <small style="color:crimson;">(THIS SHOULD BE AN INCORRECT CHOICE)</small></small>
+  </label>
+  <textarea class="form-control" rows="3" name="selection3" required></textarea>
+</div>
+
+<div class="mb-3">
+  <label class="form-label">
+    <small>selection 4 <small style="color:crimson;">(THIS SHOULD BE AN INCORRECT CHOICE)</small></small>
+  </label>
+  <textarea class="form-control" rows="3" name="selection4" required></textarea>
+</div>
+
+
+<button class="btn btn-info">Next</button>
+
+
+
+</form>
+
+
+    {% endif %}
+  </div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

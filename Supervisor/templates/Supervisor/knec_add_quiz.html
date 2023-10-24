@@ -1,0 +1,113 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+
+  <div class="container">
+      <div class="container">
+          <button type="button" class="btn btn-primary">
+              Total Questions <span class="badge bg-secondary"> {{ count }}</span>
+            </button>
+          <a href="{% url 'knec-test-review' test_id %}"><button class="btn btn-info">Review</button></a>
+      </div>
+      <br>
+      <br>
+    <div style="height:400px;">
+        <form method="post">
+          {% csrf_token %}
+
+          <select class="form-select" id="subjectSelect"  name="subject" aria-label="Default select example">
+                <option></option>
+                <option value="{{ subject.id }}" selected>{{ subject }}</option>
+
+          </select>
+
+          <br>
+          <select class="form-select" id="topicSelect" required name="topic" aria-label="Default select example">
+              <option >Topic</option>
+          </select>
+
+          <br>
+          <select class="form-select" aria-label="Default select example" id="subtopicSelect" name="subtopic">
+              <option >Subtopic</option>
+
+
+          </select>
+
+          <br>
+
+          <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Add question here</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="quiz"></textarea>
+          </div>
+
+
+            <button class="btn btn-info">NEXT</button>
+
+      </form>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // Event handler for the subject select element
+    $('#subjectSelect').change(function() {
+      var subjectId = $(this).val();
+      $('#topicSelect').empty().append('<option selected>Loading...</option>');
+      $('#subtopicSelect').empty().append('<option selected>Subtopic</option>');
+
+      // AJAX request to load topics
+      $.ajax({
+        url: '/Teacher/load_topics/',  // Replace with the actual URL of your load_topics view
+        type: 'get',
+        data: { subject_id: subjectId },
+        success: function(response) {
+          var options = '';
+          $.each(response, function(index, topic) {
+            options += '<option value="' + topic.id + '">' + topic.name + '</option>';
+          });
+          $('#topicSelect').empty().append(options);
+        },
+        error: function(xhr, status, error) {
+          console.error(xhr.responseText);
+        }
+      });
+    });
+
+    // Event handler for the topic select element
+    $('#topicSelect').change(function() {
+      var topicId = $(this).val();
+      $('#subtopicSelect').empty().append('<option selected>Loading...</option>');
+
+      // AJAX request to load subtopics
+      $.ajax({
+        url: '/Teacher/load_subtopics/',  // Replace with the actual URL of your load_subtopics view
+        type: 'get',
+        data: { topic_id: topicId },
+        success: function(response) {
+          var options = '';
+          $.each(response, function(index, subtopic) {
+            options += '<option value="' + subtopic.id + '">' + subtopic.name + '</option>';
+          });
+          $('#subtopicSelect').empty().append(options);
+        },
+        error: function(xhr, status, error) {
+          console.error(xhr.responseText);
+        }
+      });
+    });
+  });
+</script>
+
+{% endblock %}

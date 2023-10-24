@@ -1,0 +1,102 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<div class="container">
+
+
+    <form method="post">
+        {% csrf_token %}
+        <br>
+
+        <p id="error" class="alert alert-info" style="display:none;color:green">7 subject limit reached</p>
+
+    <div>
+        <h6>Sciences</h6>
+        {% for subject in sciences %}
+           <label>
+              <input type="checkbox" class="subject-checkbox" name="subjects" value="{{ subject.id }}">
+               {{ subject.name }}
+           </label>
+           <br>
+        {% endfor %}
+    </div>
+    <br>
+
+    <div>
+        <h6>Humanities</h6>
+        {% for subject in social %}
+           <label>
+              <input type="checkbox" class="subject-checkbox" name="subjects" value="{{ subject.id }}">
+               {{ subject.name }}
+           </label>
+           <br>
+        {% endfor %}
+    </div>
+    <br>
+
+    <div>
+        <h6>Literature</h6>
+        {% for subject in literature %}
+           <label>
+              <input type="checkbox" class="subject-checkbox" name="subjects" value="{{ subject.id }}">
+               {{ subject.name }}
+           </label>
+           <br>
+        {% endfor %}
+    </div>
+    <br>
+        <button class="btn btn-info">Save</button>
+
+</form>
+
+<script>
+    const checkboxes = document.querySelectorAll('.subject-checkbox');
+    let selectedCount = 0;
+
+    checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener('change', () => {
+            if (checkbox.checked) {
+                selectedCount++;
+            } else {
+                selectedCount--;
+            }
+
+            if (selectedCount >= 7) {
+
+                var error = document.getElementById('error')
+
+                error.style.display='block'
+                checkboxes.forEach((cb) => {
+                    if (!cb.checked) {
+                        cb.disabled = true;
+                    }
+                });
+            } else {
+                checkboxes.forEach((cb) => {
+                    cb.disabled = false;
+                });
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+{% endblock %}

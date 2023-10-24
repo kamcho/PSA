@@ -1,0 +1,64 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+<table class="container table">
+    <br><br><br>
+    {% if error == 'Invalidate' %}
+    {% else %}
+    {% if not tests %}
+        <div style="margin:0 auto;width:90%;">
+                    <h6 class="text-center alert alert-dark">You do not have any tests</h6>
+
+        </div>
+        <div class="container">
+            <a href="{% url 'initialise-test' class subject %}"><button class="btn btn-warning">Create Test</button></a>
+
+        </div>
+    {% else %}
+        <thead>
+          <tr>
+            <th><h6>Subject</h6></th>
+            <th><h6>Progress</h6></th>
+              <th><h6>Average</h6></th>
+            <th><h6>Expiry</h6></th>
+
+
+
+          </tr>
+        </thead>
+        <tbody>
+
+        {% for test in tests %}
+            <tr>
+                <td><a href="{% url 'class-test-analytics' test.uuid %}">{{ test.subject.name }}</a></td>
+                <td>{{ test.uuid|class_test_progress }}</td>
+                <td>{{ test.uuid|class_test_average }}</td>
+
+<!--                if  tes}-->
+                    <td style="color:crimson;">
+                      {{ test.expiry|date:'Y-m-d' }}
+                      <br>
+                    </td>
+<!--                {% }-->
+<!--                  <td style="color:green;">{{ test.expiry|date:'Y-m-d' }}</td>-->
+<!--              %}-->
+
+            </tr>
+         {% endfor %}
+        </tbody>
+
+    {% endif %}
+      </table>
+
+{% endif %}
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'Guardian/baseg.html' %}
+
+
+
+
+{% block content %}
+<div  class="subject-select-content-container">
+
+    {% if not kids %}
+    <div class="container">
+        <p>Your account is not linked to any learner. Add a learner to your watchlist.</p>
+        <br>
+        <a href="{% url 'profile'  %}" ><button class="btn btn-warning">Add</button></a>
+    </div>
+
+    {% else %}
+<div class="subjects-select-view  align-items-center justify-content-center">
+    {% for kid in kids %}
+    <a href="{% url 'task-view-select' kid %}">
+        <div class="subject-select-card">
+
+            <div class="">
+                <h6>{{ kid.user.mysubscription.type }}<i class="bi bi-caret-down"></i></h6>
+                <label for=""><small class="text-muted">Names</small></label>
+                
+                <div class="mb-8">
+                    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="{{ kid.f_name|title }} {{ kid.l_name.0|title }}. {{ kid.surname|title }}">
+                  </div>
+               <h6></h6>        
+
+            </div>
+            <div class="">
+                <label><small class="text-muted">Last Seen</small></label>
+                <div class="mb-8">
+                    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="{{ kid.user.last_login }}">
+                  </div>
+                <br>
+                 
+                <p class="active">Active.</p>
+
+
+            </div>
+
+
+        </div>
+
+    </a>
+    {% endfor %}
+    {% endif %}
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}

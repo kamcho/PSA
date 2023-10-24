@@ -1,0 +1,31 @@
+{% extends 'Guardian/baseg.html' %}
+{% block content %}
+
+
+<div class="container">
+    <br><br><br><br>
+
+
+
+
+    {% for chat in chats %}
+        <a href="{% url 'room-support' chat.uid %}">{{ chat.uid }}</a>
+        <br>
+
+
+
+
+    {% endfor %}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

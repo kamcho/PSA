@@ -1,0 +1,37 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+  <div class="container">
+      <br><br><br>
+      {% if not topics %}
+
+      {% else %}
+    <form method="post">
+    {% for topic in topics %}
+
+      <div class="for">
+          {% if exam_type == 'general' %}
+              <input class="form-check-input" name="selected" type="checkbox" value="{{ topic.id }}" >
+          {% else %}
+              <input class="form-check-input" name="selected" type="radio" value="{{ topic.id }}" required>
+          {% endif %}
+          {{ topic }}
+        </label>
+      </div>
+
+      <br>
+
+    {% endfor %}
+        <br>
+        {% csrf_token %}
+        <button class="btn btn-info">Next</button>
+     </form>
+
+     {% endif %}
+  </div>
+
+
+
+
+
+{% endblock %}

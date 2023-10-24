@@ -1,0 +1,52 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+
+<div class="container">
+<br>
+<br>
+<br>
+    <form method="post">
+        {% csrf_token %}
+            <div class="mb-3">
+              <label  class="form-label">First Name</label>
+              <input type="text" class="form-control" name="f_name" placeholder="John">
+            </div>
+
+            <div class="mb-3">
+              <label  class="form-label">Last Name</label>
+              <input type="text" class="form-control" name="l_name"  placeholder="Doe">
+            </div>
+
+
+            <div class="mb-3">
+              <label  class="form-label">Surname</label>
+              <input type="text" class="form-control" name="surname" placeholder="Senior">
+            </div>
+
+            <div class="mb-3">
+              <label  class="form-label">Phone</label>
+              <input type="text" class="form-control" name="phone" placeholder="2547123456789">
+            </div>
+
+            <button class="btn btn-warning">Save</button>
+    </form>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

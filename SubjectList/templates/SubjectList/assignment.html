@@ -1,0 +1,91 @@
+{% extends 'Users/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+{% if not assignments %}
+<div style="margin:0 auto;width:90%;">
+            <h6 class="text-center alert alert-dark">You do not have any assignments </h6>
+
+    </div>
+
+{% elif assignments == 'error' %}
+{% else %}
+<div class="container">
+    <br><br><br>
+   {% for assignment in assignments %}
+
+    {% if not user|test_is_done:assignment.uuid %}
+
+<div class="accordion" id="accordionExample">
+
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+            {{ assignment.subject|title }} by Mr/Mrs {{ assignment.teacher.personalprofile.f_name }}
+        </button>
+        </h2>
+        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <strong>{{ assignment.subject }} Assignment.</strong> You have a {{ assignment.subject }} assignment to be done before {{ assignment.expiry }}.
+                    Click the button below to take the test.
+                    <br><br>
+                    <a class="btn btn-warning" href="{% url 'assignment-lobby' assignment.uuid %}">Proceed</a>
+                </div>
+        </div>
+    </div>
+
+</div>
+    <br>
+
+
+    {% else %}
+
+
+
+            <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                {{ assignment.subject|title }} by Mr/Mrs {{ assignment.teacher.personalprofile.f_name }}
+            </button>
+        </h2>
+        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                <strong>{{ assignment.subject }} Assignment.</strong> You have already taken this test. Click the button below to view your results.
+                <br><br>
+                <a class="btn btn-warning" href="{% url 'test-detail' 'ClassTests' assignment.uuid %}">View Results</a>
+            </div>
+        </div>
+    </div>
+</div>
+    <br>
+
+    {% endif %}
+
+    {% endfor %}
+
+    
+
+
+
+
+
+
+
+
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

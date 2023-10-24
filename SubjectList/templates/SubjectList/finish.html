@@ -1,0 +1,68 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+<br>
+<br>
+
+
+<div class="finish-content-container">
+    <div class="container finish-view">
+        {% if not subtopic %}
+    
+    
+        {% else %}
+        <div class="finish-content">
+            <h5 class="">Finish Up.</h5>
+            <br>
+            <br>
+            <p>{{ subtopic.topic }} - {{ subtopic }}</p>
+        
+            <p>Make sure you have read and understood every aspect of this subtopic, please note that
+                a test will be provided at the end of each topic.
+            </p>
+        
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+                    <button class="btn btn-warning">Save Progress</button>
+                </form>
+        
+            </div>
+        </div>
+        
+    
+    
+    
+    {% endif %}
+    
+    
+    
+    
+    
+    
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

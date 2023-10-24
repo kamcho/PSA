@@ -1,0 +1,33 @@
+
+{% extends 'Users/base.html' %}
+{% block content %}
+
+
+<div class="container">
+    <br><br><br><br><br>
+    <div id="chat-container" style="height:400px;"></div>
+
+    <div>{{ user.uuid }}</div>
+    <script>
+        const uuid = "{{ chat_id }}";
+        const chat = new Chat({ uid: uuid });
+        document.getElementById("chat-container").append(chat);
+    </script>
+    
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

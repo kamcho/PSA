@@ -1,0 +1,48 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<h6>Class Info</h6>
+
+<h6>{{ class.name }}</h6>
+<p>Grade-{{ class.subject.grade }} {{ class.subject }}</p>
+   <p>Topic - {{ class.topic }}</p>
+<p>Subtopic - {{ class.subtopic }}</p>
+   <h6>Time {{ class.date }}</h6>
+<p>Class Duration {{ class.duration }} Minutes</p>
+
+<p>Dear {{ user }} please ensure that you join the class at least 3
+    minutes before the starting time. The class begins on {{ class.date }} on the dot,
+    There is no waiting. Good luck.
+</p>
+<form method="post">
+    {% csrf_token %}
+    {% if user|class_is_booked:class.id %}
+        <small>This class is already booked.</small><br><br>
+
+        <button class="btn btn-info" disabled>Booked</button>
+
+        <button class="btn btn-danger" name="action" value="delete-class">Delete</button>
+
+    {% else %}
+        <small>By clicking this button you will be automatically booked.</small><br><br>
+
+        <button class="btn btn-warning" name="action" value="book-class" >Book</button>
+
+    {% endif %}
+
+</form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

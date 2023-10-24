@@ -1,0 +1,59 @@
+{% extends 'Guardian/baseg.html' %}
+
+{% block content %}
+
+<br><br><br>
+<table class="container table" >
+        <thead>
+          <tr>
+            <th><h6>Type</h6></th>
+            <th><h6>Amount</h6></th>
+            <th><h6>Validity</h6></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for subscription in subscriptions %}
+          <tr>
+              <td><a href="">{{ subscription.type }}</a></td>
+            <td>{{ subscription.amount }}</td>
+            <td>{{ subscription.validity }} days</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+<div>
+
+    <br><br>
+
+<div class="container payment-option" style="">
+   <div class="paymnt-card">
+       <p>Subscribe to your preferred subscription choice through <img width="100" src="https://sokodirectory.com/wp-content/uploads/2015/11/m-pesa.png"> lipa na mpesa. If you pay through
+            the guardian interface you will get 90% discount on the second and third child.</p>
+       <div class="payent-img">
+
+           </div>
+            <div class="payment-body">
+
+                <a href="{% url 'process-payment' %}"><button class="btn btn-warning">Pay</button></a>
+
+            </div>
+
+
+   </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container">
+    {% if not test %}
+    {% else %}
+        <p>Subject - {{ test.subject }}</p>
+        <p>Questions: {{ test.test_size }}</p>
+        <p>Time: {{ test.duration }}</p>
+
+
+        {% if user|test_is_done:test.uuid %}
+        <p>test.</p>
+        <p>You have already taken this test. Press the button below to review.</p>
+            <a href="{% url 'test-detail' 'KNECExams' test.uuid %}"><button class="btn btn-info">Review</button></a>
+        {% else %}
+        <p>This is a multiple choice examination from KNEC, you will have {{ test.duration }} minutes to complete. If you fail to submit within {{ test.duration }} min
+        the exam will submit itself and all un-attempted questions will be marked as incorrect. The exam will only
+        commence when you click start</p>
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger">Start</button>
+            </form>
+        {% endif %}
+
+
+    {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

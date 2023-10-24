@@ -1,0 +1,52 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+
+    {% if not subjects %}
+
+    {% else %}
+   
+    <div class="subject-select-content-container">
+   
+<!--        <div class="container">-->
+<!--            <br>-->
+<!--                <div>-->
+<!--                <a href="{% url 'overall-analytics' user %}"><button class="btn btn-warning">Analytics</button></a>-->
+<!--                </div>-->
+<!--            </div>-->
+
+        <div class="subjects-select-view">
+
+            {% for subject in subjects %}
+                <a href="{% url 'exam-topic-id' subject.id %}">
+                    <div class="subject-select-card">
+                        <div class="">
+                            <h6><i class="bi bi-bookmark-plus"></i>{{ subject }}.</h6>
+                            <small>Grade <span class="badge bg-secondary" > {{ subject.grade }}</span></small>
+                        </div>
+
+                        <div class="kid-exam-topics-card">
+                            <small class="text-muted">Topics</small><br>
+                            {% for topic in user|get_topics:subject.id %}
+
+                                <small>{{ topic.topic__name }}</small><br>
+                            {% endfor %}
+
+                        </div>
+                        <div class="kid-exam-progress-card">
+                            <small >Tests Done  <span class="badge bg-info" style="margin-left: 38px;">{{ user|get_test_count:subject.id }}</span></small>
+                    <br>
+                    <small >Topics Covered  <span class="badge bg-secondary" style="margin-left:12px;">{{ user|get_topic_count:subject.id }}</span></small>
+                    <br>
+                        </div>
+
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endif %}
+{% endblock %}

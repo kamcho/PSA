@@ -1,0 +1,83 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+
+
+<div class="container">
+
+    {% if not subject %}
+    {% else %}
+    <br>
+    <br>
+    <br>
+
+
+     <table class="table">
+        <thead>
+          <tr>
+            <th><h6>Topic</h6></th>
+             <th><h6>Type</h6></th>
+            <th><h6>Average</h6></th>
+            <th><h6>Count</h6></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for topic in subject %}
+          <tr>
+              <td><a href="{% url 'exam-subject-id' subject_name topic.topic__name %}"><h6>{{ topic.topic__name }}</h6></a></td>
+              <td>Topical</td>
+              <td><span class="badge bg-secondary">{{ user|topical_average:topic.topic__name }}</span>  <span class="badge bg-dark">{{ topic.test_size }}</span> </td>
+              <td><span class="badge bg-warning">{{ user|topical_average_count:topic.topic__name }}</span> </td>
+          </tr>
+        {% endfor %}
+
+        {% for topic in general %}
+          <tr>
+            <td><a href="{% url 'test-detail' 'GeneralTest' topic.uuid %}"><h6>{{ topic.subject }}</h6></a></td>
+            <td>General</td>
+            <td><span class="badge bg-secondary">{{ topic.marks }}</span>  <span class="badge bg-dark">{{ topic.test_size }}</span> </td>
+            <td><span class="badge bg-warning">1</span> </td>
+          </tr>
+
+
+        {% endfor %}
+
+        {% for test in tests %}
+          <tr>
+              <td><a href="{% url 'test-detail' 'KNECGradeExams'  test.test %}"><h6>{{ test.subject }}</h6></a></td>
+              <td>KNEC</td>
+              <td><span class="badge bg-info">{{ test.marks}}</span> / <span class="badge bg-secondary">{{ test.test_size }}</span> </td>
+              <td><span class="badge bg-warning">1</span> </td>
+          </tr>
+        {% endfor %}
+        {% for test in class_tests %}
+          <tr>
+              <td><a href="{% url 'test-detail' 'ClassTests'  test.test %}"><h6>{{ test.test.subject }}</h6></a></td>
+              <td>Assignment</td>
+              <td><span class="badge bg-info">{{ test.marks }}</span> / <span class="badge bg-secondary">{{ test.test.test_size }}</span> </td>
+              <td><span class="badge bg-warning">1</span> </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+    {% endif %}
+
+    <br>
+
+
+
+
+
+
+
+
+
+</div>
+
+
+{% endblock %}

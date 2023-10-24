@@ -1,0 +1,66 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+<div style="display:flex">
+        {% for li in test_size %}
+            {% with index as index %}
+                {% if li == index %}
+                    <p style="color:aqua;padding-left:5px;text-decoration:underline;font-size:20px;">{{ li }}</p>
+                {% else %}
+                    <p style="padding-left:5px;">{{ li }}</p>
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+    <p>{{ quiz.quiz }}</p>
+
+
+
+
+<div class="container">
+        <form method="post">
+            {% csrf_token %}
+            {% for choice in choices %}
+                <div class="radio-check">
+                    <input type="radio" id="{{ choice.uuid }}" name="choice" value="{{ choice.uuid }}">
+                    <label for="{{ choice.uuid }}">{{ choice.choice }}</label>
+                </div>
+            {% endfor %}
+            <br>
+            <button id="nextButton" class="btn btn-info" disabled>NEXT</button>
+        </form>
+    </div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('input[type="radio"]').change(function() {
+            var selected = false;
+            $('input[type="radio"]').each(function() {
+                if ($(this).is(':checked')) {
+                    selected = true;
+                    return false;  // Exit the loop if a radio button is selected
+                }
+            });
+
+            if (selected) {
+                $('#nextButton').prop('disabled', false);
+            } else {
+                $('#nextButton').prop('disabled', true);
+            }
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+{% endblock %}

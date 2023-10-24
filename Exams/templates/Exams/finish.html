@@ -1,0 +1,40 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="container">
+    <br>
+    <br>
+    <br>
+    {% if instance == 'KNECGradeExams' or instance == 'ClassTests' %}
+        <p>Congratulations! You've reached the end of the test. Your responses have been saved and can be reviewed in the exam panel.
+            Thank you for completing the test. You answered {{ score }} out of {{ size }} questions correctly.</p>
+        <h6>You scored {{ score }} / {{ size }}</h6>
+        <br>
+        <a href="{% url 'test-detail' instance test_uuid %}"><button class="btn btn-info">Review</button></a>
+    {% else %}
+        <p>Congratulations! You've reached the end of the test. Your responses have been saved and can be reviewed in the exam panel.
+            Thank you for completing the test. You have come to the end of this test.
+            You answered {{ score }} out of {{ test.test_size }} questions correctly.</p>
+        <h6>You scored {{ score }} / {{ test.test_size}}.</h6>
+        <br>
+        <a href="{% url 'test-detail' instance test_uuid %}"><button class="btn btn-info">Review</button></a>
+    {% endif %}
+        <a href="{% url 'student-home' %}"><button class="btn btn-warning">Home</button></a>
+</div>
+
+
+
+
+
+<script>
+    // Clear session storage when the page loads
+    sessionStorage.clear();
+
+    // Delete local storage data with the key "test_data" when the page loads
+    localStorage.removeItem("{{ test_uuid }}");
+</script>
+{% endblock %}

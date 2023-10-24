@@ -1,0 +1,122 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+
+
+
+
+{% if not subjects %}
+<div class="subject-select-content-container">
+<div class="container">
+        <br>
+    <form>
+        <div class="dropdown" style="padding-left:25px;">
+            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Grade {{ grade }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="{% url 'learn' 4 %}">4</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' 5 %}">5</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' 6 %}">6</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' 7 %}">7</a></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+</div>
+{% else %}
+<div class="subject-select-content-container">
+<div class="container">
+        <br>
+    <form>
+        <div class="dropdown" style="padding-left:25px;">
+            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Grade {{ grade }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="{% url 'learn' 4 %}">4</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' 5 %}">5</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' 6 %}">6</a></li>
+                <li><a class="dropdown-item" href="{% url 'learn' 7 %}">7</a></li>
+            </ul>
+        </div>
+    </form>
+
+</div>
+    <div>
+        <div class="subjects-select-view">
+
+            {% for subject in subjects %}
+            <div class="subject-select-card">
+                <div class="booked-class-ody">
+                    {% with progress_topic=user|get_user_progress_topic:subject.id %}
+                    <a href="{% url 'syllabus' subject.id  %}">
+                        <h6>{{ subject }} </h6>
+                    </a>
+
+                    <small><i class="bi bi-gear"> </i> Grade {{ subject.grade }}</small>
+
+                </div>
+                <br>
+
+                <div class="subject-select-in-card">
+                    <h6>Topic {{ progress_topic.order }} </h6>
+
+
+                    <small><i class="bi bi-bookmark"></i>
+                        {{ progress_topic }}
+
+                    </small>
+                    <br>
+
+                    {% endwith %}
+                </div>
+                <br>
+                <div>
+                    <a href="{% url 'syllabus' subject.id %}"><button class="btn btn-info">Syllabus</button></a>
+
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+</div>
+
+
+
+
+<!-- <script>
+    // Add an event listener to the window's beforeunload event
+window.addEventListener('beforeunload', function (e) {
+  // Display a confirmation popup
+  var confirmationMessage = 'You cannot leave this page unless you finish this test. If you close this page you automatically fail!';
+
+  // You can customize the confirmation message as needed
+
+  // Some browsers do not allow custom messages, so setting a return value is essential.
+  e.returnValue = confirmationMessage;
+
+  // Show the confirmation dialog and return its result
+  var userConfirmed = window.confirm(confirmationMessage);
+
+  // If the user confirmed, allow navigation, otherwise, prevent it
+  if (!userConfirmed) {
+    e.preventDefault();
+  }
+  else {
+    e.preventDefault();
+  }
+});
+
+</script> -->
+{% endblock %}

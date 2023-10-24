@@ -1,0 +1,13 @@
+.supervisor-home-view{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+
+}
+.task-card{
+    width:90%;
+    height:250px;
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+    padding:20px;
+
+
+}

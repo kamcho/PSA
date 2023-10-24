@@ -1,0 +1,38 @@
+{% extends base_html %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+
+
+<div class="container">
+  <br>
+  <br>
+  <br>
+  
+
+     <table class="table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Score</th>
+            <th>Percentage</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for topic in subject %}
+          <tr>
+              <td><a href="{% url 'kid-test-revision' 'Topical' email topic.uuid %}">{{ topic.topic }}</a></td>
+            <td>{{ topic.marks }} / 15</td>
+            <td>{{ topic.marks|divide:15 }}%</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+</div>
+
+
+{% endblock %}

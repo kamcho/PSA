@@ -1,0 +1,42 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Code</th>
+            <th>Paper</th>
+            <th>Year</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for exam in exams %}
+
+
+          <tr>
+              <td><a href="{% url 'tests' exam.pk %}">{{exam|slice:":1"}}</a></td>
+            <td>
+                {{exam.unit}}
+          </td>
+            <td>Paper 1</td>
+            <td>
+              {{exam.year}}
+            </td>
+          </tr>
+            {% endfor %}
+
+          <!-- Add more rows as needed -->
+        </tbody>
+      </table>
+
+
+
+
+
+{% endblock %}

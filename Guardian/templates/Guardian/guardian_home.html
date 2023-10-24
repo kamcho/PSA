@@ -1,0 +1,76 @@
+{% extends 'Guardian/baseg.html' %}
+
+
+{% block content %}
+
+
+<br>
+<div class="subject-select-content-container">
+<div class="guardian-home-view">
+
+
+   <a href="{% url 'my-kids'  %}">
+    <div class="guardian-home-card">
+      <h6 class="card-title">View Kids Progress</h6>
+      <p class="card-text">View your kids progress and results.</p>
+
+      <div class="guardian-card-body">
+          {% if not kids %}
+          <p>You do not have any Learner on your watch list.</p>
+          <form method="post">
+              {% csrf_token %}
+                <button class="btn btn-warning">Add</button>
+
+          </form>
+          {% else %}
+        
+          {% for kid in kids %}
+            <div class="mb-3">
+              <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="{{ kid }}">
+            </div>
+          {% endfor %}
+          {% endif %}
+      </div>
+      <br>
+
+    </div>
+   </a>
+
+    <a href="" style="">
+    <div class="guardian-home-card">
+        <h6 class="card-title">View CBC Updates</h6>
+        <p class="card-text">View all upcoming events.</p>
+      <div class="guardian-card-body">
+        <div class="container">
+          View updates from the Board of Education concerning CBC and 8-4-4 issues.
+          
+        </div>
+        <div class="list-group">
+          <li class="list-group-item">Exam Registeration</li>
+          <li class="list-group-item">Change of Curriculum</li>
+          <li class="list-group-item">Closing/Opening Dates</li>
+          
+        </div>
+      </div>
+
+
+    </div>
+</a>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

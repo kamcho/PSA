@@ -1,0 +1,55 @@
+{% extends 'Guardian/baseg.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container">
+{% if not strength %}
+
+
+
+{% else %}
+<h6>Total tests done {{ total_tests }}</h6>
+<p>Average Score 3%</p>
+<p>Overall Position - Top 30%</p>
+
+<br>
+
+<h5>Weakness</h5>
+{% for topic in weakness %}
+    <h6>{{ topic.quiz__topic__name }}</h6>
+    <p>Passed {{ child|topic_analytics_weakness:topic.quiz__topic__name  }} of {{ child|topic_analytics_count:topic.quiz__topic__name  }} questions.</p>
+
+{% endfor %}
+
+
+<h5>Strengths</h5>
+{% for topic in strength %}
+    <h6>{{ topic.quiz__topic__name }}</h6>
+    <p>Passed {{ child|topic_analytics_strength:topic.quiz__topic__name  }} of {{ child|topic_analytics_count:topic.quiz__topic__name  }} questions.</p>
+
+
+{% endfor %}
+
+
+
+
+
+
+
+
+
+
+
+<a class="btn btn-warning">Get Insights</a>
+<a class="btn btn-warning" href="{% url 'set-test' child subject %}">Request a Test</a>
+
+
+
+
+
+
+
+{% endif %}
+</div>
+{% endblock %}

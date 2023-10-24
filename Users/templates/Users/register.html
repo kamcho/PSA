@@ -1,0 +1,77 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<br><br><br>
+
+<form class="form" autocomplete="off" method="post">
+    {% csrf_token %}
+    <p class="title">Register </p>
+    <p class="message">Signup now and get full access to our app. </p>
+
+
+    <label>
+        <input class="input" type="email" name="email" placeholder="name@gmail.com" required autocomplete="off">
+        <span></span>
+    </label>
+    <br>
+
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="role" id="inlineRadio1" value="Student" onclick="enableGrade()">
+      <label class="form-check-label" for="inlineRadio1">Student</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="role" id="inlineRadio2" value="Guardian" onclick="disableGrade()">
+      <label class="form-check-label" for="inlineRadio2">Parent</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="role" id="inlineRadio3" value="Referer" onclick="disableGrade()">
+      <label class="form-check-label" for="inlineRadio3">Referer</label>
+    </div>
+
+    <br>
+        <div>
+           <select class="form-select" id="grade" name="grade" aria-label="Default select example" disabled>
+
+                   <option value="1">1</option>
+                   <option value="2">2</option>
+                   <option value="3">3</option>
+                   <option value="4">4</option>
+                   <option value="5">5</option>
+                   <option value="6">6</option>
+                   <option value="7">7</option>
+                   <option value="8">8</option>
+
+
+           </select>
+        </div>
+    <br>
+
+    
+
+    <label>
+        <input class="input" type="password" name="pwd1"  required>
+        <span>Password</span>
+    </label>
+    <label>
+        <input class="input" type="password" placeholder="" name="pwd2" required>
+        <span>Confirm password</span>
+    </label>
+    <button class="submit">Submit</button>
+
+    <p class="signin">Already have an acount ? <a href="{% url 'login' %}">Signin</a> </p>
+</form>
+
+
+<script>
+  function enableGrade() {
+    document.getElementById("grade").disabled = false;
+  }
+
+  function disableGrade() {
+    document.getElementById("grade").disabled = true;
+  }
+</script>
+
+{% endblock %}

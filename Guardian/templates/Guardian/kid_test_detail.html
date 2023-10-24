@@ -1,0 +1,42 @@
+{% extends base_html %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+
+
+
+<table class="table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+            <th>Score</th>
+            <th>Percentage</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for topic in tests %}
+          <tr>
+              <td><a href="{% url 'my-kid-test-detail' email topic.uuid %}">{{ topic.topic }}</a></td>
+            <td>{{ topic.marks }} / {{ topic.test_size }}</td>
+            <td>{{ topic.marks|divide:topic.test_size }}%</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

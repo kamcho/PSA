@@ -1,0 +1,23 @@
+{% extends 'Users/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+
+    <p>You have come to th end of this test. Your results will be uploaded in a few minutes.</p>
+
+<h6>You scored {{ score }} / {{  test_size }}</h6>
+
+    <a href="{% url 'student-home' %}"><button class="btn btn-warning">Home</button></a>
+    <a href="{% url 'test-detail' test.uuid %}"><button class="btn btn-info">Review</button></a>
+
+
+
+
+
+
+
+
+
+{% endblock %}

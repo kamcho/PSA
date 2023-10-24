@@ -1,0 +1,49 @@
+{% extends 'Supervisor/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+
+
+
+
+     <table class="table">
+        <thead>
+          <tr>
+            <th>School</th>
+            <th>County</th>
+            <th>Area</th>
+          </tr>
+        </thead>
+        <tbody>
+
+
+            {% for school in schools %}
+              <tr>
+                <td><a href="{% url 'school' school.uuid %}">{{ school.name|title }}</a></td>
+                <td>{{ school.county|title }}</td>
+                <td>{{ school.area|title }}</td>
+              </tr>
+            {% endfor %}
+
+        </tbody>
+     </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

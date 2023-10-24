@@ -1,0 +1,58 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+
+<br>
+
+<div class="container">
+
+    <p>Before you attempt to create a new test please ensure that there are no similar tests
+    , i.e, There are no other tests for a particular subject and grade for the current term.</p>
+
+
+    <br>
+    <br>
+  <form method="post">
+      {% csrf_token %}
+      <select class="form-select" aria-label="Default select example"  name="subject" required>
+        <option >Subject</option>
+        {% for subject in subjects %}
+          <option value="{{ subject }}">{{ subject }}</option>
+        {% endfor %}
+      </select>
+      <br>
+      <select class="form-select" aria-label="Default select example" name="grade" required>
+        <option >Grade</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </select>
+      <br>
+      <select class="form-select" aria-label="Default select example" name="term" required>
+        <option >Term</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <br>
+      <div class="mb-3">
+              <label for="exampleFormControlTextarea1" class="form-label">Test size</label>
+              <input class="form-control" type="number" id="exampleFormControlTextarea1" name="test_size" required>
+          </div>
+      <button type="submit" class="btn btn-warning">Next</button>
+  </form>
+
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock %}

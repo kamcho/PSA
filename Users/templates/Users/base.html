@@ -1,0 +1,181 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TECH-BLOG</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Using package from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@weavy/dropin-js@18.0.1/dist/weavy.js" crossorigin="anonymous"></script>
+<script>
+  const access_token = "{{ request.session.access_token }}";
+  // url to your Weavy environment
+  Weavy.url = "https://ced0667cb8b14d76ba02bf7764860ddc.weavy.io";
+  // token factory that returns the access_token for your demo user
+  Weavy.tokenFactory = async () => access_token;
+</script>
+
+  <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600,800,900" rel="stylesheet" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <link  rel="stylesheet" type="text/css" href="{% static 'Users/styles.css' %}">
+  <link  rel="stylesheet" type="text/css" href="{% static 'SubjectList/SubjectLiist.css' %}">
+  <link  rel="stylesheet" type="text/css" href="{% static 'Guardian/Guardian.css' %}">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</head>
+<body class="base-html">
+
+
+
+
+    <nav class="navbar navbar-dark fixed-top" id="top-bar" style="background-color:rgba(29, 25, 46, .8);">
+      <div class="container-fluid">
+        <a class="zara"  href="#">Zara</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
+              {% if user.is_authenticated %}
+        {% if user.mysubjects.selected == "False" %}
+       <li>
+              <a class="nav-link" href=""><i class="bi bi-book"> </i>Subject-select</a>
+          </li>
+       {% else %}
+
+
+          <li>
+              <a class="nav-link" href="{% url 'student-home' %}" ><i class="bi bi-house" > </i>Home</a>
+          </li>
+
+       <li>
+           <a class="nav-link" href="{% url 'notifications' %}">
+            <button  style="background-color:purple;" class="btn  position-relative">
+              Messages
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ messages.count }}+
+                <span class="visually-hidden">unread messages</span>
+              </span>
+            </button>
+            </a>
+       </li>
+       <li>
+              <a class="nav-link" href="{% url 'exams' %}" ><i class="bi bi-clipboard-check"> </i>Exams</a>
+          </li>
+                <li>
+              <a class="nav-link" href="{% url 'assignments' %}" ><i class="bi bi-clipboard-check"> </i>Assignments</a>
+          </li>
+        {% if not grade %}
+       <li>
+            <a class="nav-link" href="{% url 'progress' 'default' %}"><i class="bi bi-journal-check" > </i>Progress</a>
+          </li>
+       {% else %}
+        <li>
+            <a class="nav-link" href="{% url 'progress' 4 %}"><i class="bi bi-journal-check" style=""> </i>Progress</a>
+          </li>
+       {% endif %}
+
+        <li>
+            <a class="nav-link" href="{% url 'profile'  %}" ><i class="bi bi-person-circle" > </i>Profile</a>
+          </li>
+        <li>
+            <a class="nav-link" href="{% url 'support'   %}" ><i class="bi bi-headset" > </i>Contact Us</a>
+          </li>
+
+
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}" ><i class="bi bi-box-arrow-left" > </i>Sign out</a>
+          </li>
+
+{% endif %}
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}" ><i class="bi bi-box-arrow-right" > </i>Sign In</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'register' %}" ><i class="bi bi-pen" > </i>Sign Up</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'password-reset' %}"><i class="bi bi-x-octagon" > </i>Reset Password</a>
+        </li>
+        {% endif %}
+
+        
+
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </nav>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="main-body">
+
+        {% block content %}
+
+
+        {% endblock %}
+    </div>
+
+
+    {% if messages %}
+
+
+  <div class="text-center" style="position:relative;margin-top:55px;">
+    {% for message in messages %}
+      {% if message.tags ==  'error' %}
+        <h6 class="alert alert-danger">{{ message }}</h6>
+      {% elif message.tags == 'info' %}
+          <h6 class="alert alert-info">{{ message }}</h6>
+      {% elif message.tags == 'success' %}
+          <h6 class="alert alert-success">{{ message }}</h6>
+      {% elif message.tags == 'warning' %}
+          <h6 class="alert alert-warning">{{ message }}</h6>
+
+
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
+
+<script>
+    window.addEventListener('popstate', function(event) {
+        // This function is called when the user navigates back
+        location.reload(); // Reload the current page
+    });
+</script>
+
+
+</body>
+</html>

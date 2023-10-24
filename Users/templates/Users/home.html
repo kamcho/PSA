@@ -1,0 +1,163 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+  <div class="content-container">
+    <div class="event-view">
+      <a href="{% url 'learn' grade %}" class="no-style">
+        <div class="event-card">
+          <h6><i class="bi bi-display"></i> E-Learning</h6>
+          <hr class="centered-hr">
+          <div class="">
+            <br>
+            {% if last_subject %}
+            <h6>{{ last_subject.subject }}</h6>
+            <small class="text-muted">{{ last_subject.topic.last }}</small>
+            <p>{{ next }}</p>
+            {% else %}
+            <h6>Start Learning</h6>
+            <p>Select Subject</p>
+            <small class="text-muted"></small>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+
+      <a href="{% url 'progress' grade %}" class="no-style">
+        <div class="event-card">
+          <h6><i class="bi bi-graph-up-arrow"></i> Progress</h6>
+          <hr class="centered-hr">
+          <br>
+          <div class="">
+            <small>Subject Coverage.</small>
+            <br>
+            <p>View your progress on each subject you have learnt.</p>
+            <!-- <div class="progress">
+              <div class="progress-bar" role="progressbar" style="width: 25%;background-color: purple;"
+                aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+            </div> -->
+          </div>
+
+        </div>
+      </a>
+      <a href="{% url 'knec-exams' grade %}">
+        <div class="event-card">
+          <h6><i class="bi bi-speaker"></i> KNEC Announcements</h6>
+          <hr class="centered-hr">
+          <br>
+
+          <div class="">
+
+            <small>Click here to view updates from KNEC/KICD/CBC on new education matters.
+
+            </small>
+            <button class="btn btn-dark">View</button>
+
+
+
+          </div>
+
+
+
+        </div>
+      </a>
+
+
+
+    </div>
+  </div>
+
+
+
+
+
+
+  <div class='table-container'>
+
+
+    <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+      aria-expanded="false">Grade</button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="#">4</a></li>
+      <li><a class="dropdown-item" href="#">5</a></li>
+      <li><a class="dropdown-item" href="#">6</a></li>
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+      <li><a class="dropdown-item" href="#">7</a></li>
+    </ul> -->
+
+    <br>
+    <br>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            <h6>Subject</h6>
+          </th>
+          <th>
+            <h6>Topics</h6>
+          </th>
+          <th>
+            <h6>Progress</h6>
+          </th>
+
+
+        </tr>
+      </thead>
+      {% if not subjects %}
+
+
+      <p>You have no learning history.</p>
+      {% else %}
+      <tbody>
+        {% for subject in subjects %}
+        <tr>
+          <td>{{ subject.subject__name }}</td>
+          <td>{{ subject.topic_count }} / {{ subject.subject__topics }}</td>
+          <td>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar"
+                style="width: {{ subject.topic_count|divide:subject.subject__topics }}%;background-color: purple;"
+                aria-valuenow="63" aria-valuemin="0" aria-valuemax="100">
+                {{ subject.topic_count|divide:subject.subject__topics }}%
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+
+      </tbody>
+      {% endif %}
+    </table>
+
+    <div style="padding: 30px;"></div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+<script>
+  window.addEventListener('popstate', function (event) {
+    // This function is called when the user navigates back
+    location.reload(); // Reload the current page
+  });
+</script>
+
+{% endblock %}

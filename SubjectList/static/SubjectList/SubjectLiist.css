@@ -1,0 +1,476 @@
+.subject-select-content-container{
+    background-color: #000000;
+    
+    width: 100%;
+    height: fit-content;
+    position: absolute;
+    top: 52px;
+    min-height: 100vh;
+    
+    /* top: 50px; */
+}
+
+.subjects-select-view{
+
+    display: grid;
+    grid-template-columns: repeat(3, .7fr);
+    margin:50px auto;
+
+    row-gap: 20px;
+    column-gap:20px;
+    width:93%;
+    background-color:rgba(29, 25, 46, .8);
+
+
+    padding-top:30px;
+    padding-bottom:40px;
+
+}
+.subject-select-card{
+    overflow: hidden;
+  position: relative;
+  text-align: left;
+  margin: 20px auto;
+  height: 300px;
+  padding:20px;
+  border-radius: 0.5rem;
+  border: 2px solid linear-gradient(to right,rgb(142, 110, 255),rgb(208, 195, 255));
+  width: 95%;
+  max-width:400px;
+  background-color: #fff;
+  color: #000;
+    box-shadow: 0px 90px 41360px 310px rgba(123, 64, 160, 0.08);
+
+
+}
+
+
+.subject-select-card::before {
+  width: 150px;
+  height: 150px;
+  content: "";
+  background: linear-gradient(to right,rgb(142, 110, 255),rgb(208, 195, 255));
+  position: absolute;
+  z-index: 1;
+  border-radius: 50%;
+  right: -25%;
+  top: -25%;
+}
+
+
+
+.subject-select-in-card{
+    width: 98%;
+    height: 40%;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    padding: 10px;
+    color: #597393 !important;
+    background-color: #fff !important;
+
+}
+
+
+/* READ */
+
+.study-headings{
+    color: white;
+    padding: 20px;
+}
+.study-content{
+    margin: 0 auto;
+    width: 90%;
+    background-color:rgba(29, 25, 46, .8);
+
+}
+
+/* FINISH */
+
+.finish-content-container{
+    width: 100%;
+    height: 1000px;
+    background-color: #000;
+    position: absolute;
+    top: 55px;
+ 
+}
+.finish-view{
+    color:white;
+    margin: 59px auto;
+    background-color:rgba(29, 25, 46, .8);
+    height: 300px;
+    border-radius: 40px;
+
+    
+
+}
+.finish-content{
+    padding: 40px;
+}
+/* BOOKED CLASSES */
+.booked-class-body{
+
+    width:80%;
+    padding-top:20px;
+    padding-left:30px;
+
+}
+.booked-classes-hr{
+    width:80%;
+    margin: 0 auto;
+}
+
+/* Upcoming Classes */
+.upcoming-classes-view{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+}
+
+.upcoming-classes-view p,a{
+    text-decoration:none;
+    color:black ;
+    padding:0px;
+    margin:0px;
+}
+
+.subject-progress-view{
+     display: grid;
+    grid-template-columns: repeat(3, .7fr);
+    margin:0 auto;
+    row-gap: 20px;
+    column-gap:20px;
+    width:95%;
+    padding-left:2%;
+    padding-bottom:40px;
+
+}
+.subject-progress-card{
+    width:95%;
+    height:250px;
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+    margin:20px;
+    padding:20px;
+
+}
+
+.assignment-card{
+    width:95%;
+    height:120px;
+    box-shadow: 2px 4px 10px 5px rgba(0, 0, 0, 0.1);
+    padding:20px;
+    position:relative;
+}
+.red-border {
+  border-left: 5px solid red;
+  padding-left: 10px; /* Add some padding to separate content from the border */
+}
+.green-border {
+  border-left: 5px solid green;
+  padding-left: 10px; /* Add some padding to separate content from the border */
+}
+.right-aligned {
+  position: absolute;
+  right: 10px;
+  top: 10px; /* Adjust as needed */
+}
+.bottom-aligned {
+  position: absolute;
+  right: 10px;
+  bottom: 10px; /* Adjust as needed */
+}
+
+
+/* FOR MESSAGING */
+.phone-view{
+    display: none;
+}
+.pc-view{
+    display: inline;
+}
+.message-card{
+    width:90%;
+    height:80px;
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+    padding:10px;
+    margin-top:10px;
+
+
+}
+.message-img{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    float:left;
+    border:2px solid purple;
+}
+.message-txt{
+    left:5px;
+}
+.message-img img{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    float:left;
+}
+@media (min-width:1230px){
+    .upcoming-classes-view{
+  padding: 20px;
+  border-radius: 5px;
+        margin: 0 auto;
+        }
+    .subject-progress-card{
+        width:99%;
+        height:300px;
+    }
+    .booked-classes-view{
+        margin: 0 auto;
+        }
+    .booked-classes-card{
+        width:85%;
+    }
+
+}
+
+
+/* EXAMS */
+.file-container{
+    width: 80%;
+}
+.quiz-file{
+    width: 400px;
+    height: 400px;
+}
+
+@media (max-width: 1200px) {
+    .upcoming-classes-view{
+        grid-template-columns:repeat(2,1fr);
+
+        
+    }
+    .subject-select-view{
+        grid-template-columns: repeat(2,.6fr);
+
+        row-gap:60px ;
+        column-gap: 40px;
+        margin: 0 auto;
+        /* padding-left: 13%; */
+
+        
+    }
+
+    .subject-progress-card{
+        margin-top:30px;
+
+        height:250px;
+        padding: 15px;
+
+    }
+    .booked-classes-view{
+        grid-template-columns:repeat(2,1fr);
+
+    }
+    .booked-classes-card{
+        margin-top:30px;
+        width:85%;
+
+    }
+    .booked-classes-hr{
+    width:95%;
+    margin: 0 auto;
+}
+}
+
+
+@media (max-width: 900px) {
+    .subjects-select-view{
+
+        grid-template-columns:repeat(2,1fr);
+
+}
+.subject-progress-view{
+            grid-template-columns:repeat(2,1fr);
+
+}
+}
+
+
+@media (max-width: 650px) {
+    .subjects-select-view{
+        display:inline;
+
+        margin-bottom:40px;
+
+
+
+    }
+    .subject-progress-view{
+        display:inline;
+
+    }
+    .subject-select-card{
+        width:80%;
+        margin:30px  auto;
+        margin-bottom:40px;
+
+
+
+    }
+    .subject-progress-card{
+        margin:20px auto !important;
+
+    }
+    .finish-content{
+        padding: 20px;
+    }
+
+
+}
+@media (max-width: 790px) {
+    .pc-view{
+        display: none !important;
+    }
+    .phone-view{
+        display: inline !important;
+    }
+
+
+}
+/* FOR EXAMS */
+
+
+.exam-view{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+}
+.exam-view .exam-card{
+    background-color: black;
+    width: 200px;
+    height: 180px;
+    color: white;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+.exam-card div{
+    padding: 15px;
+}
+.exam-card small{
+    color: rgb(206, 200, 200);
+}
+.exam-card p,h6{
+    padding-top: 5px;
+}
+
+
+
+
+.image {
+    width:100px;
+    height:100px;
+    margin-left:10px;
+    margin-top:10px;
+    border-radius:50%;
+    float:left;
+    display: inline-block;
+    border: 3px solid aqua;
+    margin-right:30px;
+}
+
+.names {
+
+    margin-top:30px;
+    color:aqua;
+    left:30px;
+    text-align:center;
+
+
+}
+
+
+
+
+/* FOR QUIZ EXAMS */
+.quiz{
+    padding: 10px;
+}
+.quiz .answer{
+    margin-left:10px;
+}
+
+
+
+/* FOR LEARN */
+.subject-view{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+}
+.learn-card{
+    width: 320px;
+    height: 220px;
+    background-color: white;
+    color: white;
+    margin-top: 30px;
+    margin-left:30px;
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+
+}
+.learn-card h6{
+
+    padding-top: 20px;
+    width: 80%;
+    margin: 0 auto;
+    border: none;
+}
+.learn-body{
+    padding-top: 5px;
+    padding-left:10%;
+    margin: 0 auto;
+    border: none;
+    font-size:17px;
+}
+.learn-card a{
+    text-decoration:none;
+    color:black;
+}
+.learn-card i{
+    display: inline-block;
+    margin-top: 20px;
+    color:purple;
+    padding-left:30px;
+
+    font-size:22px;
+}
+.centered-hr {
+    width: 99%;
+    margin: 0 auto;
+    border: none;
+    border-top: 1px solid black;
+    margin-top:10%;
+  }
+
+
+  /* FOR PROGRESS */
+
+.progress-card{
+    width: 320px;
+    height: 220px;
+    background-color: white;
+
+    margin-top: 30px;
+    margin-left:30px;
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+
+}
+.subject-progress-card .p-txt{
+    padding-top:20px;
+    padding-left:30px;
+    width: 80%;
+}
+.progress-card a{
+    text-decoration:none;
+    color:black;
+}
+
+
+#accordionExample{
+    background-color:white;
+}

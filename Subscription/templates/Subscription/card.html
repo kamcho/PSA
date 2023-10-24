@@ -1,0 +1,161 @@
+{% extends 'Guardian/baseg.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container">
+
+<br><br>
+    <form method="post" id="subscription-form" >
+        {% csrf_token %}
+
+
+         <div class="col-md-8">
+            <div class="input-group">
+              <span class="input-group-text">Card </span>
+               <input type="text" name="card" id="card" maxlength="16" minlength="16" placeholder="1234 1234 1234 1234" class="form-control" required>
+               <input type="text" name="cvc" id="cvc" minlength="3" maxlength="3" placeholder="CVC" class="form-control" required>
+               <br>
+              <small id="carderror" style="color:red;padding-left:2px;" class="error"></small>
+             </div>
+         </div>
+<br>
+
+        <div class="col-md-8">
+            <div class="input-group">
+              <span class="input-group-text">Card Expiry</span>
+              <input type="number" name="month" id="monthInput" max="12" placeholder="MM" class="form-control" required>
+              <input type="number"  name="year" id="yearInput" min="23" maxlength="2" placeholder="YY" class="form-control" required>
+              <br>
+              <small id="monthError" style="color:red;padding-left:2px;" class="error"></small>
+
+            </div>
+        </div>
+
+
+    <br>
+        <div class="col-md-8">
+            <div class="form-group">
+              <input type="text" class="form-control"   name="names" placeholder="JOHN DOE"  required>
+            </div>
+        </div>
+<br>
+
+
+        <div class="col-md-8">
+            <select class="form-select" id="subscription" name="subscription" required>
+                {% for sub in subs %}
+                    <option>{{ sub|upper }}</option>
+                {% endfor %}
+            </select>
+        </div>
+<br>
+    {% for kid in kids %}
+        <div class="col-md-8">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="selected_kids" value="{{ kid }}">
+                <label class="form-check-label">{{ kid.f_name }} {{ kid.l_name }}</label>
+            </div>
+        </div>
+    {% endfor %}
+        <div class="col-md-8">
+            <div class="form-group">
+                <input type="text" class="form-control" id="price" name="amount" placeholder="0 Ksh" required readonly>
+            </div>
+        </div>
+    <br>
+    <button class="btn btn-warning" id="pay">Pay</button>
+
+
+</form>
+
+
+
+
+<script>
+  // Add event listeners to the input fields
+  var monthInput = document.getElementById("monthInput");
+  monthInput.addEventListener("input", checkExpiration);
+  var yearInput = document.getElementById("yearInput");
+  yearInput.addEventListener("input", checkExpiration);
+
+  // Function to check if the date has expired
+  function checkExpiration() {
+    // Get the month and year values entered by the user
+    var month = monthInput.value;
+    var year = yearInput.value;
+    // If the month or year values are empty, exit the function
+    if (!month || !year) {
+      return;
+    }
+    // Convert the month and year values to a Date object
+    var date = new Date("20" + year, month - 1, 1);
+    // Get the current date
+    var now = new Date();
+    // If the date has expired, show an error message
+    if (date < now) {
+      document.getElementById("monthError").textContent = "expired.";
+      document.getElementById("yearError").textContent = "This date has expired.";
+    } else {
+      document.getElementById("monthError").textContent = "";
+      document.getElementById("yearError").textContent = "";
+    }
+  }
+</script>
+
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Function to calculate the price based on the subscription type and selected kids
+    function calculatePrice(subscriptionType, selectedKidsCount) {
+        // Define the prices for different subscription types
+        var priceMap = {
+            'GOLD': 1500,
+            'PLATINUM': 1000,
+            'SILVER': 500
+        };
+
+        // Apply the discount if there are more than one selection
+        var paybtn = document.getElementById('pay');
+        if (selectedKidsCount === 0 ) {
+
+            paybtn.disabled = true;
+        }
+        else if (selectedKidsCount > 0 && selectedKidsCount <= 1  ) {
+            paybtn.disabled = false;
+             var price = priceMap[subscriptionType] * selectedKidsCount ;
+        }
+        else if (selectedKidsCount > 1){
+             var price = priceMap[subscriptionType] * 2 * .7;
+        }
+
+
+        // Calculate the total price
+
+
+        return price;
+    }
+
+    // Function to update the price display based on the form inputs
+    function updatePrice() {
+        var subscriptionType = $('#subscription').val();
+        var selectedKidsCount = $('input[name="selected_kids"]:checked').length;
+        var price = calculatePrice(subscriptionType, selectedKidsCount);
+
+        // Set the price to 2 if there are more than one selection
+
+
+        $('#price').val(price);
+    }
+
+    // Attach event listeners to form inputs
+    $('#subscription, input[name="selected_kids"]').on('change', updatePrice);
+
+    // Initial update of the price display
+    updatePrice();
+});
+</script>
+
+
+
+{% endblock %}

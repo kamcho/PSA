@@ -1,0 +1,74 @@
+{% extends base_html %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+
+  <div class="container dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        Grade
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '4' email %}">4</a></li>
+        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '5' email %}">5</a></li>
+        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '6' email %}">6</a></li>
+        <li><a class="dropdown-item" href="{% url 'learners-syllabus' subject '7' email %}">7</a></li>
+      </ul>
+    </div>
+<br>
+  <div>
+
+<div class="container syllabus" style="text-decoration:none !important;">
+{% for coverage in syllabus %}
+
+
+    {% if  email|guardian_topic_view:coverage %}
+      <div style="display:flex;width:60%;">
+          <p style="color:purple;flex: 1;">{{ coverage.order }}.) {{ coverage }}</p>
+          <input type="checkbox" style="margin-left: 0 auto;" checked>
+      </div>
+        <div>
+           {% for subtopic in coverage.topic.all %}
+                {% if  email|guardian_subtopic_view:subtopic %}
+
+                    <div style="display:flex;width:60%;padding-left:30px;">
+                        <small style="color:purple ;flex: 1;"><a href="{% url 'media' coverage subtopic  %}">{{ subtopic }}</a></small>
+                        <i class="bi bi-check-all" style="margin-left: 0 auto;color:purple;font-size:20px;"></i>
+                    </div>
+
+                {% else %}
+                      <div style="display:flex;width:60%;padding-left:30px;">
+                        <small style="color:purple;flex: 1;"><a href="{% url 'media' coverage subtopic %}">{{ subtopic }}</a></small>
+                          <input type="checkbox" style="margin-left: 0 auto;" disabled>
+                      </div>
+                {% endif %}
+
+            {% endfor %}
+        </div>
+
+    {% else %}
+      <div style="display:flex;width:60%;">
+          <p style="flex: 1;">{{ coverage.order }}.) {{ coverage }}</p>
+          <input type="checkbox" style="margin-left: 0 auto;" disabled >
+      </div>
+        <div>
+           {% for subtopic in coverage.topic.all %}
+                        <div style="display:flex;width:60%;padding-left:30px;">
+                        <small style="color:purple;flex: 1;"><a href="{% url 'media' coverage subtopic %}">{{ subtopic }}</a></small>
+                          <input type="checkbox" style="margin-left: 0 auto;" disabled>
+                      </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+      <br>
+
+{% endfor %}
+
+
+  </div>
+
+
+
+
+
+{% endblock %}

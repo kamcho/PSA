@@ -1,0 +1,63 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+<div class="subject-select-content-container">
+{% if not classes %}
+<div class="container">
+    <br><br><br><br>
+
+    <p style="color: white;">We could not find any classes in your teaching profile. Click the button below to add.</p>
+    <a href="{% url 'dashboard' %}"><button class="btn btn-warning">Add</button></a>
+</div>
+
+{% else %}
+<div class="">
+
+    <div class="subjects-select-view">
+    {% for class in classes %}
+        <div class="subject-select-card">
+            <a href="{% url 'class-task-view-select' class.class_id class.subject.id  %}"><h6><i class="bi bi-bookmark"></i> {{ class.class_id }}</h6></a>
+            <small><i class="bi bi-gear"> </i> Grade <span class="badge bg-info text-light">{{ class.class_id.grade }}</span></small>
+            <br>
+
+            <br>
+
+            <div class="subject-select-in-card">
+
+
+             <small ><i class="bi bi-bookmark"></i>
+                        {{ class.subject }}
+             </small>
+            <br>
+            <small><i class="bi bi-person-circle"></i>  {{ class.class_id.class_size }} Students</small>
+        </div>
+        <br>
+    </div>
+
+{% endfor %}
+
+    </div>
+</div>
+
+</div>
+
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

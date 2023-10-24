@@ -1,0 +1,126 @@
+.class-view{
+    display:grid;
+    grid-template-columns: 20% 30% 8%;
+    padding-top:10px;
+}
+.teacher-home-view{
+    display:grid;
+    grid-template-columns: repeat(3, .5fr);
+    grid-gap: 20px;
+    padding-top: 30px;
+    margin: 0 auto;
+    width: 95%;
+
+
+}
+.purple{
+    color:purple;
+}
+.purple {
+    color:orange;
+}
+.card-in-card{
+    width: 98%;
+    height: 60%;
+    border-radius: 5px;
+    padding:15px;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.2);
+    /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
+
+    margin:0 auto;
+}
+.teacher-home-card{
+    width: 95%;
+    height: 250px;
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+    padding: 20px;
+    max-width: 500px;
+
+
+}
+.teacher-task-view{
+
+    display: grid;
+    grid-template-columns: repeat(2, .5fr);
+    grid-gap: 30px;
+    width: 80%;
+    margin: 30px auto;
+
+}
+
+.sub-card{
+    overflow: hidden;
+  position: relative;
+  text-align: left;
+  margin: 20px auto;
+  height: 400px;
+  text-align: center;
+  padding:20px;
+  border-radius: 0.5rem;
+  border: 2px solid linear-gradient(to right,rgb(142, 110, 255),rgb(208, 195, 255));
+  width: 80%;
+  max-width:400px;
+  background-color: #fff;
+  color: #000;
+  box-shadow: 0px 90px 41360px 310px rgba(123, 64, 160, 0.08);
+
+
+}
+@media (min-width:1200px){
+
+    .teacher-home-view{
+        
+        width: 90%;
+        margin: 0 auto;
+    }
+    
+
+
+
+}
+@media (max-width:1000px){
+    .teacher-task-view{
+        width: 98%;
+    }
+
+}
+
+@media (max-width: 650px){
+
+    .teacher-task-view{
+        display: inline;
+        
+    }
+    .teacher-task-view .teacher-home-card{
+
+        margin: 30px auto;
+    }
+
+
+
+}
+@media (max-width:900px){
+    .teacher-home-view{
+     
+        grid-template-columns: repeat(2, .5fr);
+
+    }
+
+
+}
+
+
+@media (max-width:600px){
+    .teacher-home-view{
+        display: inline;
+
+
+    }
+    .teacher-home-card{
+        width: 80%;
+        margin-top: 30px;
+        margin: 30px auto;
+
+
+    }
+}

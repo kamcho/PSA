@@ -1,0 +1,117 @@
+{% extends base_html %}
+{% load custom_filters %}
+{% block content %}
+  <div>
+   
+    {% if not notifications %}
+
+
+    {% else %}
+      <div class="container">
+        <br>
+        <br>
+        <br>
+        <br>
+
+
+    {% for message in notifications %}
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter }}">
+          <div class="pc-view">
+              {{ message.about }} <small style="position:absolute;right:45px;"> {{ message.date|timesince }} ago.</small>
+          </div>
+          <div class="phone-view">
+              {{ message.subject }}
+          </div>
+        </button>
+      </h2>
+      <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          {{ message.message }}
+
+          <br>
+            <br>
+          {% if message.notification_type == 'topical-quiz' %}
+                {% if user|test_is_done:message.uuid %}
+                    <a href="{% url 'test-detail' 'Topical' message.uuid %}"><button class="btn btn-warning">View Results</button></a>
+                {% else %}
+                    <a href="{% url 'start' message.topic message.uuid %}"><button class="btn btn-info">Take Test</button></a>
+                {% endif %}
+
+          {% elif message.notification_type == 'topical-results' %}
+
+                <a href="{% url 'test-detail' 'Topical' message.test %}"><button class="btn btn-warning">View Results</button></a>
+         {% elif message.notification_type == 'general-results'  %}
+                <a href="{% url 'test-detail' 'GeneralTest' message.test %}"><button class="btn btn-warning">View Results</button></a>
+
+         {% elif message.notification_type == 'knec-results'  %}
+                <a href="{% url 'test-detail' 'KNECGradeExams' message.test %}"><button class="btn btn-warning">View Results</button></a>
+
+         {% elif message.notification_type == 'class-results'  %}
+                <a href="{% url 'test-detail' 'ClassTests' message.test %}"><button class="btn btn-warning">View Results</button></a>
+
+          {% elif message.notification_type == 'class-test' %}
+              {% if user|test_is_done:message.test.uuid %}
+                <a href="{% url 'test-detail' 'ClassTests' message.test.uuid %}"><button class="btn btn-warning">View Result</button></a>
+              {% else %}
+                <a href="{% url 'assignment-lobby' message.test.uuid %}"><button class="btn btn-info">View Test</button></a>
+              {% endif %}
+
+
+          {% elif message.notification_type == 'retake' %}
+            {% if user|test_is_done:message.uuid %}
+                <a href="{% url 'test-detail' 'Topical' message.topic message.uuid %}"><button class="btn btn-warning">View Result</button></a>
+              {% else %}
+                <a href="{% url 'start' message.topic message.uuid %}"><button class="btn btn-info">View Test</button></a>
+              {% endif %}
+
+        {% elif message.notification_type == 'general' %}
+
+
+                <a href="{% url 'general-test' message.uuid %}"><button class="btn btn-info">View Test</button></a>
+
+
+
+          {% else %}
+<button>Pass</button>
+
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+{% endfor %}
+
+  </div>
+      </div>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

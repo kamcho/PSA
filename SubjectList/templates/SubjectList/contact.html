@@ -1,0 +1,36 @@
+{% extends base_html %}
+{% load custom_filters %}
+{% block content %}
+
+<div  class="subject-select-content-">
+    <form method="post" class="container" style="">
+        {% csrf_token %}
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        
+        
+
+       
+
+        <div class="mb-3">
+           <label for="exampleFormControlTextarea1" class="form-label">Enter your issue.</label>
+           <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="message" required></textarea>
+        </div>
+           <button class="btn btn-info">Submit</button>
+
+
+    </form>
+
+ </div>
+
+
+
+
+
+
+
+
+{% endblock %}

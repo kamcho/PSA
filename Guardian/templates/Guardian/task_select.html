@@ -1,0 +1,46 @@
+
+  {% extends base_html %}
+
+
+
+
+{% block content %}
+
+<div class="subject-select-content-container">
+    <div class="container">
+        <br><br><br>
+            <a href="{% url 'overall-analytics' email %}"><button class="btn btn-info">Analytics</button></a>
+    </div>
+
+  {% if error %}
+
+  {% else %}
+
+
+    <div class="task-select">
+
+        <div class="subject-select-card">
+          <div class="booked-class-body">
+            <h6 class="card-title">View Learning Progress</h6>
+            <p class="card-text">View {{ email }}`s learning progress.</p>
+            <a href="{% url 'learner-learning-progress' email grade %}" class="btn" style="background-color:purple;color:white;">Learning Progress</a>
+          </div>
+        </div>
+
+
+        <div class="subject-select-card">
+          <div class="booked-class-body">
+            <h6 class="card-title">View Tests Progress</h6>
+            <p class="card-text">View {{ email }}`s examination history.</p>
+            <a href="{% url 'kid-test' email  %}" class="btn" style="background-color:purple;color:white;">View Tests</a>
+          </div>
+        </div>
+
+
+
+
+    </div>
+
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+<div class="subject-select-content-container">
+<br><br><br>
+
+<div class="subjects-select-view">
+
+<a href="{% url 'my-classes' %}">
+        <div class="subject-select-card">
+
+                <h6><i class="bi bi-houses">  </i>My Classes</h6>
+                <br>
+                <div class="card-in-card">
+<!--                    {% for class in classes %}-->
+<!--                        <small><i class="bi bi-house"></i> {{ class.class_id }}</small>-->
+<!--                    {% endfor %}-->
+                    <small>View the classes you teach. Remember to always update your classes upon changes.</small>
+                </div>
+
+        </div>
+        </a>
+
+        <a href="{% url 'my-classes' %}">
+        <div class="subject-select-card">
+                <h6><i class="bi bi-spellcheck">  </i>Class Tests</h6>
+                <br>
+                <div class="card-in-card">
+                        <small>View manage and update tests you have created. You can also view
+                        the students performance from here.</small>
+                </div>
+        </div>
+
+        </a>
+
+        <a href="{% url 'dashboard' %}">
+        <div class="subject-select-card">
+                <h6><i class="bi bi-option">  </i>Dash Board</h6>
+                <br>
+                <div class="card-in-card">
+                        <small>Manage your profile  accounts settings and class allocation from here.</small>
+                </div>
+        </div>
+                </a>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<br><br><br>
+<div class="container">
+  <h6>{{ class }}</h6>
+<p>{{ request.session.test_data.date }}</p>
+  {% for quiz in quizzes %}
+
+    <small>{{ quiz.topic }}</small><br>
+    <p>{{ quiz.quiz }}</p>
+
+
+
+
+
+{% endfor %}
+
+
+  <form method="post">
+    {% csrf_token %}
+
+    <button class="btn btn-warning">Save</button>
+
+  </form>
+
+
+
+</div>
+
+
+
+
+
+
+
+{% endblock %}

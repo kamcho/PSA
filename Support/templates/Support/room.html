@@ -1,0 +1,19 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+<br><br><br><br><br>
+<div id="chat-container" style="height:400px;"></div>
+
+<div>{{ user.uuid }}</div>
+<script>
+    const uuid = "{{ user.uuid }}";
+    const chat = new Chat({ uid: uuid });
+    document.getElementById("chat-container").append(chat);
+</script>
+
+
+
+
+{% endblock %}

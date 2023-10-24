@@ -1,0 +1,58 @@
+{% extends 'Users/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="subject-select-content-container">
+    <div class="guardian-home-view">
+    
+    
+       <a href="{% url 'read' topic subtopic 'text'  %}">
+        <div class="guardian-home-card">
+          <h6 class="card-title">Text Media</h6>
+          
+    
+          <div class="guardian-card-body">
+              
+            <p class="card-text">A student is provided with written text reading materials for study.
+                 This option should be used where there is limited supply of data.
+                Study has proven that students understand better from audio-visual materials (Videos)</p>
+             
+          </div>
+          <br>
+    
+        </div>
+       </a>
+    
+       <a href="{% url 'read' topic subtopic 'video' %}">
+        <div class="guardian-home-card">
+            <h6 class="card-title">Video Media</h6>
+            
+          <div class="guardian-card-body">
+            <p class="card-text">A learner is provided with recorded video for learning.
+                Video media consume a lot of data and is adviced to be used with wifi connections.
+                If not using wifi consult with your parent for permission to use video streams.</p>
+            
+          </div>
+    
+    
+        </div>
+    </a>
+    
+    
+    </div>
+    
+    
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

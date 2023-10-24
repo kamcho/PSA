@@ -1,0 +1,98 @@
+{% extends base_html %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container">
+
+        {% if not marks %}
+        {% else %}
+        <br>
+        <br>
+        <br>
+
+            {% if instance == 'ClassTests'  %}
+            <h6>Scores {{ marks.marks }} / {{ marks.test.test_size }}</h6>
+            {% else %}
+                    <h6>Scores {{ marks.marks }} / {{ marks.test_size }}</h6>
+            {% endif %}
+        {% endif %}
+    </div>
+
+
+    <div class="container">
+
+        {% if not quizzes %}
+
+        {% else %}
+            {% for quiz in quizzes %}
+                {% if quiz.is_correct == False %}
+                    <div style="color:crimson;">
+                        {% if quiz.quiz.file %}
+                        <div class="file-container">
+                            <img src="{{ quiz.quiz.file.url }}" width="100" height="100" class="quiz-file">
+                        </div>
+
+                        {% else %}
+                        {% endif %}
+
+                        <h6>{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
+
+                         <small style="padding-left:15px;">You chose {{ quiz.selection.choice }}</small><i style="font-size:30px;color:crimson;" class="bi bi-x"></i><small>{{ quiz.is_correct }}</small><br>
+                         <small style="color:green;padding-left:15px;"><b>Correct choice is </b> {{ quiz.quiz.quiz|get_correct_choice }}</small>
+
+
+                        <hr>
+                    </div>
+
+                {% else %}
+                    <div >
+                        {% if quiz.quiz.file %}
+                        <div class="file-container">
+                            <img src="{{ quiz.quiz.file.url }}" width="100" height="100" class="quiz-file">
+                        </div>
+
+                        {% else %}
+                        {% endif %}
+                        <h6 style="color:purple;">{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
+
+                         <small style="color:green;padding-left:15px;">{{ quiz.selection.choice }}</small><i style="font-size:30px;color:green;" class="bi bi-check-all"></i>
+                        <hr>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+
+            
+
+            {% if undone %}
+
+            <h6 class="dashed-heading">Un-Answered Questions</h6>
+            {% for quiz in undone %}
+
+                        <p>Quiz {{ quiz.quiz }}</p>
+                            <small style="color:green;padding-left:15px;">Answer - {{ quiz.quiz|get_correct_choice }}</small>
+
+
+            {% endfor %}
+
+            {% else %}
+            {% endif %}
+
+
+        {% endif %}
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

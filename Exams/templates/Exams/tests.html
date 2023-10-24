@@ -1,0 +1,160 @@
+{% extends 'Users/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    
+    {% if error %}
+    <br><br><br><br>
+    <p>This test cannot be taken now. Contact @support</p>
+    {% else %}
+    <br><br><br><br>
+    <div class="test-container">Test Ends in
+        <br><span style="font-size:40px;" class="badge bg-info text-light" id="time">01:00</span>
+    </div>
+
+    <div style="display:flex">
+        {% for li in list %}
+        {% with index as current_index %}
+        {% if li == current_index %}
+        <p style="color:aqua;padding-left:5px;text-decoration:underline;font-size:20px;">{{ li }}</p>
+        {% else %}
+        <p style="padding-left:5px;">{{ li }}</p>
+        {% endif %}
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+    <div class="quiz">
+        <p><small>{{ index }}.</small>) </p>
+        {% if quiz.file %}
+        <div class="file-container">
+            <img src="{{ quiz.file.url }}" width="100" height="100" class="quiz-file">
+        </div>
+        {% else %}
+        {% endif %}
+        <div>
+            {{ quiz.quiz }}
+        </div>
+    </div>
+
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            {% for choice in choices %}
+            <div class="radio-check">
+                <input type="radio" id="{{ choice.uuid }}" name="choice" value="{{ choice.uuid }}">
+                <label for="{{ choice.uuid }}">{{ choice.choice }}</label>
+            </div>
+            {% endfor %}
+            <br>
+            <button id="nextButton" class="btn btn-info" disabled>NEXT</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+    function startTimer(duration, display) {
+
+        var timer = duration;
+        var minutes, seconds;
+
+        var intervalId = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(intervalId);
+                display.textContent = 'Expired';  // Change text when timer expires
+
+                // Call the Django function using AJAX when timer expires
+                callDjangoFunction();
+            }
+        }, 1000);
+    }
+
+    function callDjangoFunction() {
+        // Make an AJAX request to trigger the Django function
+        $.ajax({
+            url: '/Exams/{{instance}}/{{ test_id }}/Finish/',  // Replace with the actual URL
+            type: 'GET',
+            success: function (response) {
+                window.location.href = '/Exams/{{instance}}/{{ test_id }}/Finish/';
+                localStorage.removeItem('{{ test_id }}');
+
+
+            },
+            error: function () {
+                console.error('Error calling Django function');
+            }
+        });
+    }
+
+    window.onload = function () {
+        if ('{{ instance }}' === 'Topical' || '{{ instance }}' === 'General' || '{{ instance }}' === 'KNECGradeExam') {
+            var test_duration = parseInt('{{ test.duration }}');
+        }
+        else {
+            var test_duration = parseInt('{{ test.duration }}');
+        }
+        var fiveMinutes = 60 * test_duration;
+        var display = document.querySelector('#time');
+
+        // Check if timer start time is stored in localStorage
+        var startTime = localStorage.getItem('{{ test_id }}');
+        if (!startTime) {
+            startTime = new Date().getTime();
+            localStorage.setItem('{{ test_id }}', startTime);
+        } else {
+            startTime = parseInt(startTime);
+        }
+
+        var currentTime = new Date().getTime();
+        var elapsed = currentTime - startTime;
+        var remainingTime = fiveMinutes - Math.floor(elapsed / 1000);
+
+        // Start the timer with remaining time
+        startTimer(remainingTime, display);
+    };
+</script>
+<script>
+    $(document).ready(function () {
+        $('input[type="radio"]').change(function () {
+            var selected = false;
+            $('input[type="radio"]').each(function () {
+                if ($(this).is(':checked')) {
+                    selected = true;
+                    return false;  // Exit the loop if a radio button is selected
+                }
+            });
+
+            if (selected) {
+                $('#nextButton').prop('disabled', false);
+            } else {
+                $('#nextButton').prop('disabled', true);
+            }
+        });
+    });
+</script>
+
+<!-- <script>
+    // Get the data from localStorage
+    var startTime = localStorage.getItem('{{ test_id }}');
+
+    // Add an event listener to the window's beforeunload event
+    window.addEventListener('beforeunload', function () {
+        // Remove the data from localStorage
+        localStorage.removeItem('{{ test_id }}');
+    });
+
+</script> -->
+
+{% endblock %}

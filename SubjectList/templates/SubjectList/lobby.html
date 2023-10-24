@@ -1,0 +1,50 @@
+{% extends 'Users/base.html' %}
+{% load static %}
+{% block content %}
+
+<br><br>
+  <div class="call-lobby" style="width:80%;">
+    <div class="d-flex justify-content-center">
+        <h6>{{ class.class_id.name }}</h6>
+    </div>
+    <div class="d-flex justify-content-center">
+        <h6>{{ class.class_id.subject }} - {{ class.class_id.subject.grade }}</h6>
+    </div>
+    <br>
+
+    <div class="row">
+      <div class="col">
+        <input type="text" class="form-control" placeholder="{{ class.class_id.topic }}" aria-label="First name">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="{{ class.class_id.subtopic }}" aria-label="Last name">
+      </div>
+
+    </div>
+<br>
+    <div class="row">
+      <div class="col">
+        <input type="text" class="form-control" placeholder="{{ class.class_id.date }}" aria-label="First name">
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" placeholder="{{ class.class_id.duration }} Minutes" aria-label="Last name">
+      </div>
+
+    </div>
+
+<br><br>
+
+      <div class="d-flex justify-content-center">
+        <button class="btn btn-danger" style="font-size:20px;color:white;">Join
+            <i class="bi bi-telephone-plus" ></i>
+        </button>
+      </div>
+
+
+  </div>
+
+
+
+
+
+{% endblock %}

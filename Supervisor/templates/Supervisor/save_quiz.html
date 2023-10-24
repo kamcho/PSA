@@ -1,0 +1,41 @@
+{% extends 'Supervisor/base.html' %}
+{% block content %}
+
+
+<div class="container">
+    <h6>Strand Info.</h6>
+    <p>{{ subject.subject }}</p>
+    <p>Topic</p>
+    <small>{{ subject.topic }}</small><br>
+    <p>Subtopic</p>
+    <small>{{ subject }}</small>
+    <br><br>
+    <h6>Quiz</h6>
+    <p>{{ quiz }}</p>
+
+    <h6>Choices</h6>
+    <p style="color:green;">a) {{ selection.selection1 }} <small>(correct)</small></p>
+    <p style="color:crimson;">b) {{ selection.selection2 }}.</p>
+    <p style="color:crimson;">c) {{ selection.selection3 }}.</p>
+    <p style="color:crimson;">d) {{ selection.selection4 }}.</p>
+
+
+
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-warning">Save</button>
+    </form>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+{% endblock %}

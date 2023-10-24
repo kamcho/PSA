@@ -1,0 +1,46 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+<div class="container text-center alert alert-warning">Not implemented</div>
+
+<!--<div>-->
+<!--    <a href="{% url 'booked-classes' %}"><button class="btn btn-info">Booked classes</button></a>-->
+<!--</div>-->
+<!--<br>-->
+
+
+<!--<div class="upcoming-classes-view">-->
+
+<!--    {% for class in classes %}-->
+
+
+<!--            <div class="upcoming-classes-card">-->
+<!--                <a href="{% url 'book-class' class.id %}" >-->
+<!--                    <div class="booked-class-body">-->
+<!--                        <h6>{{ class.name }}</h6>-->
+<!--                        <small>Grade {{ class.subject.grade }}</small>-->
+<!--                    </div>-->
+<!--                </a>-->
+<!--                    <hr class="booked-classes-hr">-->
+<!--                <div class="booked-class-body">-->
+<!--                    <h6>Date {{ class.date|date:'M-d-D' }}</h6>-->
+<!--                    <small>{{ class.date|date:'H : i' }} - {{ class.end_time|date:'H : i' }} PM</small>-->
+<!--                    <p>{{ class.duration }} Minutes</p>-->
+<!--                    <div>-->
+<!--                        <a href="{% url 'book-class' class.id %}"><button class="btn btn-info">Book</button></a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+
+
+<!--    {% endfor %}-->
+
+<!--</div>-->
+
+
+
+
+{% endblock %}

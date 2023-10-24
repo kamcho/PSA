@@ -1,0 +1,68 @@
+{% extends base_html %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+
+<div class="container">
+
+
+<br>
+<br>
+<br>
+<h6>{{ subject_name }}</h6>
+
+     <table class="table">
+        <thead>
+          <tr>
+            <th>Topic</th>
+              <th>Grade</th>
+              <th>Type</th>
+            <th>Average</th>
+            <th>Count</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for topic in subject %}
+          <tr>
+              <td><a href="{% url 'kid-exam-subject-id'  email subject_name topic.topic__name %}">{{ topic.topic__name}}</a></td>
+              <td><span class="badge bg-info text-light">{{ topic.subject__grade }}</span></td>
+              <td>Topical</td>
+              <td ><span  class="badge bg-secondary text-light">{{ email|topical_average:topic.topic__name }}</span></td>
+              <td><span class="badge bg-dark text-light">{{ email|topical_average_count:topic.topic__name }} </span></td>
+          </tr>
+        {% endfor %}
+        {% for test in tests %}
+          <tr>
+              <td><a href="{% url 'kid-test-revision' 'KNECExams' email test.test %}">{{ test.subject }}</a></td>
+                <td><span class="badge bg-info text-light">{{ test.subject.grade }}</span></td>
+              <td>KNEC</td>
+
+              <td><span class="badge bg-secondary text-light">{{ test.marks }} / {{ test.test_size }}</span></td>
+            <td><span class="badge bg-dark text-light">1 </span></td>
+
+          </tr>
+        {% endfor %}
+        {% for test in class_tests %}
+          <tr>
+              <td><a href="{% url 'kid-test-revision' 'ClassTests' email test.test %}">{{ test.test.subject }}</a></td>
+              <td><span class="badge bg-info text-light">{{ test.test.subject.grade }}</span></td>
+                <td>Assignment</td>
+              <td><span class="badge bg-secondary text-light">{{ test.marks }} / {{ test.test.test_size }}</span></td>
+              <td><span class="badge bg-dark text-light">1</span></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+     </table>
+
+
+
+
+
+
+
+    </div>
+{% endblock %}

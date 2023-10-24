@@ -1,0 +1,36 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+<br>
+<br>
+
+<!--<h6>{{ user.role }}</h6>-->
+
+      <div class="container">
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
+      </div>
+<br>
+<br>
+
+<div class="supervisor-home-view">
+    <a href="{% url 'schools' %}">
+
+    <div class="task-card">
+        Users
+    </div>
+        </a>
+
+
+
+</div>
+
+
+
+
+{% endblock %}

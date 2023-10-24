@@ -1,0 +1,53 @@
+{% extends base_html %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="subject-select-content-container">
+
+{% if not subjects %}
+    <br>
+    <br>
+    <br>
+<div style="margin:0 auto;width:90%;" class="">
+
+            <h6 class="text-center alert alert-light">This student has no test history</h6>
+
+    </div>
+
+    {% else %}
+<br>
+<br>
+      <br>
+      <div class="subjects-select-view">
+        {% for subject in subjects %}
+            <a href="{% url 'kid-exam-topic-id' child subject %}">
+                <div class="subject-select-card">
+                    <div class="">
+                        <h6><i class="bi bi-bookmark-plus"></i> {{ subject }}.</h6>
+                    </div>
+                    <br>
+
+                    <div class="kid-exam-topics-card">
+                        <small class="text-muted">Subtopics</small><br>
+                        {% for topic in child|get_topics:subject.id %}
+
+                            <small>{{ topic.topic__name }}</small><br>
+                        {% endfor %}
+                    </div>
+                    <div class="kid-exam-progress-card">
+                        <small >Tests Done  <span class="badge bg-info" style="margin-left: 38px;">{{ child|get_test_count:subject }}</span></small>
+                <br>
+                <small >Topics Covered  <span class="badge bg-secondary" style="margin-left:12px;">{{ child|get_topic_count:subject }}</span></small>
+                <br>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+      </div>
+
+{% endif %}
+
+</div>
+{% endblock %}
+
