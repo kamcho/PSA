@@ -41,6 +41,7 @@ class Subscribe(LoginRequiredMixin, TemplateView):
 
 
 def generate_access_token():
+    
     response = requests.request("GET", 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', headers = { 'Authorization': 'Basic cFJZcjZ6anEwaThMMXp6d1FETUxwWkIzeVBDa2hNc2M6UmYyMkJmWm9nMHFRR2xWOQ=='})
     if response.status_code == 200:
         access_token = response.text.encode('utf8')
@@ -66,7 +67,7 @@ def generate_mpesa_password(paybill_number):
 
 
 def initiate_payment(request):
-    paybill = 174379
+    paybill = "174379"
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
     access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
