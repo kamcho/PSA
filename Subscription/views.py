@@ -72,10 +72,14 @@ def generate_mpesa_password(paybill_number):
 def initiate_payment(request):
     paybill = "174379"
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    consumer_key = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+    concatenated_string = f"{paybill}{consumer_key}{timestamp}"
+    base64_encoded = base64.b64encode(concatenated_string.encode()).decode('utf-8')
+
+    password = str(base64_encoded)
 
     access_token = generate_access_token()
     
-    password = generate_mpesa_password(paybill)
     # print(access_token, 'and', password)
 
     headers = {
@@ -103,7 +107,7 @@ def initiate_payment(request):
     print('after request')
     # print(responses)
     print('post requeat')
-    return HttpResponse(access_token)
+    return HttpResponse(responses)
 
 
 @csrf_exempt
