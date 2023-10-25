@@ -101,7 +101,7 @@ def initiate_payment(request):
     print('after request')
     # print(responses)
     print('post requeat')
-    return HttpResponse(responses.text)
+    return HttpResponse(access_token)
 
 
 @csrf_exempt
