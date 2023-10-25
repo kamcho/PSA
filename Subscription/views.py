@@ -42,14 +42,17 @@ class Subscribe(LoginRequiredMixin, TemplateView):
 
 def generate_access_token():
     
-    response = requests.request("GET", 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', headers = { 'Authorization': 'Bearer cFJZcjZ6anEwaThMMXp6d1FETUxwWkIzeVBDa2hNc2M6UmYyMkJmWm9nMHFRR2xWOQ=='})
-    if response.status_code == 200:
-        access_token = response.text.encode('utf8')
-        data = json.loads(access_token)
-        print(data)
+    consumer_key = "mdNXF5APn5OGZ0rrAuIymdfjQrKVMEdN"
+    consumer_secret = "XmXC0WlJoVVa4inB"
+    api_URL = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
 
-    # Access the "access_token" value
-        access_token = data["access_token"]
+    # make a get request using python requests liblary
+    response = requests.get(api_URL, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+
+    # return access_token from response
+    if response.status_code == 200:
+        access_token = response.json()['access_token'] 
+        
         return access_token
     else:
         return JsonResponse({'error': 'Token generation failed'}, status=response.status_code)
@@ -70,15 +73,14 @@ def initiate_payment(request):
     paybill = "174379"
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
-    access_token_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
-
     access_token = generate_access_token()
     
     password = generate_mpesa_password(paybill)
     # print(access_token, 'and', password)
 
     headers = {
-  'Authorization': 'Bearer 52hMh3GrObSACC7LCrxyvuSUutih'
+  'Authorization': f'Bearer {access_token}',
+  'Content-Type': 'application/json'
 }
 
     payload = {
