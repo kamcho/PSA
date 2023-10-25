@@ -86,9 +86,9 @@ def initiate_payment(request):
     "Timestamp": timestamp,
     "TransactionType": "CustomerPayBillOnline",
     "Amount": 1,
-    "PartyA": 254722985477,
+    "PartyA": 254742134431,
     "PartyB": 174379,
-    "PhoneNumber": 254722985477,
+    "PhoneNumber": 254742134431,
     "CallBackURL": "http://16.170.98.188:8000/Subscription/callback",
     "AccountReference": "CompanyXLTD",
     "TransactionDesc": "Payment of X"
