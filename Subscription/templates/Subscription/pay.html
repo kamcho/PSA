@@ -1,0 +1,85 @@
+{% extends 'Guardian/baseg.html' %}
+
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+
+        {% if not user.personalprofile.phone %}
+            <div class="mb-3">
+                <small>You have not updated your phone number! Enter your number below or update it from profile.</small><br>
+                <label for="exampleFormControlInput1" class="form-label">Phone</label>
+                <input type="number" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number">
+            </div>
+        {% else %}
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Phone</label>
+                <input type="number" class="form-control" id="phone" name="phone" placeholder="{{ user.personalprofile.phone }}">
+            </div>
+        {% endif %}
+
+        Pay for:
+        {% for kid in kids %}
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="kids" value="{{ kid }}" id="{{ kid }}">
+                <label class="form-check-label" for="{{ kid }}">
+                    {{ kid.user.personalprofile.f_name }} {{ kid.user.personalprofile.l_name }} {{ kid.user.personalprofile.surname }}
+                </label>
+            </div>
+        {% endfor %}
+
+        <br>
+        <div>
+            <select class="form-select" aria-label="Default select example" id="subscription" name="subscription">
+                <option value="Silver">Silver (3 Months)</option>
+                <option value="Gold">Gold (3 Months)</option>
+                <option value="Platinum">Platinum (30 Days)</option>
+            </select>
+        </div>
+        <br>
+
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Amount</label>
+            <input type="text" class="form-control" id="amount" name="amount" placeholder="0 Ksh">
+        </div>
+
+        <button type="submit" class="btn btn-warning">Pay</button>
+    </form>
+</div>
+
+<script>
+    // Get references to the subscription, amount, and kids elements
+    const subscriptionSelect = $("#subscription");
+    const amountInput = $("#amount");
+    const kidCheckboxes = $('input[name="kids"]');
+
+    // Define the prices for different subscriptions
+    const prices = {
+        Silver: 500,
+        Gold: 750,
+        Platinum: 500,
+    };
+
+    // Update the amount when subscription or kid selection changes
+    function updateAmount() {
+        const selectedSubscription = subscriptionSelect.val();
+        const selectedKids = kidCheckboxes.filter(":checked").length;
+
+        // Calculate the total amount
+        let totalAmount = prices[selectedSubscription] * (selectedKids > 1 ? 1.45 : 1);
+
+        // Update the amount input
+        amountInput.val(`${totalAmount}`);
+    }
+
+    // Attach event listeners to update the amount
+    subscriptionSelect.on("change", updateAmount);
+    kidCheckboxes.on("change", updateAmount);
+
+    // Initialize the amount based on the initial subscription
+    updateAmount();
+</script>
+
+{% endblock %}

@@ -16,7 +16,7 @@
           <tr>
               <td><a href="">{{ subscription.type }}</a></td>
             <td>{{ subscription.amount }}</td>
-            <td>{{ subscription.validity }} days</td>
+            <td>{{ subscription.validity }}</td>
           </tr>
         {% endfor %}
         </tbody>
@@ -34,8 +34,7 @@
            </div>
             <div class="payment-body">
 
-                <a href="{% url 'process-payment' %}"><button class="btn btn-warning">Pay</button></a>
-                <a href="{% url 'process-payment' %}"><button class="btn btn-warning">Pay</button></a>
+                <a href="{% url 'pay' %}"><button class="btn btn-warning">Pay</button></a>
 
             </div>
 

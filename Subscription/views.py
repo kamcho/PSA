@@ -3,6 +3,7 @@ import json
 from datetime import timedelta
 # views.py
 import requests
+from django.contrib import messages
 from django.shortcuts import render, redirect
 
 import base64
@@ -16,7 +17,7 @@ from requests.auth import HTTPBasicAuth
 
 from SubjectList.models import PaymentNotifications
 from Users.models import MyUser, PersonalProfile
-from .models import MySubscription, Subscriptions
+from .models import MpesaPayments, MySubscription, Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
@@ -38,6 +39,33 @@ class Subscribe(LoginRequiredMixin, TemplateView):
 
         except DatabaseError:
             pass
+
+
+class Pay(LoginRequiredMixin, TemplateView):
+    template_name = 'Subscription/pay.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)  
+        ref_id = self.request.user.uuid
+        kids = PersonalProfile.objects.filter(ref_id=ref_id)
+        context['kids'] = kids
+
+        return context  
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            amount = self.request.POST.get('amount')
+            phone = self.request.POST.get('phone')
+            kids = self.request.POST.getlist('kids')
+            subscription = self.request.POST.get('subscription')
+            user = self.request.user.email
+            if amount != '0':
+                initiate_payment(phone,user)
+                messages.success(self.request, 'Enter M-Pesa pin to complete payment')
+
+            return redirect(self.request.get_full_path())
+
+
 
 
 def generate_access_token():
@@ -69,7 +97,7 @@ def generate_mpesa_password(paybill_number):
     return str(base64_encoded)
 
 
-def initiate_payment(request):
+def initiate_payment(phone, user):
     paybill = "174379"
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     consumer_key = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
@@ -84,7 +112,7 @@ def initiate_payment(request):
 
     headers = {
   'Authorization': f'Bearer {access_token}',
-#   'Content-Type': 'application/json'
+  'Content-Type': 'application/json'
 }
 
     payload = {
@@ -93,12 +121,12 @@ def initiate_payment(request):
     "Timestamp": timestamp,
     "TransactionType": "CustomerPayBillOnline",
     "Amount": 1,
-    "PartyA": 254742134431,
+    "PartyA": phone,
     "PartyB": 174379,
-    "PhoneNumber": 254742134431,
-    "CallBackURL": "http://16.170.98.188:8000/Subscription/callback",
+    "PhoneNumber": phone,
+    "CallBackURL": "https://e3aa-196-108-117-38.ngrok-free.app/Subscription/callback/",
     "AccountReference": "CompanyXLTD",
-    "TransactionDesc": "Payment of X"
+    "TransactionDesc": f"{user}"
 }
 
 
@@ -113,7 +141,54 @@ def initiate_payment(request):
 @csrf_exempt
 def payment_callback(request):
     data = request.body.decode('utf-8')
-    data = json.loads(data)
+    # data = json.loads(data)
+    data = {'Body': {'stkCallback': 
+                 {'MerchantRequestID': '92642-183991499-1',
+                   'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
+                     'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
+                       'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
+                            {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
+                            {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
+                              {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
+
     print(data)
+    data = data['Body']['stkCallback']
+    if data['ResultCode'] == 0:
+        payment = data['CallbackMetadata']['Item']
+        for item in payment:
+            name = item['Name']
+            value = item.get('Value')
+
+            if name == "MpesaReceiptNumber":
+                receipt_number = value
+            elif name == "PhoneNumber":
+                phone_number = value
+            elif name == "Amount":
+                amount = value
+            elif name == "TransactionDate":
+                transaction_date = str(value)
+        updatePayment()
+    else:
+        print('Unsuccesfull user operation')
 
     return JsonResponse({'response': data})
+
+
+def updatePayment(email, subscription, amount, student_list, phone, transaction_date, receipt):
+
+    user = MyUser.objects.get(email=email)
+    sub_type = Subscriptions.objects.get(name=subscription)
+    payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
+                                            transaction_date=transaction_date, sub_type=sub_type, receipt=receipt)
+    return None
+
+def updateSubscription(beneficiaries, duration):
+    for user in beneficiaries:
+        subscription = MySubscription.objects.get(user__email=user)
+        subscription.expiry = subscription.expiry + timedelta(days=duration)
+        subscription.save()
+
+    return None
+        
+
+

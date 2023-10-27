@@ -50,3 +50,22 @@ class StripeCardPayments(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class MpesaPayments(models.Model):
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+    student_list = models.CharField(max_length=100, default='Null')
+    date = models.DateTimeField(auto_now=True)
+    receipt = models.CharField(max_length=15)
+    phone = models.CharField(max_length=15)
+    transaction_date = models.CharField(max_length=100)
+    sub_type = models.ForeignKey(Subscriptions, on_delete=models.CASCADE)
+    
+
+    def __str__(self):
+        return str(self.user)
+
+
+class TransactionMetadata(models.Model):
+    pass
