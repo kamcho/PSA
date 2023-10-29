@@ -69,7 +69,7 @@ class MpesaPayments(models.Model):
 
 class GuardianPayment(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    beneficiaries = models.ManyToManyField(MyUser, related_name='beneficiaries')
+    beneficiaries = models.ManyToManyField(MyUser, related_name='learners')
     phone = models.CharField(max_length=15)
     subscriptions = models.ForeignKey(Subscriptions, on_delete=models.CASCADE)
 
