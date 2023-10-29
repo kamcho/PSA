@@ -17,7 +17,7 @@ from requests.auth import HTTPBasicAuth
 
 from SubjectList.models import PaymentNotifications
 from Users.models import MyUser, PersonalProfile
-from .models import GuardianPayment, MpesaPayments, MySubscription, Subscriptions
+from .models import  MpesaPayments, MySubscription, Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
@@ -144,11 +144,11 @@ def initiate_payment(phone, user, total):
 
 
 
-def paymentMetadata(user, subscription, phone, beneficiaries):
-    payment = GuardianPayment.objects.create(user=user, subscription=subscription, phone=phone)
-    learners = MyUser.objects.filter(email__in=beneficiaries)
-    payment.beneficiaries.set(learners)
-    return None
+# def paymentMetadata(user, subscription, phone, beneficiaries):
+#     payment = GuardianPayment.objects.create(user=user, subscription=subscription, phone=phone)
+#     learners = MyUser.objects.filter(email__in=beneficiaries)
+#     payment.beneficiaries.set(learners)
+#     return None
 @csrf_exempt
 def payment_callback(request):
     

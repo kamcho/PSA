@@ -67,11 +67,11 @@ class MpesaPayments(models.Model):
         return str(self.user)
 
 
-class GuardianPayment(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    beneficiaries = models.ManyToManyField(MyUser, related_name='learners')
-    phone = models.CharField(max_length=15)
-    subscriptions = models.ForeignKey(Subscriptions, on_delete=models.CASCADE)
+# class GuardianPayment(models.Model):
+#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     beneficiaries = models.ManyToManyField(MyUser, related_name='learners')
+#     phone = models.CharField(max_length=15)
+#     subscriptions = models.ForeignKey(Subscriptions, on_delete=models.CASCADE)
 
-    def __str__(self):
-            return str(self.user)
+#     def __str__(self):
+#             return str(self.user)
