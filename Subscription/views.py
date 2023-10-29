@@ -147,16 +147,19 @@ def initiate_payment(phone, user, total):
 
 
 def paymentMetadata(user, subscription, phone, beneficiaries):
-    print(beneficiaries)
-    learners = MyUser.objects.filter(email__in=beneficiaries)
-    print(learners)
+    print(phone)
     subscription = Subscriptions.objects.get(type=subscription)
+    # print(subscription)
+    learners = MyUser.objects.filter(email__in=beneficiaries)
+    # print(learners)
     user = MyUser.objects.get(email=user)
+    print(user)
     
-    payment = GuardianPayment.objects.create(user=user, subscription=subscription, phone=phone)
+    payment = GuardianPayment.objects.create(user=user, subscriptions=subscription, phone=phone)
     print(payment)
+    for learner in learners:
     
-    payment.beneficiaries.set(learners)
+        payment.beneficiaries.add(*learner)
     return None
 @csrf_exempt
 def payment_callback(request):
