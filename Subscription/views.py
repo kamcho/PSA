@@ -60,9 +60,9 @@ class Pay(LoginRequiredMixin, TemplateView):
             subscription = self.request.POST.get('subscription')
             user = self.request.user.email
             if amount != '0':
-                paymentMetadata(user, subscription, phone, kids)
+                # paymentMetadata(user, subscription, phone, kids)
 
-                initiate_payment(phone,user, amount)
+                initiate_payment(phone, user, amount)
                 messages.success(self.request, 'Enter M-Pesa pin to complete payment')
 
             return redirect(self.request.get_full_path())
@@ -138,29 +138,22 @@ def initiate_payment(phone, user, total):
 
 
     responses = requests.request("POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers = headers, json = payload)
-    # print(responses.text)
-    print('after request')
-    # print(responses)
-    print('post requeat')
+    print(responses.text)
+   
     return HttpResponse(responses)
 
 
 
 def paymentMetadata(user, subscription, phone, beneficiaries):
-    print(phone)
     subscription = Subscriptions.objects.get(type=subscription)
-    # print(subscription)
     learners = MyUser.objects.filter(email__in=beneficiaries)
-    # print(learners)
     user = MyUser.objects.get(email=user)
-    print(user)
-    
     payment = GuardianPayment.objects.create(user=user, subscriptions=subscription, phone=phone)
-    print(payment)
-    for learner in learners:
-    
-        payment.beneficiaries.add(*learner)
+    # print(payment)    
+    payment.beneficiaries.set(learners)
+    payment.save()
     return None
+
 @csrf_exempt
 def payment_callback(request):
     
@@ -193,7 +186,9 @@ def payment_callback(request):
                 amount = value
             elif name == "TransactionDate":
                 transaction_date = str(value)
-        updatePayment()
+
+        # metadata = GuardianPayment.objects.filter
+        # updatePayment(subscription=)
     else:
         print('Unsuccesfull user operation')
 
@@ -203,10 +198,10 @@ def payment_callback(request):
 def updatePayment(subscription, amount, student_list, phone, transaction_date, receipt):
 
     user = PersonalProfile.objects.get(phone=phone, user__role='Guardian')
-    sub_type = Subscriptions.objects.get(name=subscription)
+    sub_type = Subscriptions.objects.get(type=subscription)
     payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
                                             transaction_date=transaction_date, sub_type=sub_type, receipt=receipt)
-    return None
+    return user
 
 def updateSubscription(beneficiaries, duration):
     for user in beneficiaries:
