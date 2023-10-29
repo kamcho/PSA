@@ -41,7 +41,11 @@
                 </div>
             {% endif %}
         {% else %}
+            <div class="text-center">
+                <h5 style="color: crimson;">You'r subscription has expired. Click the button to subscribe and continue learning.</h5>
+                <a href="{% url 'subscription' %}" class="btn btn-danger">Subscribe</a>
 
+            </div>
 
 
         {% endif %}
