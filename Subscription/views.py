@@ -17,7 +17,7 @@ from requests.auth import HTTPBasicAuth
 
 from SubjectList.models import PaymentNotifications
 from Users.models import MyUser, PersonalProfile
-from .models import  MpesaPayments, MySubscription, Subscriptions
+from .models import GuardianPayment, MpesaPayments, MySubscription, Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
@@ -60,7 +60,9 @@ class Pay(LoginRequiredMixin, TemplateView):
             subscription = self.request.POST.get('subscription')
             user = self.request.user.email
             if amount != '0':
-                initiate_payment(phone,user)
+                paymentMetadata(user, subscription, phone, kids)
+
+                initiate_payment(phone,user, amount)
                 messages.success(self.request, 'Enter M-Pesa pin to complete payment')
 
             return redirect(self.request.get_full_path())
@@ -144,24 +146,31 @@ def initiate_payment(phone, user, total):
 
 
 
-# def paymentMetadata(user, subscription, phone, beneficiaries):
-#     payment = GuardianPayment.objects.create(user=user, subscription=subscription, phone=phone)
-#     learners = MyUser.objects.filter(email__in=beneficiaries)
-#     payment.beneficiaries.set(learners)
-#     return None
+def paymentMetadata(user, subscription, phone, beneficiaries):
+    print(beneficiaries)
+    learners = MyUser.objects.filter(email__in=beneficiaries)
+    print(learners)
+    subscription = Subscriptions.objects.get(type=subscription)
+    user = MyUser.objects.get(email=user)
+    
+    payment = GuardianPayment.objects.create(user=user, subscription=subscription, phone=phone)
+    print(payment)
+    
+    payment.beneficiaries.set(learners)
+    return None
 @csrf_exempt
 def payment_callback(request):
     
     data = request.body.decode('utf-8')
     data = json.loads(data)
-    # data = {'Body': {'stkCallback': 
-    #              {'MerchantRequestID': '92642-183991499-1',
-    #                'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
-    #                  'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
-    #                    'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
-    #                         {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
-    #                         {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
-    #                           {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
+    data = {'Body': {'stkCallback': 
+                 {'MerchantRequestID': '92642-183991499-1',
+                   'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
+                     'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
+                       'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
+                            {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
+                            {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
+                              {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
 
     print(data,'DATA', '\n\n')
     data = data['Body']['stkCallback']
