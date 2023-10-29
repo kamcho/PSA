@@ -23,18 +23,34 @@
 
     {% if user.role == 'Student' %}
         {% if user.mysubscription.active == 'Active' %}
+    
             <div class="text-center" style="margin-top:20px;">
                 <a href="{% url 'save-progress' subject.topic subject %}"><button class="btn btn-info">Finish</button></a>
             </div>
+            <br>
+            {% if media == 'text' %}
+                <div class="study-content">
+                    <object data="{{ subject.file1.url }}" width="95%" height="800">
+                        Unsupported format
+                    </object>
+                </div>
+            {% else %}
+                <div class="study-content">
+                    <video src="{{ subject.file2.url }}" width="95%" preload="auto" controls>
+                    </video>
+                </div>
+            {% endif %}
         {% else %}
-            <div>
-                <h6 style="color: crimson;">Your Subscription has expired ! Renew</h6>
-            </div>
+
+
+
         {% endif %}
     {% else %}
     {% endif %}
 
     <br>
+
+    
 
     {% if media == 'text' %}
     <div class="study-content">
