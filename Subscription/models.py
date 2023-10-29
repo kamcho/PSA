@@ -27,9 +27,9 @@ class MySubscription(models.Model):
 
     def active(self):
         today = datetime.date.today()
-        if self.user.role == 'Student' and today > self.expiry:
+        if today > self.expiry:
             return 'Subscription Expired'
-        elif self.user.role == 'Student' and self.expiry > today:
+        elif self.expiry > today:
             return 'Active'
         else:
             return self.user.role

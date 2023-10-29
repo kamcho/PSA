@@ -22,9 +22,15 @@
         </div>
 
     {% if user.role == 'Student' %}
-    <div class="text-center" style="margin-top:20px;">
-        <a href="{% url 'save-progress' subject.topic subject %}"><button class="btn btn-info">Finish</button></a>
-    </div>
+        {% if user.mysubscription.active == 'Active' %}
+            <div class="text-center" style="margin-top:20px;">
+                <a href="{% url 'save-progress' subject.topic subject %}"><button class="btn btn-info">Finish</button></a>
+            </div>
+        {% else %}
+            <div>
+                <h6 style="color: crimson;">Your Subscription has expired ! Renew</h6>
+            </div>
+        {% endif %}
     {% else %}
     {% endif %}
 

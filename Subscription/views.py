@@ -111,6 +111,7 @@ def initiate_payment(phone, user, total):
     access_token = generate_access_token()
     metadata = {
     "user_id": user,
+    "beneficiaries": 'beneficiary@gmail.com'
     
 }
     
@@ -133,7 +134,7 @@ def initiate_payment(phone, user, total):
     "CallBackURL": "https://e3aa-196-108-117-38.ngrok-free.app/Subscription/callback/",
     "AccountReference": "CompanyXLTD",
     "TransactionDesc": f"{user}",
-    "Metadata": json.dumps(metadata),
+    "Metadata": metadata
 }
 
 
@@ -159,16 +160,16 @@ def payment_callback(request):
     
     data = request.body.decode('utf-8')
     data = json.loads(data)
-    data = {'Body': {'stkCallback': 
-                 {'MerchantRequestID': '92642-183991499-1',
-                   'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
-                     'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
-                       'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
-                            {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
-                            {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
-                              {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
+    # data = {'Body': {'stkCallback': 
+    #              {'MerchantRequestID': '92642-183991499-1',
+    #                'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
+    #                  'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
+    #                    'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
+    #                         {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
+    #                         {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
+    #                           {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
 
-    print(data,'DATA', '\n\n')
+    print(data)
     data = data['Body']['stkCallback']
     if data['ResultCode'] == 0:
         payment = data['CallbackMetadata']['Item']
