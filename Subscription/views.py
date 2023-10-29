@@ -17,7 +17,7 @@ from requests.auth import HTTPBasicAuth
 
 from SubjectList.models import PaymentNotifications
 from Users.models import MyUser, PersonalProfile
-from .models import MpesaPayments, MySubscription, Subscriptions
+from .models import GuardianPayment, MpesaPayments, MySubscription, Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
@@ -97,7 +97,7 @@ def generate_mpesa_password(paybill_number):
     return str(base64_encoded)
 
 
-def initiate_payment(phone, user):
+def initiate_payment(phone, user, total):
     paybill = "174379"
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     consumer_key = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
@@ -107,6 +107,10 @@ def initiate_payment(phone, user):
     password = str(base64_encoded)
 
     access_token = generate_access_token()
+    metadata = {
+    "user_id": user,
+    
+}
     
     # print(access_token, 'and', password)
 
@@ -126,7 +130,8 @@ def initiate_payment(phone, user):
     "PhoneNumber": phone,
     "CallBackURL": "https://e3aa-196-108-117-38.ngrok-free.app/Subscription/callback/",
     "AccountReference": "CompanyXLTD",
-    "TransactionDesc": f"{user}"
+    "TransactionDesc": f"{user}",
+    "Metadata": json.dumps(metadata),
 }
 
 
@@ -138,23 +143,32 @@ def initiate_payment(phone, user):
     return HttpResponse(responses)
 
 
+
+def paymentMetadata(user, subscription, phone, beneficiaries):
+    payment = GuardianPayment.objects.create(user=user, subscription=subscription, phone=phone)
+    learners = MyUser.objects.filter(email__in=beneficiaries)
+    payment.beneficiaries.set(learners)
+    return None
 @csrf_exempt
 def payment_callback(request):
+    
     data = request.body.decode('utf-8')
-    # data = json.loads(data)
-    data = {'Body': {'stkCallback': 
-                 {'MerchantRequestID': '92642-183991499-1',
-                   'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
-                     'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
-                       'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
-                            {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
-                            {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
-                              {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
+    data = json.loads(data)
+    # data = {'Body': {'stkCallback': 
+    #              {'MerchantRequestID': '92642-183991499-1',
+    #                'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
+    #                  'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
+    #                    'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
+    #                         {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
+    #                         {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
+    #                           {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
 
-    print(data)
+    print(data,'DATA', '\n\n')
     data = data['Body']['stkCallback']
     if data['ResultCode'] == 0:
         payment = data['CallbackMetadata']['Item']
+        mdata = request.POST.get('Metadata')
+        print('mdata',mdata)
         for item in payment:
             name = item['Name']
             value = item.get('Value')
@@ -174,9 +188,9 @@ def payment_callback(request):
     return JsonResponse({'response': data})
 
 
-def updatePayment(email, subscription, amount, student_list, phone, transaction_date, receipt):
+def updatePayment(subscription, amount, student_list, phone, transaction_date, receipt):
 
-    user = MyUser.objects.get(email=email)
+    user = PersonalProfile.objects.get(phone=phone, user__role='Guardian')
     sub_type = Subscriptions.objects.get(name=subscription)
     payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
                                             transaction_date=transaction_date, sub_type=sub_type, receipt=receipt)

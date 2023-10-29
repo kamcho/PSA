@@ -8,15 +8,16 @@
         {% csrf_token %}
 
         {% if not user.personalprofile.phone %}
-            <div class="mb-3">
-                <small>You have not updated your phone number! Enter your number below or update it from profile.</small><br>
-                <label for="exampleFormControlInput1" class="form-label">Phone</label>
-                <input type="number" class="form-control" id="phone" name="phone" placeholder="Enter Phone Number">
-            </div>
+<div class="mb-3">
+            <small>You have not updated your phone number! Enter your number below or update it from profile.</small><br>    
+            <a href="{% url 'profile' %}" class="btn btn-warning">Update Phone</a>
+            <br><br>
+
+
         {% else %}
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Phone</label>
-                <input type="number" class="form-control" id="phone" name="phone" placeholder="{{ user.personalprofile.phone }}">
+                <input type="number" class="form-control" id="phone" name="phone" value="{{ user.personalprofile.phone }}" placeholder="{{ user.personalprofile.phone }}">
             </div>
         {% endif %}
 
