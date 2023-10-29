@@ -5,5 +5,5 @@ from .models import *
 admin.site.register(Subscriptions)
 admin.site.register(MySubscription)
 admin.site.register(StripeCardPayments)
-admin.site.register(GuardianPayment)
+# admin.site.register(GuardianPayment)
 admin.site.register(MpesaPayments)
