@@ -10,6 +10,7 @@ class Subscriptions(models.Model):
     type = models.CharField(max_length=30,unique=True)
     amount = models.PositiveIntegerField()
     validity = models.CharField(max_length=10)
+    duration = models.PositiveIntegerField(default=30)
 
     def __str__(self):
         return str(self.type)

@@ -204,10 +204,19 @@ def updatePayment(user, subscription, amount, student_list, phone, transaction_d
     return user
 
 def updateSubscription(beneficiaries, duration):
+    beneficiaries = beneficiaries.split(", ")
     for user in beneficiaries:
-        subscription = MySubscription.objects.get(user__email=user)
-        subscription.expiry = subscription.expiry + timedelta(days=duration)
-        subscription.save()
+        try:
+            subscription = MySubscription.objects.get(user__email=user)
+            subscription.expiry = subscription.expiry + timedelta(days=duration)
+            subscription.save()
+        except MySubscription.DoesNotExist as e:
+            user = MyUser.objects.get(email=user)
+            subscription = MySubscription.objects.create(user=user)
+            subscription.expiry = subscription.expiry + timedelta(days=duration)
+            subscription.save()
+
+
 
     return None
         
