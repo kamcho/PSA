@@ -160,9 +160,11 @@ def payment_callback(request):
         for item in payment:
             name = item['Name']
             value = item.get('Value')
+            print(checkout_id)
             checkout_id = PendingPayment.objects.get(checkout_id=checkout_id)
             beneficiaries = checkout_id.beneficiaries.all()
             beneficiaries = ', '.join(str(beneficiary.user.email) for beneficiary in beneficiaries)
+            print(beneficiaries)
 
 
             if name == "MpesaReceiptNumber":
