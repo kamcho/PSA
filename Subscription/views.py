@@ -17,7 +17,7 @@ from requests.auth import HTTPBasicAuth
 
 from SubjectList.models import PaymentNotifications
 from Users.models import MyUser, PersonalProfile
-from .models import GuardianPayment, MpesaPayments, MySubscription, Subscriptions
+from .models import  MpesaPayments, MySubscription, PendingPayment, Subscriptions
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
@@ -58,11 +58,10 @@ class Pay(LoginRequiredMixin, TemplateView):
             phone = self.request.POST.get('phone')
             kids = self.request.POST.getlist('kids')
             subscription = self.request.POST.get('subscription')
-            user = self.request.user.email
+            user = self.request.user
             if amount != '0':
-                # paymentMetadata(user, subscription, phone, kids)
 
-                initiate_payment(phone, user, amount)
+                initiate_payment(phone, user, amount, subscription, kids)
                 messages.success(self.request, 'Enter M-Pesa pin to complete payment')
 
             return redirect(self.request.get_full_path())
@@ -99,7 +98,7 @@ def generate_mpesa_password(paybill_number):
     return str(base64_encoded)
 
 
-def initiate_payment(phone, user, total):
+def initiate_payment(phone, user, total, subscription, beneficiaries):
     paybill = "174379"
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     consumer_key = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
@@ -109,11 +108,9 @@ def initiate_payment(phone, user, total):
     password = str(base64_encoded)
 
     access_token = generate_access_token()
-    metadata = {
-    "user_id": user,
-    "beneficiaries": 'beneficiary@gmail.com'
+
     
-}
+
     
     # print(access_token, 'and', password)
 
@@ -133,23 +130,27 @@ def initiate_payment(phone, user, total):
     "PhoneNumber": phone,
     "CallBackURL": "https://e3aa-196-108-117-38.ngrok-free.app/Subscription/callback/",
     "AccountReference": "CompanyXLTD",
-    "TransactionDesc": f"{user}",
-    "Metadata": metadata
+    "TransactionDesc": "Subscription",
+    # "Metadata": metadata
 }
 
 
     responses = requests.request("POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers = headers, json = payload)
-    print(responses.text)
+    data = responses.text
+    data = json.loads(data)
+    checkout_id = data["CheckoutRequestID"]    
+    paymentMetadata(user=user, checkout_id=checkout_id, subscription=subscription, phone=phone, beneficiaries=beneficiaries)
+
    
     return HttpResponse(responses)
 
 
 
-def paymentMetadata(user, subscription, phone, beneficiaries):
+def paymentMetadata(user, checkout_id, subscription, phone, beneficiaries):
     subscription = Subscriptions.objects.get(type=subscription)
     learners = MyUser.objects.filter(email__in=beneficiaries)
     user = MyUser.objects.get(email=user)
-    payment = GuardianPayment.objects.create(user=user, subscriptions=subscription, phone=phone)
+    payment = PendingPayment.objects.create(user=user, checkout_id=checkout_id, subscriptions=subscription, phone=phone)
     # print(payment)    
     payment.beneficiaries.set(learners)
     payment.save()

@@ -67,7 +67,8 @@ class MpesaPayments(models.Model):
         return str(self.user)
 
 
-class GuardianPayment(models.Model):
+class PendingPayment(models.Model):
+    checkout_id = models.CharField(max_length=100, default='default')
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     beneficiaries = models.ManyToManyField(MyUser, related_name='beneficiaries')
     phone = models.CharField(max_length=15)
