@@ -57,6 +57,7 @@ class MpesaPayments(models.Model):
     amount = models.IntegerField()
     student_list = models.CharField(max_length=100, default='Null')
     date = models.DateTimeField(auto_now=True)
+    checkout_id = models.CharField(max_length=100, default='chout')
     receipt = models.CharField(max_length=15)
     phone = models.CharField(max_length=15)
     transaction_date = models.CharField(max_length=100)

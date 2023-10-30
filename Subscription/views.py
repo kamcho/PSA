@@ -112,7 +112,7 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
         "PartyA": phone,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "http://16.170.98.188/Subscription/callback/",
+        "CallBackURL": "https://ece0-197-156-137-152.ngrok-free.app/Subscription/callback/",
         "AccountReference": "CompanyXLTD",
         "TransactionDesc": "Subscription",
 
@@ -179,7 +179,7 @@ def payment_callback(request):
             elif name == "TransactionDate":
                 transaction_date = str(value)
         print(checkout_id.subscriptions)
-        updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number)
+        updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number, checkout_id=checkout_id.checkout_id)
 
         # metadata = GuardianPayment.objects.filter
         # updatePayment(subscription=)
@@ -189,21 +189,14 @@ def payment_callback(request):
     return JsonResponse({'response': data})
 
 
-def updatePayment(user, subscription, amount, student_list, phone, transaction_date, receipt):
-    # print()
-    print( receipt)
-    print(amount)
-    print(student_list)
-    print(phone)
-    print(transaction_date)
-    print(subscription)
+def updatePayment(user, subscription, amount, student_list, phone, transaction_date, receipt, checkout_id):
+  
 
     user = MyUser.objects.get(email=user)
-    print(user)
     sub_type = Subscriptions.objects.get(type=subscription)
     try:
         payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
-                                            transaction_date=transaction_date, sub_type=sub_type, receipt=receipt)
+                                            transaction_date=transaction_date, sub_type=sub_type, receipt=receipt, checkout_id=checkout_id)
     except Exception as e:
         print(str(e))
         return str(e)
