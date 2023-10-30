@@ -112,7 +112,7 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
         "PartyA": phone,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "https://e3aa-196-108-117-38.ngrok-free.app/Subscription/callback/",
+        "CallBackURL": "http://http://16.170.98.188//Subscription/callback/",
         "AccountReference": "CompanyXLTD",
         "TransactionDesc": "Subscription",
 
