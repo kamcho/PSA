@@ -180,7 +180,7 @@ def payment_callback(request):
                 transaction_date = str(value)
         print(checkout_id.subscriptions)
         updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number, checkout_id=checkout_id.checkout_id)
-
+     
         # metadata = GuardianPayment.objects.filter
         # updatePayment(subscription=)
     else:
@@ -201,10 +201,14 @@ def updatePayment(user, subscription, amount, student_list, phone, transaction_d
         print(str(e))
         return str(e)
     print(payment)
+    updateSubscription(beneficiaries=student_list, subscription=subscription)
     return user
 
 def updateSubscription(beneficiaries, duration):
     beneficiaries = beneficiaries.split(", ")
+    duration = Subscriptions.objects.get(type=duration)
+    duration = duration.duration
+
     for user in beneficiaries:
         try:
             subscription = MySubscription.objects.get(user__email=user)
