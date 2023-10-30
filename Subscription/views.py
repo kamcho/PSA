@@ -1,20 +1,16 @@
 import datetime
 import json
 from datetime import timedelta
-# views.py
 import requests
 from django.contrib import messages
 from django.shortcuts import render, redirect
-
 import base64
-import hashlib
 import datetime
 from django.db import DatabaseError, IntegrityError
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from requests.auth import HTTPBasicAuth
-
 from SubjectList.models import PaymentNotifications
 from Users.models import MyUser, PersonalProfile
 from .models import  MpesaPayments, MySubscription, PendingPayment, Subscriptions
@@ -60,13 +56,9 @@ class Pay(LoginRequiredMixin, TemplateView):
             subscription = self.request.POST.get('subscription')
             user = self.request.user
             if amount != '0':
-
                 initiate_payment(phone, user, amount, subscription, kids)
                 messages.success(self.request, 'Enter M-Pesa pin to complete payment')
-
             return redirect(self.request.get_full_path())
-
-
 
 
 def generate_access_token():
@@ -104,36 +96,27 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
     consumer_key = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
     concatenated_string = f"{paybill}{consumer_key}{timestamp}"
     base64_encoded = base64.b64encode(concatenated_string.encode()).decode('utf-8')
-
     password = str(base64_encoded)
-
     access_token = generate_access_token()
-
-    
-
-    
-    # print(access_token, 'and', password)
-
     headers = {
-  'Authorization': f'Bearer {access_token}',
-  'Content-Type': 'application/json'
-}
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
 
     payload = {
-    "BusinessShortCode": 174379,  # Use double quotes for all keys and values
-    "Password": password,  # Use the generated password
-    "Timestamp": timestamp,
-    "TransactionType": "CustomerPayBillOnline",
-    "Amount": 1,
-    "PartyA": phone,
-    "PartyB": 174379,
-    "PhoneNumber": phone,
-    "CallBackURL": "https://e3aa-196-108-117-38.ngrok-free.app/Subscription/callback/",
-    "AccountReference": "CompanyXLTD",
-    "TransactionDesc": "Subscription",
-    # "Metadata": metadata
-}
+        "BusinessShortCode": 174379,  # Use double quotes for all keys and values
+        "Password": password,  # Use the generated password
+        "Timestamp": timestamp,
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": 1,
+        "PartyA": phone,
+        "PartyB": 174379,
+        "PhoneNumber": phone,
+        "CallBackURL": "https://e3aa-196-108-117-38.ngrok-free.app/Subscription/callback/",
+        "AccountReference": "CompanyXLTD",
+        "TransactionDesc": "Subscription",
 
+    }
 
     responses = requests.request("POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers = headers, json = payload)
     data = responses.text
@@ -145,40 +128,40 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
     return HttpResponse(responses)
 
 
-
 def paymentMetadata(user, checkout_id, subscription, phone, beneficiaries):
     subscription = Subscriptions.objects.get(type=subscription)
     learners = MyUser.objects.filter(email__in=beneficiaries)
     user = MyUser.objects.get(email=user)
-    payment = PendingPayment.objects.create(user=user, checkout_id=checkout_id, subscriptions=subscription, phone=phone)
-    # print(payment)    
+    payment = PendingPayment.objects.create(user=user, checkout_id=checkout_id, subscriptions=subscription, phone=phone)   
     payment.beneficiaries.set(learners)
     payment.save()
     return None
+
 
 @csrf_exempt
 def payment_callback(request):
     
     data = request.body.decode('utf-8')
     data = json.loads(data)
-    # data = {'Body': {'stkCallback': 
-    #              {'MerchantRequestID': '92642-183991499-1',
-    #                'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
-    #                  'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
-    #                    'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
-    #                         {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
-    #                         {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
-    #                           {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
+    data = {'Body': {'stkCallback': 
+                 {'MerchantRequestID': '92642-183991499-1',
+                   'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
+                     'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
+                       'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
+                            {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
+                            {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
+                              {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
 
     print(data)
     data = data['Body']['stkCallback']
     if data['ResultCode'] == 0:
         payment = data['CallbackMetadata']['Item']
-        mdata = request.POST.get('Metadata')
-        print('mdata',mdata)
+        checkout_id = data['CheckoutRequestID']
         for item in payment:
             name = item['Name']
             value = item.get('Value')
+            checkout_id = PendingPayment.objects.get(checkout_id=checkout_id)
+            beneficiaries = checkout_id.beneficiaries.all()
 
             if name == "MpesaReceiptNumber":
                 receipt_number = value
@@ -188,6 +171,7 @@ def payment_callback(request):
                 amount = value
             elif name == "TransactionDate":
                 transaction_date = str(value)
+        updatePayment(subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number)
 
         # metadata = GuardianPayment.objects.filter
         # updatePayment(subscription=)
