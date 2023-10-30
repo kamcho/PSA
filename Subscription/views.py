@@ -157,15 +157,18 @@ def payment_callback(request):
     if data['ResultCode'] == 0:
         payment = data['CallbackMetadata']['Item']
         checkout_id = data['CheckoutRequestID']
+        checkout_id = PendingPayment.objects.get(checkout_id=checkout_id)
+        print(checkout_id)
+        beneficiaries = checkout_id.beneficiaries.all()
+        # print(beneficiaries)
+        beneficiaries = ', '.join(str(beneficiary) for beneficiary in beneficiaries)
+        # print(beneficiaries)
+
         for item in payment:
             name = item['Name']
             value = item.get('Value')
-            print(checkout_id)
-            checkout_id = PendingPayment.objects.get(checkout_id=checkout_id)
-            beneficiaries = checkout_id.beneficiaries.all()
-            beneficiaries = ', '.join(str(beneficiary.user.email) for beneficiary in beneficiaries)
-            print(beneficiaries)
-
+            # print(checkout_id)
+            
 
             if name == "MpesaReceiptNumber":
                 receipt_number = value
@@ -175,7 +178,8 @@ def payment_callback(request):
                 amount = value
             elif name == "TransactionDate":
                 transaction_date = str(value)
-        updatePayment(subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number)
+        print(checkout_id.subscriptions)
+        updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number)
 
         # metadata = GuardianPayment.objects.filter
         # updatePayment(subscription=)
@@ -185,13 +189,24 @@ def payment_callback(request):
     return JsonResponse({'response': data})
 
 
-def updatePayment(subscription, amount, student_list, phone, transaction_date, receipt):
+def updatePayment(user, subscription, amount, student_list, phone, transaction_date, receipt):
+    # print()
+    print( receipt)
+    print(amount)
+    print(student_list)
+    print(phone)
+    print(transaction_date)
+    print(subscription)
 
-    user = PersonalProfile.objects.get(phone=phone, user__role='Guardian')
+    user = MyUser.objects.get(email=user)
+    print(user)
     sub_type = Subscriptions.objects.get(type=subscription)
-    payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
+    try:
+        payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
                                             transaction_date=transaction_date, sub_type=sub_type, receipt=receipt)
-    
+    except Exception as e:
+        print(str(e))
+        return str(e)
     print(payment)
     return user
 
