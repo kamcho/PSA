@@ -162,6 +162,8 @@ def payment_callback(request):
             value = item.get('Value')
             checkout_id = PendingPayment.objects.get(checkout_id=checkout_id)
             beneficiaries = checkout_id.beneficiaries.all()
+            beneficiaries = ', '.join(str(beneficiary.user.email) for beneficiary in beneficiaries)
+
 
             if name == "MpesaReceiptNumber":
                 receipt_number = value
@@ -187,6 +189,8 @@ def updatePayment(subscription, amount, student_list, phone, transaction_date, r
     sub_type = Subscriptions.objects.get(type=subscription)
     payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
                                             transaction_date=transaction_date, sub_type=sub_type, receipt=receipt)
+    
+    print(payment)
     return user
 
 def updateSubscription(beneficiaries, duration):
