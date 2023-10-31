@@ -112,7 +112,7 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
         "PartyA": phone,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "https://ece0-197-156-137-152.ngrok-free.app/Subscription/callback/",
+        "CallBackURL": "http://16.170.98.188//Subscription/callback/",
         "AccountReference": "CompanyXLTD",
         "TransactionDesc": "Subscription",
 
@@ -152,13 +152,13 @@ def payment_callback(request):
                             {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
                               {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
 
-    print(data)
+    # print(data)
     data = data['Body']['stkCallback']
     if data['ResultCode'] == 0:
         payment = data['CallbackMetadata']['Item']
         checkout_id = data['CheckoutRequestID']
         checkout_id = PendingPayment.objects.get(checkout_id=checkout_id)
-        print(checkout_id)
+        # print(checkout_id)
         beneficiaries = checkout_id.beneficiaries.all()
         # print(beneficiaries)
         beneficiaries = ', '.join(str(beneficiary) for beneficiary in beneficiaries)
@@ -178,7 +178,7 @@ def payment_callback(request):
                 amount = value
             elif name == "TransactionDate":
                 transaction_date = str(value)
-        print(checkout_id.subscriptions)
+        # print(checkout_id.subscriptions)
         updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number, checkout_id=checkout_id.checkout_id)
      
         # metadata = GuardianPayment.objects.filter
@@ -197,17 +197,19 @@ def updatePayment(user, subscription, amount, student_list, phone, transaction_d
     try:
         payment = MpesaPayments.objects.create(user=user, amount=amount, student_list=student_list, phone=phone,
                                             transaction_date=transaction_date, sub_type=sub_type, receipt=receipt, checkout_id=checkout_id)
+        updateSubscription(beneficiaries=student_list, duration=subscription)
+
     except Exception as e:
         print(str(e))
         return str(e)
-    print(payment)
-    updateSubscription(beneficiaries=student_list, subscription=subscription)
     return user
 
 def updateSubscription(beneficiaries, duration):
+    
     beneficiaries = beneficiaries.split(", ")
-    duration = Subscriptions.objects.get(type=duration)
-    duration = duration.duration
+    subscription_type = Subscriptions.objects.get(type=duration)
+    duration = subscription_type.duration
+    print(beneficiaries, duration)
 
     for user in beneficiaries:
         try:
@@ -216,7 +218,7 @@ def updateSubscription(beneficiaries, duration):
             subscription.save()
         except MySubscription.DoesNotExist as e:
             user = MyUser.objects.get(email=user)
-            subscription = MySubscription.objects.create(user=user)
+            subscription = MySubscription.objects.create(user=user, type=subscription_type)
             subscription.expiry = subscription.expiry + timedelta(days=duration)
             subscription.save()
 
