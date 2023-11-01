@@ -112,7 +112,7 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
         "PartyA": phone,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "http://16.170.98.188//Subscription/callback/",
+        "CallBackURL": "http://16.170.98.188/Subscription/callback/",
         "AccountReference": "CompanyXLTD",
         "TransactionDesc": "Subscription",
 
@@ -143,14 +143,14 @@ def payment_callback(request):
     
     data = request.body.decode('utf-8')
     data = json.loads(data)
-    data = {'Body': {'stkCallback': 
-                 {'MerchantRequestID': '92642-183991499-1',
-                   'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
-                     'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
-                       'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
-                            {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
-                            {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
-                              {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
+    # data = {'Body': {'stkCallback': 
+    #              {'MerchantRequestID': '92642-183991499-1',
+    #                'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
+    #                  'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
+    #                    'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
+    #                         {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
+    #                         {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
+    #                           {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
 
     # print(data)
     data = data['Body']['stkCallback']
