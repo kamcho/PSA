@@ -112,7 +112,7 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
         "PartyA": phone,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "http://16.170.98.188/Subscription/callback/",
+        "CallBackURL": "https://107a-154-123-60-86.ngrok-free.app/Subscription/callback/",
         "AccountReference": "CompanyXLTD",
         "TransactionDesc": "Subscription",
 
@@ -121,10 +121,10 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
     responses = requests.request("POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers = headers, json = payload)
     data = responses.text
     data = json.loads(data)
-    checkout_id = data["CheckoutRequestID"]    
+    checkout_id = data["CheckoutRequestID"]
+ 
     paymentMetadata(user=user, checkout_id=checkout_id, subscription=subscription, phone=phone, beneficiaries=beneficiaries)
 
-   
     return HttpResponse(responses)
 
 
@@ -135,6 +135,7 @@ def paymentMetadata(user, checkout_id, subscription, phone, beneficiaries):
     payment = PendingPayment.objects.create(user=user, checkout_id=checkout_id, subscriptions=subscription, phone=phone)   
     payment.beneficiaries.set(learners)
     payment.save()
+
     return None
 
 
@@ -143,32 +144,18 @@ def payment_callback(request):
     
     data = request.body.decode('utf-8')
     data = json.loads(data)
-    # data = {'Body': {'stkCallback': 
-    #              {'MerchantRequestID': '92642-183991499-1',
-    #                'CheckoutRequestID': 'ws_CO_26102023221429017722985477',
-    #                  'ResultCode': 0, 'ResultDesc': 'The service request is processed successfully.',
-    #                    'CallbackMetadata': {'Item': [{'Name': 'Amount', 'Value': 1.0},
-    #                         {'Name': 'MpesaReceiptNumber', 'Value': 'RJQ3LST7P3'},
-    #                         {'Name': 'Balance'}, {'Name': 'TransactionDate', 'Value': 20231026221251},
-    #                           {'Name': 'PhoneNumber', 'Value': 254722985477}]}}}}
-
-    # print(data)
     data = data['Body']['stkCallback']
     if data['ResultCode'] == 0:
         payment = data['CallbackMetadata']['Item']
         checkout_id = data['CheckoutRequestID']
-        checkout_id = PendingPayment.objects.get(checkout_id=checkout_id)
-        # print(checkout_id)
+        checkout_id = PendingPayment.objects.filter(checkout_id=checkout_id).last()
+        print(checkout_id)
         beneficiaries = checkout_id.beneficiaries.all()
-        # print(beneficiaries)
         beneficiaries = ', '.join(str(beneficiary) for beneficiary in beneficiaries)
-        # print(beneficiaries)
 
         for item in payment:
             name = item['Name']
-            value = item.get('Value')
-            # print(checkout_id)
-            
+            value = item.get('Value')            
 
             if name == "MpesaReceiptNumber":
                 receipt_number = value
@@ -178,13 +165,9 @@ def payment_callback(request):
                 amount = value
             elif name == "TransactionDate":
                 transaction_date = str(value)
-        # print(checkout_id.subscriptions)
         updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number, checkout_id=checkout_id.checkout_id)
-     
-        # metadata = GuardianPayment.objects.filter
-        # updatePayment(subscription=)
     else:
-        print('Unsuccesfull user operation')
+        pass
 
     return JsonResponse({'response': data})
 
@@ -200,7 +183,6 @@ def updatePayment(user, subscription, amount, student_list, phone, transaction_d
         updateSubscription(beneficiaries=student_list, duration=subscription)
 
     except Exception as e:
-        print(str(e))
         return str(e)
     return user
 
@@ -209,20 +191,20 @@ def updateSubscription(beneficiaries, duration):
     beneficiaries = beneficiaries.split(", ")
     subscription_type = Subscriptions.objects.get(type=duration)
     duration = subscription_type.duration
-    print(beneficiaries, duration)
+    sub_type = subscription_type
 
     for user in beneficiaries:
         try:
             subscription = MySubscription.objects.get(user__email=user)
             subscription.expiry = subscription.expiry + timedelta(days=duration)
+            subscription.type = sub_type
             subscription.save()
         except MySubscription.DoesNotExist as e:
             user = MyUser.objects.get(email=user)
             subscription = MySubscription.objects.create(user=user, type=subscription_type)
             subscription.expiry = subscription.expiry + timedelta(days=duration)
+            subscription.type = sub_type
             subscription.save()
-
-
 
     return None
         
