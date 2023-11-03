@@ -29,13 +29,18 @@ class Subscribe(LoginRequiredMixin, TemplateView):
         user = self.request.user
         try:
             context['subscriptions'] = Subscriptions.objects.all()
-            context['my_subscription'] = MySubscription.objects.filter(user=user).first()
+            if self.request.user.role == 'Student':
+                context['my_subscription'] = MySubscription.objects.filter(user=user).first()
+                context['template'] = 'Users/base.html'
+            elif self.request.user.role == 'Guardian':
+                context['template'] = 'Guardian/baseg.html'
 
-            return context
+
+            
 
         except DatabaseError:
             pass
-
+        return context
 
 class Pay(LoginRequiredMixin, TemplateView):
     template_name = 'Subscription/pay.html'
@@ -47,8 +52,6 @@ class Pay(LoginRequiredMixin, TemplateView):
             context['template'] = 'Users/base.html'
         elif self.request.user.role == 'Guardian':
             context['template'] = 'Guardian/baseg.html'
-
-
             ref_id = self.request.user.uuid
         kids = PersonalProfile.objects.filter(ref_id=ref_id)
         context['kids'] = kids
