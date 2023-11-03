@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
 
-    path('Subscription/', Subscribe.as_view(), name='subscription'),
+    path('Subscriptions/', Subscribe.as_view(), name='subscription'),
     path('Pay/', Pay.as_view(), name='pay'),
     # path('process-payment/', views.initiate_payment, name='process-payment'),
     path('callback/', views.payment_callback, name='callback')

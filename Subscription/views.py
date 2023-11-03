@@ -29,7 +29,7 @@ class Subscribe(LoginRequiredMixin, TemplateView):
         user = self.request.user
         try:
             context['subscriptions'] = Subscriptions.objects.all()
-            context['my_subscription'] = MySubscription.objects.filter(user=user)
+            context['my_subscription'] = MySubscription.objects.filter(user=user).first()
 
             return context
 
@@ -41,10 +41,18 @@ class Pay(LoginRequiredMixin, TemplateView):
     template_name = 'Subscription/pay.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)  
-        ref_id = self.request.user.uuid
+        context = super().get_context_data(**kwargs) 
+        if self.request.user.role == 'Student':
+            ref_id = self.request.user.personalprofile.ref_id
+            context['template'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['template'] = 'Guardian/baseg.html'
+
+
+            ref_id = self.request.user.uuid
         kids = PersonalProfile.objects.filter(ref_id=ref_id)
         context['kids'] = kids
+        
 
         return context  
     
@@ -60,7 +68,16 @@ class Pay(LoginRequiredMixin, TemplateView):
                 messages.success(self.request, 'Enter M-Pesa pin to complete payment')
             return redirect(self.request.get_full_path())
 
-
+def process_number(input_str):
+    if input_str.startswith('0'):
+        # Remove the leading '0' and replace it with '254'
+        return '254' + input_str[1:]
+    elif input_str.startswith('254'):
+        # If it starts with '254', return the original string
+        return input_str
+    else:
+        # If it doesn't start with either '0' or '254', return the original string
+        return input_str
 def generate_access_token():
     
     consumer_key = "mdNXF5APn5OGZ0rrAuIymdfjQrKVMEdN"
@@ -91,6 +108,7 @@ def generate_mpesa_password(paybill_number):
 
 
 def initiate_payment(phone, user, total, subscription, beneficiaries):
+    phone=process_number(phone)
     paybill = "174379"
     timestamp = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     consumer_key = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
@@ -119,12 +137,14 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
     }
 
     responses = requests.request("POST", 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest', headers = headers, json = payload)
-    data = responses.text
-    data = json.loads(data)
-    checkout_id = data["CheckoutRequestID"]
- 
-    paymentMetadata(user=user, checkout_id=checkout_id, subscription=subscription, phone=phone, beneficiaries=beneficiaries)
-
+    if responses.status_code == 200:
+        data = responses.text
+        data = json.loads(data)
+        checkout_id = data["CheckoutRequestID"]
+        print(data)
+    
+        paymentMetadata(user=user, checkout_id=checkout_id, subscription=subscription, phone=phone, beneficiaries=beneficiaries)
+    print(responses.status_code)
     return HttpResponse(responses)
 
 

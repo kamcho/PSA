@@ -1,4 +1,4 @@
-{% extends 'Guardian/baseg.html' %}
+{% extends template %}
 
 {% block content %}
 
@@ -6,47 +6,50 @@
 <div class="container">
     <form method="post">
         {% csrf_token %}
-
         {% if not user.personalprofile.phone %}
-<div class="mb-3">
-            <small>You have not updated your phone number! Enter your number below or update it from profile.</small><br>    
-            <a href="{% url 'profile' %}" class="btn btn-warning">Update Phone</a>
-            <br><br>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="0712345678" required>
+        </div>
+           
 
 
         {% else %}
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Phone</label>
-                <input type="number" class="form-control" id="phone" name="phone" value="{{ user.personalprofile.phone }}" placeholder="{{ user.personalprofile.phone }}">
+                <input type="tel" class="form-control" id="phone" name="phone"
+                    value="{{ user.personalprofile.phone }}" placeholder="{{ user.personalprofile.phone }}" required>
             </div>
         {% endif %}
+       
+            
 
-        Pay for:
-        {% for kid in kids %}
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="kids" value="{{ kid }}" id="{{ kid }}">
-                <label class="form-check-label" for="{{ kid }}">
-                    {{ kid.user.personalprofile.f_name }} {{ kid.user.personalprofile.l_name }} {{ kid.user.personalprofile.surname }}
-                </label>
+            Pay for:
+            {% for kid in kids %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="kids" value="{{ kid }}" id="{{ kid }}">
+                    <label class="form-check-label" for="{{ kid }}">
+                        {{ kid.user.personalprofile.f_name }} {{ kid.user.personalprofile.l_name }} {{ kid.user.personalprofile.surname }}
+                    </label>
+                </div>
+            {% endfor %}
+
+            <br>
+            <div>
+                <select class="form-select" aria-label="Default select example" id="subscription" name="subscription" required>
+                    <option value="Silver">Silver (3 Months)</option>
+                    <option value="Gold">Gold (3 Months)</option>
+                    <option value="Platinum">Platinum (30 Days)</option>
+                </select>
             </div>
-        {% endfor %}
+            <br>
 
-        <br>
-        <div>
-            <select class="form-select" aria-label="Default select example" id="subscription" name="subscription">
-                <option value="Silver">Silver (3 Months)</option>
-                <option value="Gold">Gold (3 Months)</option>
-                <option value="Platinum">Platinum (30 Days)</option>
-            </select>
-        </div>
-        <br>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Amount</label>
+                <input type="number" class="form-control" id="amount" name="amount" placeholder="0 Ksh" readonly required>
+            </div>
 
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Amount</label>
-            <input type="text" class="form-control" id="amount" name="amount" placeholder="0 Ksh">
-        </div>
-
-        <button type="submit" class="btn btn-warning">Pay</button>
+            <button type="submit" class="btn btn-warning" onclick="validateForm()">Pay</button>
     </form>
 </div>
 
@@ -82,5 +85,19 @@
     // Initialize the amount based on the initial subscription
     updateAmount();
 </script>
-
+<script>
+    function validateForm() {
+        // Get all the checkboxes with the name "kids"
+        var checkboxes = document.querySelectorAll('input[name="kids"]:checked');
+    
+        // Check if at least one checkbox is selected
+        if (checkboxes.length < 1) {
+            alert("Please select at least one kid.");
+            return false; // Prevent form submission
+        }
+    
+        // If at least one checkbox is selected, allow the form to submit
+        return true;
+    }
+    </script>
 {% endblock %}
