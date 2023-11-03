@@ -149,23 +149,23 @@ def payment_callback(request):
         payment = data['CallbackMetadata']['Item']
         checkout_id = data['CheckoutRequestID']
         checkout_id = PendingPayment.objects.filter(checkout_id=checkout_id).last()
-        print(checkout_id)
-        beneficiaries = checkout_id.beneficiaries.all()
-        beneficiaries = ', '.join(str(beneficiary) for beneficiary in beneficiaries)
+        if checkout_id:
+            beneficiaries = checkout_id.beneficiaries.all()
+            beneficiaries = ', '.join(str(beneficiary) for beneficiary in beneficiaries)
 
-        for item in payment:
-            name = item['Name']
-            value = item.get('Value')            
+            for item in payment:
+                name = item['Name']
+                value = item.get('Value')            
 
-            if name == "MpesaReceiptNumber":
-                receipt_number = value
-            elif name == "PhoneNumber":
-                phone_number = value
-            elif name == "Amount":
-                amount = value
-            elif name == "TransactionDate":
-                transaction_date = str(value)
-        updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number, checkout_id=checkout_id.checkout_id)
+                if name == "MpesaReceiptNumber":
+                    receipt_number = value
+                elif name == "PhoneNumber":
+                    phone_number = value
+                elif name == "Amount":
+                    amount = value
+                elif name == "TransactionDate":
+                    transaction_date = str(value)
+            updatePayment(user=checkout_id, subscription=checkout_id.subscriptions, amount=amount, student_list=beneficiaries, phone=phone_number, transaction_date=transaction_date, receipt=receipt_number, checkout_id=checkout_id.checkout_id)
     else:
         pass
 

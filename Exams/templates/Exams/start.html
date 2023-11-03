@@ -23,11 +23,21 @@
         {% if done == 'True' %}
 
         {% else %}
-        <form method="post">
-            {% csrf_token %}
-                <button class="btn btn-danger">Start</button>
+            {% if user.mysubscription.active == 'Active' %}
 
-        </form>
+                <form method="post">
+                    {% csrf_token %}
+                        <button class="btn btn-danger">Start</button>
+
+                </form>
+            {% else %}
+            <div class="text-center">
+                <h5 style="color: crimson;">You'r subscription has expired, renew subscription to take this test. Click the button to subscribe and continue learning.</h5>
+                <a href="{% url 'subscription' %}" class="btn btn-danger">Subscribe</a>
+
+            </div>
+
+            {% endif %}
         {% endif %}
     {% endif %}
 </div>

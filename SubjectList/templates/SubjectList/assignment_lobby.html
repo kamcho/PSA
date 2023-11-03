@@ -24,12 +24,21 @@
         <p class="text-muted">You have already taken this test. Click the button below to view your results</p>
         <a href="{% url 'test-detail' 'ClassTests' assignment.uuid %}"><button class="btn btn-info">View Results</button></a>
         {% else %}
-    <form method="post">
+            {% if user.mysubscription.active == 'Active' %}
+        <form method="post">
         {% csrf_token %}
 
             <button class="btn btn-danger">Start Test</button>
+            {% else %}
+            <div class="text-center">
+                <h5 style="color: crimson;">You'r subscription has expired, renew subscription to take this test. Click the button to subscribe and continue learning.</h5>
+                <a href="{% url 'subscription' %}" class="btn btn-danger">Subscribe</a>
+
+            </div>
+
+            {% endif %}
         {% endif %}
-    </form>
+            </form>
 
 </div>
 
