@@ -21,7 +21,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 
-class Subscribe(LoginRequiredMixin, TemplateView):
+class Subscribe(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Subscription/subscription.html'
 
     def get_context_data(self, **kwargs):
@@ -41,8 +41,12 @@ class Subscribe(LoginRequiredMixin, TemplateView):
         except DatabaseError:
             pass
         return context
+    
+    def test_func(self):
+        roles = ['Guardian', 'Student']
+        return self.request.user.role in roles
 
-class Pay(LoginRequiredMixin, TemplateView):
+class Pay(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Subscription/pay.html'
 
     def get_context_data(self, **kwargs):
@@ -70,6 +74,10 @@ class Pay(LoginRequiredMixin, TemplateView):
                 initiate_payment(phone, user, amount, subscription, kids)
                 messages.success(self.request, 'Enter M-Pesa pin to complete payment')
             return redirect(self.request.get_full_path())
+        
+    def test_func(self):
+        roles = ['Guardian', 'Student']
+        return self.request.user.role in roles
 
 def process_number(input_str):
     if input_str.startswith('0'):
