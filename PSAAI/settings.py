@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','*', '16.170.243.46']
+ALLOWED_HOSTS = ['127.0.0.1','*', '16.170.243.46','http://crimsons-analytics.com/','crimsons-analytics.com']
 CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46","https://107a-154-123-60-86.ngrok-free.app"]
 
 # Application definition
@@ -98,6 +98,17 @@ DATABASES = {
        'PORT': '5432',
    }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'psaai',         # The name of your PostgreSQL database
+#         'USER': 'postgres',     # The PostgreSQL superuser
+#         'PASSWORD': '141778215aA',  # The password you set during PostgreSQL installation
+#         'HOST': 'localhost',    # The database server (in this case, it's your local machine)
+#         'PORT': '5432',             # Leave empty to use the default PostgreSQL port (5432)
+#     }
+# }
 
 LOGGING = {
     'version': 1,
