@@ -183,7 +183,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 AUTH_USER_MODEL = 'Users.MyUser'
 LOGIN_REDIRECT_URL = 'redirect'
-CRISPY_TEMPLATE_PACK = 'uni_form'
+CRISPY_TEMPLATE_PACK = 'crispy_bootstrap4'
 LOGIN_URL = 'Sign-In/'
 
 
