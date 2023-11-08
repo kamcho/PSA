@@ -165,7 +165,7 @@ class MyProfile(LoginRequiredMixin, TemplateView):
 
                         learner = PersonalProfile.objects.get(user__email=mail)  # get users profile
                         # Ensure users first name matches the value of first name and ensure that the user is a student.
-                        if learner.f_name == name and learner.user.role == 'Student':
+                        if learner.f_name.lower() == name and learner.user.role == 'Student':
                             ref_id = self.request.user.uuid
                             learner.ref_id = ref_id
                             learner.save()
