@@ -7,8 +7,7 @@
     <br>
     <br>
     {% if user.role != 'Student' %}
-        <h6>{{ marks.user.personalprofile.surname|title }} {{ marks.user.personalprofile.f_name|title }} {{
-            marks.user.personalprofile.l_name|title }}
+        <h6>{{ marks.user.personalprofile.surname|title }} {{ marks.user.personalprofile.f_name|title }} {{ marks.user.personalprofile.l_name|title }}
         </h6>
     {% else %}
 
@@ -40,7 +39,7 @@
             <h6 style="color:purple;">{{ forloop.counter }}) {{ quiz.quiz.quiz }}</h6>
 
             <div style="padding-left:15px;">
-                <small>{{ quiz.selection.choice }}</small><i style="font-size:30px;color:green;" class="bi bi-x"></i>
+                <small>{{ quiz.selection.choice }}</small><i style="font-size:30px;color:green;" class="bi bi-check-all"></i>
                 <small>{{ quiz.is_correct }}</small>
             </div>
         </div>

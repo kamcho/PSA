@@ -120,10 +120,10 @@ class MyProfile(LoginRequiredMixin, TemplateView):
 
                         # Get logged in user's profile for editing
                         profile = PersonalProfile.objects.get(user=user)  # get users personal profile
-                        f_name = self.request.POST.get('first-name')
+                        f_name = self.request.POST.get('first-name').lower()
                         new_phone_number = self.request.POST.get('phone-number')
-                        l_name = self.request.POST.get('last-name')
-                        surname = self.request.POST.get('surname')
+                        l_name = self.request.POST.get('last-name').lower()
+                        surname = self.request.POST.get('surname').lower()
                         profile.phone = new_phone_number
                         profile.f_name = f_name
                         profile.l_name = l_name
@@ -161,7 +161,7 @@ class MyProfile(LoginRequiredMixin, TemplateView):
                 try:
                     if self.request.user.role == 'Guardian':
                         mail = self.request.POST.get('mail')
-                        name = self.request.POST.get('name')
+                        name = self.request.POST.get('name').lower()
 
                         learner = PersonalProfile.objects.get(user__email=mail)  # get users profile
                         # Ensure users first name matches the value of first name and ensure that the user is a student.
@@ -278,9 +278,9 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     def post(self, request, **kwargs):
         if request.method == 'POST':
-            f_name = request.POST.get('f_name')
-            l_name = request.POST.get('l_name')
-            surname = request.POST.get('surname')
+            f_name = request.POST.get('f_name').lower()
+            l_name = request.POST.get('l_name').lower()
+            surname = request.POST.get('surname').lower()
             phone = request.POST.get('phone')
             user = self.request.user  # get user from session.
 
