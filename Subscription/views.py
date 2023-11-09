@@ -141,7 +141,7 @@ def initiate_payment(phone, user, total, subscription, beneficiaries):
         "PartyA": phone,
         "PartyB": 174379,
         "PhoneNumber": phone,
-        "CallBackURL": "https://107a-154-123-60-86.ngrok-free.app/Subscription/callback/",
+        "CallBackURL": "https://knowedge.online/Subscription/callback/",
         "AccountReference": "CompanyXLTD",
         "TransactionDesc": "Subscription",
 

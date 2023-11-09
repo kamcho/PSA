@@ -124,7 +124,8 @@ class MyProfile(LoginRequiredMixin, TemplateView):
                         new_phone_number = self.request.POST.get('phone-number')
                         l_name = self.request.POST.get('last-name').lower()
                         surname = self.request.POST.get('surname').lower()
-                        profile.phone = new_phone_number
+                        if new_phone_number:
+                            profile.phone = new_phone_number
                         profile.f_name = f_name
                         profile.l_name = l_name
                         profile.surname = surname
@@ -135,6 +136,9 @@ class MyProfile(LoginRequiredMixin, TemplateView):
                     # Create personal profile if none is found
                     messages.error(self.request, 'OOOps that did not work, Please try again!!')
                     personal_profile = PersonalProfile.objects.create(user=user)
+
+                except IntegrityError:
+                    messages.error(self.request, 'A user with this phone number already exists !! If this number belongs to you contact @support')
 
                 except Exception as e:
                     # Handle any unhandled errors
@@ -294,6 +298,12 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             except PersonalProfile.DoesNotExist as e:
                 PersonalProfile.objects.create(user=user)
                 finish_profile_setup(user=user, f_name=f_name, l_name=l_name, surname=surname, phone=phone)
+
+            except IntegrityError:
+                messages.error(self.request, 'A user with this phone number already exists !! If this number belongs to you contact @support')
+                return redirect(request.get_full_path())
+
+
 
             except Exception as e:
                 messages.error(request, 'We could not process your request, try again.!!')
