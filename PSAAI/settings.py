@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'Subscription',
     'crispy_bootstrap4',
     'Support',
+    'Partner',
 
 ]
 
@@ -100,6 +101,13 @@ DATABASES = {
    }
 }
 
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / "mydatabase.sqlite3",
+#     }
+# }
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',

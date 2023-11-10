@@ -58,7 +58,8 @@ class MyUser(AbstractBaseUser):
         Student = "Student"
         Teacher = "Teacher"
         ADMIN = "ADMINISTRATOR"
-        Guardian = 'Guardian'
+        Guardian = "Guardian"
+        Partner = "Partner"
 
 
     base_role = Role.Student
@@ -133,7 +134,18 @@ class Guardian(MyUser):
         proxy = True
 
 
+class PartnerManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        result = super().get_queryset(*args, **kwargs)
+        return result.filter(role=MyUser.Role.Partner)
 
+
+class Partner(MyUser):
+    base_role = MyUser.Role.Partner
+    partner = PartnerManager()
+
+    class Meta:
+        proxy = True
 
 
 class SchoolClass(models.Model):

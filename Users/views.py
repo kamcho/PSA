@@ -102,6 +102,8 @@ class MyProfile(LoginRequiredMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Partner':
+            context['base_html'] = 'Partner/base.html'
         
         else:
             # If logged in user's role doesn't match any criteria log out the user and show message
