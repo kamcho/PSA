@@ -347,8 +347,8 @@ class Finish(IsStudent, LoginRequiredMixin, TemplateView):
                 print(subtopic)
 
                 # Create notification message
-                about = f'{subject}: {topic} quiz is ready.'
-                message = 'The quiz for this topic is now ready. Once started, the quiz will finish in 15 minutes. ' \
+                about = f'{subject}: {topic} test quiz is ready.'
+                message = f'The quiz for {topic}  is now ready. This test is designed to test your understanding in this topic and all its subtopics. Once started, the quiz will finish in 15 minutes. ' \
                           'Good luck.'
 
                 # Check if user's progress already exists for the subtopic

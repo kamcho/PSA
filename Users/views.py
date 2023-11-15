@@ -257,6 +257,8 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
                     return redirect('guardian-home')
                 elif role == 'Teacher':
                     return redirect('teachers-home')
+                elif role == 'Partner':
+                    return redirect('partner-home')
                 
                 else:
 
@@ -336,6 +338,8 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                     return redirect('guardian-home')
                 elif request.user.role == 'Teacher':
                     return redirect('teachers-home')
+                elif request.user.role == 'Partner':
+                    return redirect('partner-home')
                 else:
                     messages.error(request, 'Role not found')
                     return redirect(request.get_full_path())
@@ -453,11 +457,21 @@ class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
 
         return context
-
+    
     def test_func(self):
+        role = self.request.user.role
+
+        return role == 'Student'
+
+    def handle_no_permission(self):
         """
         Check if the user has the required role for accessing this view.
         """
         role = self.request.user.role
-
-        return role == 'Student'
+        if role == 'Guardian':
+            return redirect('guardian-home')
+        elif role == 'Teacher':
+            return redirect('teacher-home')
+        elif role == 'Partner':
+            return redirect('partner-home')
+        

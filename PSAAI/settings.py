@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','crimsons-analytics.com','knowedge.online']
+ALLOWED_HOSTS = ['*','crimsons-analytics.com','knowedge.online']
 # CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46",]
 
 # Application definition
