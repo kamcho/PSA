@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'crispy_bootstrap4',
     'Support',
     'Partner',
+    'django.contrib.sitemaps',
 
 ]
 
