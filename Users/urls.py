@@ -7,7 +7,7 @@ urlpatterns = [
 
     path('Sign-Up/', RegisterView.as_view(), name='register'),
     path('Profile/', MyProfile.as_view(), name='profile'),
-    path("sitemap.xml",sitemap,{"sitemaps": sitemaps},name="django.contrib.sitemaps.views.sitemap",)
+    path("sitemap.xml/",sitemap,{"sitemaps": sitemaps},name="django.contrib.sitemaps.views.sitemap",)
     path('', Home.as_view(), name='student-home'),
     path('login-Redirect/', LoginRedirect.as_view(), name='redirect'),
     path('Profile-Set-Up/', FinishSetup.as_view(), name='edit-profile'),
