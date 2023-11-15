@@ -14,7 +14,18 @@ import logging
 
 logger = logging.getLogger('django')
 
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
 
+class StaticViewSitemap(Sitemap):
+    changefreq = 'daily'
+    priority = 0.5
+
+    def items(self):
+        return ['student-home', 'redirect', 'profile', 'register', 'login', 'edit-profile' ]  # Add the names of your static views
+
+    def location(self, item):
+        return reverse(item)
 class RegisterView(TemplateView):
     template_name = "Users/register.html"
 
