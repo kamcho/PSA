@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 import uuid
 from ElasticEmail.model.email_content import EmailContent
 from ElasticEmail.model.body_part import BodyPart
@@ -14,7 +15,7 @@ from django.db import DatabaseError
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.utils import timezone
-from Exams.models import ClassTest, ClassTestStudentTest
+from Exams.models import ClassTest, ClassTestStudentTest, StudentTest
 from SubjectList.models import Subject, Subtopic, Progress, TopicExamNotifications, Topic, TopicalExamResults, Course, \
      AccountInquiries
 from Teacher.models import ClassTestNotifications
@@ -73,6 +74,33 @@ def send_mail(user, subject, body):
             pass
 
 
+
+class Tests(LoginRequiredMixin, TemplateView):
+    template_name = 'SubjectList/tests.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        excluded1= StudentTest.objects.filter(user=user).values('uuid')
+        print(excluded1)
+        test1 = TopicExamNotifications.objects.filter(user=user).exclude(uuid__in=excluded1)
+        academic_profile = AcademicProfile.objects.get(user=user)
+        current_class = academic_profile.current_class
+
+        # If no current_class is found raise ValueError
+        if current_class:
+            excluded = ClassTestStudentTest.objects.filter(user=user).values('test')
+            
+            assignments = ClassTest.objects.filter(class_id=current_class).exclude(uuid__in=excluded)
+        else:
+            messages.error(self.request, 'You have not set your grade. Contact @support')
+            assignments = []
+
+        context['tests'] = list(test1) + list(assignments)
+
+
+        # Fetch assignments for the current class
+        return context
 class Learning(LoginRequiredMixin, IsStudent, TemplateView):
     """
     View to display subjects by grade for learning.

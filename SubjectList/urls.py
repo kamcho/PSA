@@ -1,5 +1,5 @@
 from django.urls import path
-from SubjectList.views import Learning, MediaSelect, Read, Assignment, Finish, AssignmentDetail, Syllabus, Messages, MyProgress, \
+from SubjectList.views import Learning, Tests, MediaSelect, Read, Assignment, Finish, AssignmentDetail, Syllabus, Messages, MyProgress, \
     ContactUs
 
 urlpatterns = [
@@ -13,6 +13,7 @@ urlpatterns = [
     path('<str:topic>/<str:subtopic>/Media-Select/', MediaSelect.as_view(), name='media' ),
     path('Notifications/', Messages.as_view(), name='notifications'),
     path('Grade-<str:grade>/Learning-Progress', MyProgress.as_view(), name='progress'),
-    path('Support/', ContactUs.as_view(), name='contact')
+    path('Support/', ContactUs.as_view(), name='contact'),
+    path('Undone-Tests/',Tests.as_view(), name='pending-tests' ),
 
 ]

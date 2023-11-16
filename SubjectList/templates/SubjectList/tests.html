@@ -1,0 +1,74 @@
+{% extends 'Users/base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block content %}
+<br><br><br><br>
+
+    <div class="container">
+        {% for test in tests %}
+            {% if not test.notification_type %}
+                <div class="accordion" id="accordionExample">
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                            {{ test.subject }} - Grade {{ test.subject.grade }}.  {{ test.topic }}
+                        </button>
+                        </h2>
+                        <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <strong>Assignment from Teacher {{ test.teacher }} </strong><br>
+                                    <p>Dear student, We have set a test for you to evaluate your understanding on this subject. The test
+                                        contains {{ test.test_size }} questions. You will have {{ test.duration }} minutes to take the test.
+                                        Click the button below to view more information about this test.
+                                    </p>
+                                    <p>{{ test.message }}</p>
+                                    <br><br>
+                                    <a class="btn btn-info" href="{% url 'assignment-lobby' test.uuid %}">Proceed</a>
+                                </div>
+                        </div>
+                    </div>
+                
+                </div>
+                <br>
+            
+            {% else %}
+
+   
+            <div class="accordion" id="accordionExample">
+
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                        {{ test.subject }} - Grade {{ test.subject.grade }}.  {{ test.topic }}
+                    </button>
+                    </h2>
+                    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <strong>Grade - {{ test.subject.grade }} - {{ test.about }} </strong><br>
+                                <p>{{ test.message }}</p>
+                                <br><br>
+
+
+
+                                {% if message.notification_type == 'retake' %}
+                                    <a href="{% url 'start' test.topic test.uuid %}"><button class="btn btn-info">View Test</button></a>
+                                {% else %}
+                                    <a class="btn btn-info" href="{% url 'general-test' test.uuid %}">Proceed</a>
+
+                                {% endif %}
+                            </div>
+                    </div>
+                </div>
+            
+            </div>
+            <br>
+            {% endif %}
+
+
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
