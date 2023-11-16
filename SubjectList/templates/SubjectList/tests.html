@@ -52,10 +52,12 @@
 
 
 
-                                {% if message.notification_type == 'retake' or message.notification_type == 'topical-quiz' %}
-                                    <a href="{% url 'start' test.topic test.uuid %}"><button class="btn btn-info">View Test</button></a>
+                                {% if message.notification_type == 'general'  %}
+                                <a class="btn btn-info" href="{% url 'general-test' test.uuid %}">Proceed</a>
+
                                 {% else %}
-                                    <a class="btn btn-info" href="{% url 'general-test' test.uuid %}">Proceed</a>
+                                    <a href="{% url 'start' test.topic test.uuid %}"><button class="btn btn-info">View Test</button></a>
+
 
                                 {% endif %}
                             </div>
