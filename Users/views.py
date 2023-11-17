@@ -365,7 +365,7 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return profile.user == user  # Check if the profile belongs to the logged-in user
 
 
-class Home(TemplateView):
+class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     """
     Home view for the Student's dashboard.
     Displays the user's progress and related information.
