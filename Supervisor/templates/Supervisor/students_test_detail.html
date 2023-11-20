@@ -1,0 +1,35 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<br><br><br><br>
+
+<div class="container">
+    <h6>
+        {{ test.user.personalprofile.f_name|title }} {{ test.user.personalprofile.l_name.0|title }}. {{ test.user.personalprofile.surname|title }}
+    </h6>
+
+    <h6>{{ test.subject }} {{ test.test.subject }} Grade {{ test.subject.grade }} {{ test.test.suvbject.grade }}</h6>
+
+    <h6>{{ test.marks }} of {{ test.test_size }} {{ test.test.test_size }}</h6>
+    <p>{{ test.topic }}</p>
+
+    <p style="font-family: Georgia, 'Times New Roman', Times, serif;">{{ test.date }}</p>
+
+
+
+    <form method="post">
+        {% csrf_token %}
+    
+        {% if status == True %}
+            <button class="btn btn-warning" name="restore">Restore</button>
+        {% else %}
+            <button class="btn btn-danger" name="delete">Delete</button>
+        {% endif %}
+    </form>
+
+</div>
+
+
+
+{% endblock %}

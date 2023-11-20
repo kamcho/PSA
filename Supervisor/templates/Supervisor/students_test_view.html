@@ -1,0 +1,137 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+    <a class="btn btn-warning">
+        {{ email }}
+    </a>
+    <br>
+    <br>
+
+    {% if  tests %}
+    <table class="table">
+      <h5>Topical Tests</h5>
+        <thead>
+          <tr>
+            <th><h6>Date</h6></th>
+            <th><h6>Subject</h6></th>
+            <th><h6>Topic</h6></th>
+             <th><h6>Score</h6></th>
+            <th><h6>Test Size</h6></th>
+            <th><h6>Action</h6></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for test in tests %}
+          <tr>
+              <td>{{ test.date }}</td>
+              <td><a href="{% url 'students-test-detail-view' 'TopicalTest'  email test.uuid %}"><h6>{{test.subject}}</h6></a></td>
+              <td>{{ test.topic }}</td>
+              <td>{{ test.marks }}</td>
+              <td>{{ test.test_size }}</td>
+              {% if test.archived %}
+              <td><i class="bi bi-pen" style="font-size: 15px;"> Restore</i> </td>
+              {% else %}
+              <td><i class="bi bi-eye" style="font-size: 15px;"> View</i> </td>
+              {% endif %}          </tr>
+          {% endfor %}
+          
+        </tbody>
+     </table>
+
+     {% else %}
+     {% endif %}
+
+     <br><br>
+
+     {% if class_tests %}
+
+     <table class="table">
+      <h5>Class Tests</h5>
+      <thead>
+        <tr>
+          <th><h6>Date</h6></th>
+          <th><h6>Subject/Topic</h6></th>
+           <th><h6>Score</h6></th>
+          <th><h6>Test Size</h6></th>
+          <th><h6>Action</h6></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for test in class_tests %}
+        <tr>
+            <td>{{ test.date }}</td>
+            <td><a href="{% url 'students-test-detail-view' 'ClassTest'  email test.uuid %}"><h6>{{test.test.subject}}</h6></a></td>
+            <td>{{ test.marks }}</td>
+            <td>{{ test.test.test_size }}</td>
+            {% if test.archived %}
+            <td><i class="bi bi-pen" style="font-size: 15px;"> Restore</i> </td>
+            {% else %}
+            <td><i class="bi bi-eye" style="font-size: 15px;"> View</i> </td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        
+      </tbody>
+   </table>
+   {% else %}
+     {% endif %}
+
+
+   <br><br>
+   {% if general_test %}
+   <table class="table">
+    <h5>General Tests</h5>
+    <thead>
+      <tr>
+        <th><h6>Date</h6></th>
+        <th><h6>Subject</h6></th>
+         <th><h6>Score</h6></th>
+        <th><h6>Test Size</h6></th>
+        <th><h6>Action</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for test in general_tests %}
+      <tr>
+          <td>{{ test.date }}</td>
+          <td><a href="{% url 'students-test-detail-view' 'GeneralTest'  email test.uuid %}"><h6>{{test.subject}}</h6></a></td>
+          <td>{{ test.marks }}</td>
+          <td>{{ test.test_size }}</td>
+          {% if test.archived %}
+            <td><i class="bi bi-pen" style="font-size: 15px;"> Restore</i> </td>
+            {% else %}
+            <td><i class="bi bi-eye" style="font-size: 15px;"> View</i> </td>
+            {% endif %}
+      </tr>
+      {% endfor %}
+      
+    </tbody>
+ </table>
+
+ {% else %}
+     {% endif %}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

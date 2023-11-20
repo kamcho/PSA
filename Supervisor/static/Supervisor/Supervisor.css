@@ -1,6 +1,6 @@
 .supervisor-home-view{
     display:grid;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns:repeat(3, .7fr);
 
 }
 .task-card{
@@ -10,4 +10,44 @@
     padding:20px;
 
 
+}
+.profile-card{
+    overflow: hidden;
+    position: relative;
+    text-align: left;
+    display: grid;
+    grid-template-columns: 70% 30%;
+
+    height: 400px;
+    padding:20px;
+    border-radius: 20px;
+    border: 2px solid linear-gradient(to right,rgb(142, 110, 255),rgb(208, 195, 255));
+    width: 98%;
+    max-width:1800px;
+    background-color: #fff;
+    color: #000;
+      box-shadow: 0px 90px 1360px 310px rgba(123, 64, 160, 0.08);
+  
+}
+
+.test-progress{
+    display: grid;
+    width: 60%;
+    margin-top: 40px;
+    margin-left: 40px;
+    max-width: 500px;
+    grid-template-columns: auto auto auto auto auto auto ;
+}
+.class-subject-view{
+    display: grid;
+    grid-template-columns: repeat(4, .4fr);
+    row-gap: 20px;
+}
+.class-subject-card{
+    width: 95%;
+    height: 200px;
+    padding: 10px;
+    
+    background-color: rgba(221, 14, 152, 0.1);
+    border-radius: 10px;
 }

@@ -1,0 +1,85 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+<br>
+<br>
+<br>
+<br>
+
+<div class="container">
+    <div>
+        <h5>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h5>
+    </div>
+    <div class="profile-card">
+        <div class="test-progress">
+        {% for subject in subjects %}
+            <div>
+                <div class="d-flex" style="height: 200px; color: rgb(0, 0, 0);">
+                    <div class="vr" style="width: 10px;"></div>      
+                </div>
+                {{ subject }}
+            </div>
+        {% endfor %}
+        </div>
+
+        <div class="user-info">
+            <h6>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h6>
+            <p>Grade {{ user.academicprofile.current_class|title }}</p>
+            <p>Adm No C14/177</p>
+            <p>Position 3 0f 256</p>
+            <p>School Fees Cleared</p>
+            {% if user.is_active %}
+                <p style="color:green">Active</p>
+            {% else %}
+                <p style="color:rgb(255, 12, 44)">In-Active </p>
+            {% endif %}
+
+
+        </div>
+    </div>
+</div>
+
+<div class="subjects-select-view">
+
+    <a href="{% url 'students-task-slect' user %}">
+        <div class="subject-select-card">
+            E-Learning
+    
+            <p>View {{ user.personalprofile.f_name|title }}'s E-learning progress and tests results.</p>
+        </div>
+
+    </a>
+
+    
+    <div class="subject-select-card">
+        Extra Curricular
+        <p>My activites.</p>
+        <pre>
+            Games
+            clubs
+            competitions
+        </pre>
+    </div>
+
+    <a href="{% url 'students-exam-profile' user %}">
+        <div class="subject-select-card">
+            Exams
+    
+            <p>School graded physical examinations</p>
+        </div>
+    </a>
+    
+
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}

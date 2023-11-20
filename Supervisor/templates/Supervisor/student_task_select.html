@@ -1,0 +1,39 @@
+{% extends 'Supervisor/base.html' %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+    <div class="" style="display:grid; grid-template-columns:  repeat(2, .7fr);margin: 0 auto;">
+        <a href="{% url 'learner-learning-progress' email '4' %}">
+            <div class="subject-select-card">
+                <h6>Learning Progress</h6>
+    
+            </div>
+        </a>
+
+        <a href="{% url 'students-test-view' email %}">
+            <div class="subject-select-card">
+                <h6>Tests</h6>
+            </div>
+        </a>
+        
+        
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

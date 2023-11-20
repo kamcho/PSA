@@ -1,0 +1,75 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br><br>
+<div class="container">
+
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="inputField1" class="form-label">Email</label>
+                <input type="email" class="form-control" id="inputField1" name="email" placeholder="johndoe@gmail.com" required>
+            </div>
+           
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="inputField2" name="f_name" placeholder="First Name" required>
+            </div>
+        </div>
+        <br>
+        <select class="form-select" id="roleSelect" aria-label="Default select example" name="role" required>
+            <option value="Student">Student</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Supervisor">Supervisor</option>
+        </select>
+        <br>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="inputField3" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="inputField3" name="l_name" placeholder="Last Name" required>
+            </div>
+            <div class="col-md-6">
+                <label for="inputField4" class="form-label">Surname</label>
+                <input type="text" class="form-control" id="inputField4" name="surname" placeholder="Surname">
+            </div>
+        </div>
+    
+        <br>
+        <select class="form-select" id="classInput" name="class" aria-label="Default select example" required>
+            {% for class in classes %}
+                <option value="{{ class }}">{{ class }}</option>
+            {% endfor %}
+          
+        </select>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    
+    <script>
+        const roleSelect = document.getElementById('roleSelect');
+        const classInput = document.getElementById('classInput');
+    
+        // Add an event listener to the role select element
+        roleSelect.addEventListener('change', function() {
+            // Check if the selected value is "1" (Student)
+            if (roleSelect.value === 'Student') {
+                // Enable the Class input
+                classInput.removeAttribute('disabled');
+            } else {
+                // Disable the Class input
+                classInput.setAttribute('disabled', 'disabled');
+            }
+        });
+    </script>
+   
+
+
+</div>
+
+
+{% endblock %}

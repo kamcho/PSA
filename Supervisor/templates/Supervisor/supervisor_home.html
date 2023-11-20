@@ -6,28 +6,50 @@
 
 <br>
 <br>
+<br>
+<br>
 
 <!--<h6>{{ user.role }}</h6>-->
 
-      <div class="container">
-          <form class="d-flex">
-            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success" type="submit">Search</button>
-          </form>
-      </div>
-<br>
-<br>
+ 
 
 <div class="supervisor-home-view">
-    <a href="{% url 'schools' %}">
+    <a href="{% url 'students-view' %}">
 
-    <div class="task-card">
-        Schools
+    <div class="subject-select-card">
+        <h6>Students</h6>
+        <p>View all Students and all student related information.</p>
+        <ul>
+            <li>Profiles</li>
+            <li>Progress</li>
+            <li>Tests</li>
+            <li>Assignments</li>
+        </ul>
     </div>
         </a>
+    <a href="{% url 'classes' %}">
+        <div class="subject-select-card">
+        <h6>Class and Tests</h6>
+        <p>View all School tests and school`s classes perfomance information.</p>
+        <ul>
+            <li>Exams</li>
+            <li>Grades</li>
+            <li>Averages</li>
+            <li>Analytics</li>
+        </ul>
+    </div>
+    </a>
     <a href="{% url 'test-type' %}">
-        <div class="task-card">
-        Tests
+        <div class="subject-select-card">
+        <h6>Teachers</h6>
+        <p>View teachers profiles and their class assignments results analytics.</p>
+        <ul>
+            <li>Teachers Profile</li>
+            <li>Class Assignments</li>
+            <li>Class Assignment Analytics</li>
+            <li>Class performance</li>
+            <li>Class Predictions</li>
+        </ul>
     </div>
     </a>
 
@@ -35,6 +57,28 @@
 </div>
 
 
+<div class="container">
+    <br><br><br>
 
+    <h6>Recent Actions By You</h6>
+    <table class="table">
+        <thead>
+          <tr>
+            <th><h6>Date</h6></th>
+             <th><h6>Action</h6></th>
+            <th><h6>Description</h6></th>
+            <th><h6>Revert</h6></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td><a href=""><h6>4/10/23</h6></a></td>
+              <td>Delete</td>
+              <td>Deleted Students Test</td>
+              <td><i class="bi bi-check-all" style="font-size: 20px;">Reversible</i> </td>
+          </tr>
+        </tbody>
+     </table>
+</div>
 
 {% endblock %}

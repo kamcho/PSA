@@ -1,0 +1,36 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br><br>
+<div class="container">
+
+
+<div class="subjects-select-view">
+    {% for class in classes %}
+    <a href="{% url 'class-profile' class %}">
+        <div class="subject-select-card">
+            <h6>{{ class }}</h6>
+            <p>Grade {{ class.grade }}</p>
+            <p>Class Size {{ class.class_size }}</p>
+        </div>
+    </a>
+
+   
+    
+
+    
+    {% endfor %}
+</div>
+
+
+
+
+
+
+
+</div>
+
+{% endblock %}

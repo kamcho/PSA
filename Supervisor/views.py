@@ -1,16 +1,21 @@
 import datetime
+from typing import Any
+from urllib import request
+from django import contrib
 
 from django.contrib import messages
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.utils import timezone
 from django.views.generic import TemplateView
-
-from Exams.models import TopicalQuizes, KNECGradeExams, TopicalQuizAnswers
+from Term.models import Exam
+from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass
+from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes, KNECGradeExams, TopicalQuizAnswers
 from SubjectList.models import Subject, Topic, Subtopic, Course
-from Supervisor.models import KnecQuizzes, KnecQuizAnswers, Schools
+from Supervisor.models import KnecQuizzes, KnecQuizAnswers
 
 
 class SupervisorHomeView(TemplateView):
@@ -19,6 +24,290 @@ class SupervisorHomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(SupervisorHomeView, self).get_context_data(**kwargs)
         return context
+
+
+class CreateUser(TemplateView):
+    template_name = 'Supervisor/create_user.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        classes = SchoolClass.objects.all()
+        context['classes'] = classes
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            try:
+                email = request.POST.get('email')
+                f_name = request.POST.get('f_name')
+                l_name = request.POST.get('l_name')
+                surname = request.POST.get('surname')
+                role = request.POST.get('role')
+                print(role,f_name)
+                if role == 'Student':
+                    class_id = request.POST.get('class')
+                    user = MyUser.objects.create(email=email, role=role, password='defaultpwd')
+                    profile = PersonalProfile.objects.get(user=user)
+                    print(profile, '\n\n\n\n\n\n')
+                    class_id = SchoolClass.objects.get(class_name=class_id)
+                    profile.f_name = f_name
+                    profile.l_name = l_name
+                    profile.surname = surname
+                    profile.save()
+                    academia = AcademicProfile.objects.get(user=user)
+                    academia.current_class = class_id
+                    academia.save()
+
+                    return redirect('students-profile', email)
+            
+                elif role in ['Teacher', 'Supervisor']:
+                    user = MyUser.objects.create(email=email, role=role, password='defaultpwd')
+                    profile = PersonalProfile.objects.get(user=user)
+                    profile.f_name = f_name
+                    profile.l_name = l_name
+                    profile.surname = surname
+                    profile.save()
+
+                    return redirect(request.get_full_path())
+            except Exception:
+                messages.error(self.request, 'We could not save the user. Contact @support')
+
+                return redirect(request.get_full_path())
+
+
+
+
+
+
+class StudentsView(TemplateView):
+    template_name = 'Supervisor/students_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StudentsView, self).get_context_data(**kwargs)
+        try:
+            params = self.request.session.get('params', None)
+            if params:
+                users = PersonalProfile.objects.filter(Q(f_name__contains=params) | Q(l_name__contains=params)
+                                                    | Q(surname__contains=params) | Q(user__email__contains=params) ).values_list('user__email')
+                users = MyUser.objects.filter(email__in=users, role='Student')
+                if not users:
+                    messages.warning(self.request, 'We could not find any users matching your query')
+            else:
+                users  = MyUser.objects.filter(role='Student', is_active=True)
+            context['users'] = users
+        except Exception:
+            messages.error(self.request, 'We could not fetch students from the database')
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+            context = super(StudentsView, self).get_context_data(**kwargs)
+
+            params = request.POST.get('search')
+            if params:
+
+                
+                self.request.session['params'] = params
+            else:
+                try:
+                    del self.request.session['params']
+                except KeyError:
+                    pass
+                
+            return redirect(request.get_full_path())
+    
+class StudentProfile(TemplateView):
+    template_name = 'Supervisor/students_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StudentProfile, self).get_context_data(**kwargs)
+        email = self.kwargs['email']
+        user  = MyUser.objects.get(email=email)
+        subjects = Subject.objects.filter(grade=4)
+        context['subjects'] = subjects
+        context['user'] = user
+        return context
+    
+
+class StudentExamProfile(TemplateView):
+    template_name = 'Supervisor/students_exam_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StudentExamProfile, self).get_context_data(**kwargs)
+        email = self.kwargs['email']
+        user  = MyUser.objects.get(email=email)
+        grade = self.request.session.get('grade', 4)
+        scores = Exam.objects.filter(user__email=email, subject__grade=grade) 
+        term1 = scores.filter(term__term='Term 1')
+        term2 = scores.filter(term__term='Term 2')
+        term3 = scores.filter(term__term='Term 3')
+        context['term1'] = term1
+        context['term2'] = term2
+        context['term3'] = term3
+
+        context['scores'] = scores
+        context['grade'] = grade
+        context['user'] = user
+        return context
+    
+    def post(self, *args, **kwargs):
+      
+        if self.request.method == 'POST':
+            selected = self.request.POST.get('select')
+           
+            self.request.session['grade'] = selected
+
+            return redirect(self.request.get_full_path())
+
+
+
+class StudentTaskSelect(TemplateView):
+    template_name = 'Supervisor/student_task_select.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StudentTaskSelect, self).get_context_data(**kwargs)
+        email = self.kwargs['email']
+        user  = MyUser.objects.get(email=email)
+        context['user'] = user
+        return context
+
+
+class StudentTestsView(TemplateView):
+    template_name = 'Supervisor/students_test_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        email = self.kwargs['email']
+        context['email'] = email
+        tests = StudentTest.objects.filter(user__email=email)
+        class_tests = ClassTestStudentTest.objects.filter(user__email=email)
+        general_tests = GeneralTest.objects.filter(user__email=email)
+        if not tests and not class_tests and not general_tests:
+            messages.warning(self.request, 'This user has not taken any tests')
+        
+        context['class_tests'] = class_tests
+        context['general_tests'] = general_tests
+        context['tests'] = tests
+        return context
+
+
+class StudentTestDetailView(TemplateView):
+    template_name = 'Supervisor/students_test_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        email = self.kwargs['email']
+        test_id = self.kwargs['test_id']
+        test_type = self.kwargs['test_type']
+        try:
+            if test_type == 'TopicalTest':
+                test = StudentTest.objects.get(user__email=email, uuid=test_id)
+                context['status'] = test.archived
+            elif test_type == 'ClassTest':
+                test = ClassTestStudentTest.objects.get(user__email=email, uuid=test_id)
+                context['status'] = test.archived
+            elif test_type == 'GeneralTest':
+                test = GeneralTest.objects.get(user__email=email, uuid=test_id)
+                context['status'] = test.archived
+            else:
+                messages.error(self.request, 'Invalid Test')
+            context['test'] = test
+
+        except :
+            messages.error(self.request, 'We could not find this test')
+
+        return context
+
+    def post(self, *args, **kwargs):
+        if self.request.method == "POST":
+
+            try:
+                if 'delete' in self.request.POST:
+                    test_type = self.kwargs['test_type']
+                    email = self.kwargs['email']
+                    test_id = self.kwargs['test_id']
+                    if test_type == 'TopicalTest':
+                        test = StudentTest.objects.get(user__email=email, uuid=test_id)
+                        test.archived = True
+                        test.save()
+                    elif test_type == 'ClassTest':
+                        test = ClassTestStudentTest.objects.get(user__email=email, uuid=test_id)
+                        test.archived = True
+                        test.save()
+                    elif test_type == 'GeneralTest':
+                        test = GeneralTest.objects.get(user__email=email, uuid=test_id)
+                        test.archived = True
+                        test.save()
+                    else:
+                        messages.error(self.request, 'Invalid Test')
+                elif 'restore' in self.request.POST:
+                    test_type = self.kwargs['test_type']
+                    email = self.kwargs['email']
+                    test_id = self.kwargs['test_id']
+                    if test_type == 'TopicalTest':
+                        test = StudentTest.objects.get(user__email=email, uuid=test_id)
+                        test.archived = False
+                        test.save()
+                    elif test_type == 'ClassTest':
+                        test = ClassTestStudentTest.objects.get(user__email=email, uuid=test_id)
+                        test.archived = False
+                        test.save()
+                    elif test_type == 'GeneralTest':
+                        test = GeneralTest.objects.get(user__email=email, uuid=test_id)
+                        test.archived = False
+                        test.save()
+                    else:
+                        messages.error(self.request, 'Invalid Test')
+
+            except:
+                pass
+
+            return redirect(self.request.get_full_path())
+        
+
+class ClassesView(TemplateView):
+    template_name = 'Supervisor/classes.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        classes = SchoolClass.objects.all()
+        context['classes'] = classes
+        return context     
+    
+class ClassDetail(TemplateView):
+    template_name = 'Supervisor/class_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        class_id = self.kwargs['class_id']
+        class_id = SchoolClass.objects.get(class_name=class_id)
+        context['class'] = class_id
+        year = self.request.session.get('year', None)
+        term = self.request.session.get('term', 'Term 1')
+        if year:
+            context['subjects'] = subjects = Subject.objects.filter(grade=year)
+            print(subjects)
+        else:
+            subjects = Subject.objects.filter(grade=class_id.grade)
+            context['subjects'] = subjects
+            year = class_id.grade
+            # print(subjects)
+
+        context['term'] = term
+        context['grade'] = year
+        
+        
+        return context
+    
+    def post(self, request, **args):
+        if request.method == 'POST':
+            year = request.POST.get('year')
+            term = request.POST.get('term')
+            request.session['year'] = year
+            request.session['term'] = term
+
+
+            return redirect(request.get_full_path())
 
 
 class TestTaskView(TemplateView):

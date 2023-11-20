@@ -28,8 +28,11 @@ urlpatterns = [
     path('Exams/', include('Exams.urls')),
     path('Subscription/', include('Subscription.urls')),
     path('Support/', include('Support.urls')),
+    path('Supervisor/', include('Supervisor.urls')),
     path('Logs/', include('Logs.urls')),
     path('Guardian/', include('Guardian.urls')),
+    path('Term/', include('Term.urls')),
+
     path('Analytics/', include('Analytics.urls')),
     path('Partner/', include('Partner.urls')),
     path('Teacher/', include('Teacher.urls')),

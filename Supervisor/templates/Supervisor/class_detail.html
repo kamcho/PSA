@@ -1,0 +1,66 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br><br>
+<div class="container">
+    <h6>{{ class|title }} </h6>
+   <p> Grade {{ class.grade }}</p>
+
+   <br>
+
+   <form  method="post">
+    {% csrf_token %}
+   <div class="input-group mb-3">
+    <select class="form-select" aria-label="Default select example" name="year">
+        <option value="{{ grade }}">Grade {{ grade }}</option>
+        <option value="1">Grade 1</option>
+        <option value="2">Grade 2</option>
+        <option value="3">Grade 3</option>
+        <option value="4">Grade 4</option>
+        <option value="5">Grade 5</option>
+        <option value="6">Grade 6</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+
+
+      </select>  
+        <span class="input-group-text">Term</span>
+        <select class="form-select" aria-label="Default select example" name="term">
+            <option value="Term {{ term }}">{{ term }}</option>
+            <option value="Term 1">1</option>
+            <option value="Term 2">2</option>
+            <option value="Term 3">3</option>
+        </select>  
+        <button class="btn btn-warning" >Filter</button>
+   </div>
+    </form>
+    <br>
+
+    {% if not subjects %}
+    <h6>We could not find Subjects for Grade {{ grade }}</h6>
+ {% else %}
+
+    <div class="class-subject-view">
+        
+            {% for subject in subjects %}
+                <div class="class-subject-card">
+
+                    <h6>{{ subject.id }}</h6>
+                    <p>Highest {% get_class_highest class.class_id subject.id term %}</p>
+                    <p>Lowest  {% get_class_lowest  class.class_id subject.id term %}</p>
+                    <p>Average {% get_class_average class.class_id subject.id term %}</p>
+
+                </div>
+            {% endfor %}
+    {% endif %}
+
+    </div>
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<br><br><br><br>
+
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+
+        <h6 >{{ subject.name }} grade {{ subject.grade }}</h6>
+
+        <br>
+            <select id="student" class="form-select"  aria-label="Default select example" name="user" required>
+                {% for student in students %}
+                    <option value="{{ student }}">{{ student.user.personalprofile.f_name }} {{ student.user.personalprofile.surname }} {{ student.user.personalprofile.l_name }}</option>
+                {% endfor %}
+                
+            </select>
+        <br>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="inputField3" class="form-label">Score</label>
+                <input type="number" class="form-control" id="inputField3" name="score" maxlength="3" placeholder="score" required>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-warning">Save</button>
+
+    </form>
+
+
+
+
+</div>
+
+
+
+
+
+{% endblock %}

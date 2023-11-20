@@ -27,8 +27,8 @@ class KnecQuizzes(models.Model):
     def __str__(self):
         return str(self.id)
 
-    # class Meta:
-    #     managed = False
+    class Meta:
+        managed = False
 
 
 class KnecQuizAnswers(models.Model):
@@ -40,5 +40,5 @@ class KnecQuizAnswers(models.Model):
     def __str__(self):
         return str(self.uuid)
 
-    # class Meta:
-    #     managed = False
+    class Meta:
+        managed = False

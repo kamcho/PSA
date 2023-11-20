@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from django.utils import timezone
 from Exams.models import TopicalQuizes, TopicalQuizAnswers, StudentsAnswers, ClassTestStudentTest
 from SubjectList.models import Topic, Subtopic
+from Term.models import CurrentTerm
 from Users.models import AcademicProfile
 from .models import *
 from django.views.generic import TemplateView
@@ -79,6 +80,7 @@ class TaskViewSelect(IsTeacher, LoginRequiredMixin, TemplateView):
         subject = self.kwargs['subject']
         try:
             # Get class list
+            term_info = CurrentTerm.objects.all().first()
             my_class = StudentList.objects.get(user=self.request.user, subject=subject, class_id__class_name=class_id)
             
 
@@ -90,6 +92,7 @@ class TaskViewSelect(IsTeacher, LoginRequiredMixin, TemplateView):
             context['tests'] = tests
             context['class'] = class_id
             context['students'] = students
+            context['term'] = term_info
         except Exception as e:
             messages.error(self.request, 'An error occurred when processing your request. Please try again later')
 

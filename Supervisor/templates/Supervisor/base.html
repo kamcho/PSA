@@ -78,7 +78,7 @@
             <a class="nav-link" href="{% url 'profile' %}"><i class="bi bi-person-circle" style="color:white;"> </i>Profile</a>
           </li>
        <li>
-            <a class="nav-link" href="{% url 'contact'  %}" ><i class="bi bi-headphones" > </i>contact</a>
+            <a class="nav-link" href="{% url 'allchats'  %}" ><i class="bi bi-headphones" > </i>contact</a>
           </li>
 
 
@@ -119,6 +119,25 @@
     </div>
 
 
+    {% if messages %}
+
+
+  <div class="text-center" style="position:relative;margin-top:55px;">
+    {% for message in messages %}
+      {% if message.tags ==  'error' %}
+        <h6 class="alert alert-danger">{{ message }}</h6>
+      {% elif message.tags == 'info' %}
+          <h6 class="alert alert-info">{{ message }}</h6>
+      {% elif message.tags == 'success' %}
+          <h6 class="alert alert-success">{{ message }}</h6>
+      {% elif message.tags == 'warning' %}
+          <h6 class="alert alert-warning">{{ message }}</h6>
+
+
+      {% endif %}
+    {% endfor %}
+  </div>
+{% endif %}
 
 </body>
 </html>

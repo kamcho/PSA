@@ -102,7 +102,7 @@ class KNECGradeExams(BaseGroupTest):
 
     def __str__(self):
         return str(self.uuid)
-
+ 
 
 class StudentKNECExams(BaseTest):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
@@ -123,7 +123,7 @@ class StudentKNECExams(BaseTest):
 
 
 class ClassTest(BaseGroupTest):
-    MultipleObjectsReturned = None
+    # MultipleObjectsReturned = None
     class_id = models.ForeignKey(SchoolClass,  on_delete=models.CASCADE)
     quiz = models.ManyToManyField(TopicalQuizes)
 

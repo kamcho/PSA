@@ -10,6 +10,7 @@ import datetime
 from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, ClassTest, StudentKNECExams, GeneralTest, \
     TopicalQuizes, TopicalQuizAnswers
 from SubjectList.models import *
+from Term.models import Exam
 
 from Users.models import MyUser, SchoolClass
 
@@ -279,3 +280,43 @@ def get_correct_choice(quiz):
     correct_choice = TopicalQuizAnswers.objects.get(quiz__quiz=quiz, is_correct=True)
 
     return correct_choice.choice
+
+
+
+
+@register.simple_tag
+def get_class_highest(class_id, subject, term):
+    
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term)
+    highest = scores.values('score').order_by('-score').first()
+    if highest:
+
+        return highest['score']
+    else:
+        return 'Not Found'
+    
+
+@register.simple_tag
+def get_class_lowest(class_id, subject, term):
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term)
+    lowest = scores.values('score').order_by('score').first()
+    if lowest:
+
+        return lowest['score']
+    else:
+        return 'Not Found'
+    
+@register.simple_tag
+def get_class_average(class_id, subject, term):
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term)
+    total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
+    print(total_marks)
+    
+
+    if total_marks:
+
+        average = (int(total_marks)/ int(scores.count()))
+
+        return round(average)
+    else:
+        return 'Not Found'

@@ -149,12 +149,13 @@ class Partner(MyUser):
 
 
 class SchoolClass(models.Model):
+    class_id = models.UUIDField(default=uuid.uuid4, unique=True)
     grade = models.PositiveIntegerField()
     class_name = models.CharField(max_length=100)
     class_size = models.PositiveIntegerField(default=30)
 
     def __str__(self):
-        return str(str(self.class_name))
+        return str(self.class_name)
 
 
 class PersonalProfile(models.Model):

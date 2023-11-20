@@ -3,13 +3,20 @@
 
 <div class="subject-select-content-container">
 <br><br><br>
+<div class="container">
+    {% if term.mode %}
+    <a href="{% url 'add-score' class subject.id %}"><button class="btn btn-info">Add Score</button></a>
+
+    {% else %}
+    {% endif %}
+
 
 {% if not subject %}
 
 
 
 {% else %}
-<div class="container">
+
         <a href="{% url 'initialise-test' class subject.id %}"><button class="btn btn-warning">Create Test</button></a>
 
 </div>

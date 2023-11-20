@@ -29,10 +29,10 @@ class Subscribe(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         user = self.request.user
         try:
             context['subscriptions'] = Subscriptions.objects.all()
-            if self.request.user.role == 'Student':
+            if user.role == 'Student':
                 context['my_subscription'] = MySubscription.objects.filter(user=user).first()
                 context['template'] = 'Users/base.html'
-            elif self.request.user.role == 'Guardian':
+            elif user.role == 'Guardian':
                 context['template'] = 'Guardian/baseg.html'
 
 
