@@ -1,8 +1,9 @@
 from pyexpat import model
+from turtle import mode
 from django.db import models
 from SubjectList.models import Subject
 
-from Users.models import MyUser
+from Users.models import MyUser, SchoolClass
 
 # Create your models here.
 class Terms(models.Model):
@@ -45,3 +46,20 @@ class Exam(models.Model):
     def __str__(self):
         return str(self.user)
 
+class ClassTermRanking(models.Model):
+    term = models.ForeignKey(Terms, on_delete=models.CASCADE)
+    class_id = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)
+    grade = models.PositiveIntegerField()
+    file = models.FileField(upload_to='files/')
+
+    def __str__(self):
+        return str(self.class_id) + ' ' + str(self.grade)+ ' ' + str(self.term)
+
+    
+class StreamTermRanking(models.Model):
+    class_id = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)
+    grade = models.PositiveIntegerField()
+    file = models.FileField(upload_to='files/')
+
+    def __str__(self):
+        return str(self.class_id) + ' ' + str(self.grade)

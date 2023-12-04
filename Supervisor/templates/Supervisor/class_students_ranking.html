@@ -1,0 +1,106 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+
+<br><br><br><br>
+
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+
+        <div  >
+            <select class="form-select" aria-label="Default select example" name="stream">
+                <option value="class_id">{{ class_id }}</option>
+                <option value="stream">Grade {{ grade }} Stream</option>
+            </select>
+          </div>
+
+
+
+    
+    {% if file.file %}
+    <br>
+        <div class="study-content">
+            <div>
+                <embed src="{{ file.file.url }}" width="500" height="375" type="application/pdf">
+            </div>      
+        </div>
+    {% else %}
+    <br>
+ 
+       <div class="input-group mb-3">
+        <select class="form-select" aria-label="Default select example" name="year">
+            <option value="{{ grade }}">Grade {{ grade }}</option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+            <option value="4">Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+    
+    
+          </select>  
+            <span class="input-group-text">Term</span>
+            <select class="form-select" aria-label="Default select example" name="term">
+                <option value="{{ term }}">{{ term }}</option>
+                <option value="Term 1">1</option>
+                <option value="Term 2">2</option>
+                <option value="Term 3">3</option>
+            </select>  
+            <button class="btn btn-warning" name="config">Filter</button>
+       </div>
+        </form>
+        <br>
+        <br>
+       
+        <table class="container table">
+            <caption>{{ class_id }} 
+                Mean {% get_class_overall_average class_id.class_id grade term %}
+                <br>
+                Stream
+                Mean {% get_class_overall_average class_id.class_id grade term %}
+            </caption>
+
+            <thead>
+              <tr style="background-color: black;color: white;text-transform: capitalize !important;">
+                <th><h6>RANK</h6></th>
+                <th><h6 >STUDENT</th></h6></th>
+                {% for subject in subjects %}
+                    <th><h6>{{ subject }}</h6></th>
+                {% endfor %}
+                
+                <th><h6>Marks</h6></th>
+                {% if stream %}
+                    <th><h6>Class</h6></th>
+                {% else %}
+                {% endif %}
+              </tr>
+            </thead>
+            <tbody>
+            {% for user in students %}
+              <tr>
+                <td>{{ user.rank }}</td>
+                    <td><a href="">{{ user.user__personalprofile__f_name }} {{ user.user__personalprofile__l_name.0 }} {{ user.user__personalprofile__surname }}</a></td>
+               
+                
+                {% for subject in subjects %}
+                    <td>{% get_subject_score user.user__email grade subject.id term %}</td>
+                {% endfor %}
+                {% if stream %}
+                    <td><h6>{{ user.user__academicprofile__current_class__class_name }}</h6></td>
+                {% else %}
+                {% endif %}
+                <td>{{ user.total_score }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+         </table>
+    {% endif %}
+</div>
+
+{% endblock %}

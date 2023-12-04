@@ -1,7 +1,10 @@
 import datetime
+from itertools import groupby
+from tkinter import N
 from typing import Any
 from urllib import request
 from django import contrib
+from django.db.models import F, IntegerField, Count, Sum
 
 from django.contrib import messages
 from django.db import transaction
@@ -11,7 +14,7 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from django.utils import timezone
 from django.views.generic import TemplateView
-from Term.models import Exam
+from Term.models import ClassTermRanking, CurrentTerm, Exam
 from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass
 from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes, KNECGradeExams, TopicalQuizAnswers
 from SubjectList.models import Subject, Topic, Subtopic, Course
@@ -309,7 +312,120 @@ class ClassDetail(TemplateView):
 
             return redirect(request.get_full_path())
 
+class ClassStudentsRanking(TemplateView):
+    template_name='Supervisor/class_students_ranking.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        class_id = self.kwargs['class_id']
+        class_instance = SchoolClass.objects.get(class_id=class_id)
+        grade = self.request.session.get('year', None)
+        term = self.request.session.get('term', None)
+        stream = self.request.session.get('stream', False)
+        
+        if not grade:
+            grade = class_instance.grade
+        if not term:
+            term = CurrentTerm.objects.all().first()
+        if stream:
+            # file = ClassTermRanking.objects.filter(class_id__class_id=class_id, grade=grade, term__term=term).last()
+            # context['file'] = file
+
+            context['class_id'] = class_instance
+            class_id = SchoolClass.objects.filter(grade=class_instance.grade).values_list('class_id')
+            print(class_id)
+
+        
+
+            scores = (
+            Exam.objects
+            .filter(user__academicprofile__current_class__class_id__in=class_id, subject__grade=grade, term__term=term)
+            .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname', 'user__academicprofile__current_class__class_name')  # Group by the user
+            .annotate(total_score=Sum('score'))
+            .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
+        )
+            context['stream'] = True
+
+        else:
+            file = ClassTermRanking.objects.filter(class_id__class_id=class_id, grade=grade, term__term=term).last()
+            context['file'] = file
+
+            context['class_id'] = class_instance
+        
+            scores = (
+            Exam.objects
+            .filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term)
+            .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname')  # Group by the user
+            .annotate(total_score=Sum('score'))
+            .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
+        )
+        ranked_students = []
+        current_rank = 0
+
+        for key, group in groupby(scores, key=lambda student: student['total_score']):
+            score_group = list(group)
+            
+            # Assign the same rank to students with the same score
+            for student in score_group:
+                student['rank'] = current_rank + 1
+            
+            # Skip the following rank
+            current_rank += len(score_group)
+
+            # Append students to the result list
+            ranked_students.extend(score_group)
+                
+        subjects = Subject.objects.filter(grade=grade)
+        context['subjects'] = subjects
+        context['students'] = ranked_students
+        context['term'] = term
+        context['grade'] = grade
+
+        return context
+    
+    
+    
+
+    def post(self, request, **kwargs):
+        if request.method == 'POST':
+            grade = request.POST.get('year')
+            term = request.POST.get('term')
+            stream = request.POST.get('stream')
+
+            if stream == 'stream':
+                request.session['stream'] = grade
+            else:
+                request.session['stream'] = None
+
+
+                
+            
+            request.session['year'] = grade
+            request.session['term'] = term
+            
+
+
+
+
+        return redirect(request.get_full_path())
+
+
+def rank(marks_object):
+        
+    return marks_object
+class ClassSubjectDetail(TemplateView):
+    template_name = 'Supervisor/class_subject_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        class_id = self.kwargs['class_id']
+        class_name = SchoolClass.objects.get(class_id=class_id)
+        subject = self.kwargs['subject']
+        term = self.kwargs['term']
+        scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term).order_by('-score')
+        context['tests'] = scores
+        context['class'] = class_name
+        return context
 class TestTaskView(TemplateView):
     template_name = 'Supervisor/test_type_select.html'
 

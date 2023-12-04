@@ -1,0 +1,57 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br><br>
+<div class="container">
+
+<h6><button type="button" class="btn btn-outline-primary" disabled>{{ class }} - {{ term }}</button></h6>
+<h6><div class="dropdown">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{ tests.0.subject }}
+    </a>
+  
+    
+  </div></h6>
+  <button type="button" class="btn btn-primary">
+    Average  <span class="badge text-bg-secondary">{% get_class_average class_id subject term %}</span>
+  </button>
+  <br>
+  <br>
+
+
+<table class="container table">
+    <thead>
+      <tr style="background-color: black;color: white;text-transform: capitalize !important;">
+        <th><h6>RANK</h6></th>
+        <th><h6 >STUDENT</th></h6></th>
+        <th><h6>SCORE</h6></th>
+        <th><h6>GRADE</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for test in tests %}
+      <tr>
+        {% if test.user.personalprofile.f_name %}
+        <td>{{ forloop.counter }}</td>
+            <td><a href="{% url 'students-profile' test.user %}">{{ test.user.personalprofile.f_name }} {{ test.user.personalprofile.l_name }} {{ test.user.personalprofile.surname }}</a></td>
+        {% else %}
+            <td><a href="{% url 'students-profile' test.user %}">{{ test.user }}</a></td>
+        {% endif %}
+        <td>{{ test.score }}</td>
+        <td>{{ test.grade }}%</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+ </table>
+    
+
+
+
+
+
+
+</div>
+{% endblock %}

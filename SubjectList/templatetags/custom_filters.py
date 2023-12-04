@@ -317,6 +317,81 @@ def get_class_average(class_id, subject, term):
 
         average = (int(total_marks)/ int(scores.count()))
 
-        return round(average)
+        return round(average,3)
+    else:
+        return 'Not Found'
+
+@register.simple_tag
+def get_class_overall_average(class_id, grade, term):
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term)
+    total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
+
+    if total_marks:
+
+        average = (int(total_marks)/ int(scores.count()))
+
+        return round(average,3)
+    else:
+        return 'Not Found'
+
+@register.simple_tag
+def get_user_term_average(user, grade, term):
+    scores = Exam.objects.filter(user=user, subject__grade=grade, term__term=term)
+    print(scores.explain())
+    total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
+
+    if total_marks:
+
+        average = (int(total_marks)/ int(scores.count()))
+
+        return round(average,3)
+    else:
+        return 'Not Found'
+
+
+@register.simple_tag
+def get_class_overall_ranking(class_id, grade, term):
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term)
+    # print(scores)
+    ranking = scores.values('user','score').order_by().aggregate(total_marks=Sum('score'))['total_marks']
+    total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
+
+    if scores:
+
+      
+
+        return scores
+    else:
+        return 'Not Found'
+
+@register.simple_tag
+def get_stream_overall_ranking(class_id, grade, term):
+    class_id = SchoolClass.objects.filter(class_id=class_id).values_list().last()
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id__in=class_id, subject__grade=grade, term__term=term)
+    # print(scores)
+    ranking = scores.values('user','score').order_by().aggregate(total_marks=Sum('score'))['total_marks']
+    total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
+
+    if scores:
+
+      
+
+        return scores
+    else:
+        return 'Not Found'
+
+
+
+
+@register.simple_tag
+def get_subject_score(user, grade, subject, term):
+    score = Exam.objects.filter(user__email=user, subject__grade=grade, subject=subject, term__term=term).first()
+    # print(user,subject,term,grade)
+    
+    if score:
+
+      
+
+        return score.score
     else:
         return 'Not Found'

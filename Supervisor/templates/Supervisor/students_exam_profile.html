@@ -26,7 +26,7 @@
 
 
 <div class="container">
-    <br><br><br>
+    <br>
     <h6>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name|title }}. {{ user.personalprofile.surname|title }}</h6>
     <p>Grade {{ user.academicprofile.current_class|title }}</p>
 
@@ -35,6 +35,8 @@
 <div class="container">
     <br>
     <h6>Term 1</h6>
+    {% if term1 %}
+    <h6>Term Average {% get_user_term_average user grade 'Term 1' %}</h6>
     <table class="table">
         <thead>
           <tr>
@@ -55,12 +57,16 @@
           {% endfor %}
         </tbody>
      </table>
+     {% else %}
+      <h6>Grade {{ grade }} Term 1 results are not available.</h6>
+     {% endif %}
 </div>
 <br>
 <div class="container">
-  <br>
-  <br>
+
   <h6>Term 2</h6>
+  {% if term2 %}
+  <h6>Term Average {% get_user_term_average user grade 'Term 2' %}</h6>
 
   <table class="table">
       <thead>
@@ -82,11 +88,17 @@
         {% endfor %}
       </tbody>
    </table>
+   {% else %}
+      <h6>Grade {{ grade }} Term 2 results are not available.</h6>
+     {% endif %}
 </div>
 <div class="container">
   <br>
 
   <h6>Term 3</h6>
+  {% if term3 %}
+  <h6>Term Average {% get_user_term_average user grade 'Term 3' %}</h6>
+
   <table class="table">
       <thead>
         <tr>
@@ -107,6 +119,9 @@
         {% endfor %}
       </tbody>
    </table>
+   {% else %}
+      <h6>Grade {{ grade }} Term 3 results are not available.</h6>
+     {% endif %}
 </div>
 
 
