@@ -1,0 +1,71 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+
+    <form  method="post">
+        {% csrf_token %}
+       <div class="input-group mb-3">
+        <select class="form-select" aria-label="Default select example" name="grade">
+            <option value="{{ grade }}">Grade {{ grade }}</option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+            <option value="4">Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+    
+    
+          </select>  
+            <span class="input-group-text">Term</span>
+            <select class="form-select" aria-label="Default select example" name="term">
+                <option value="Term 1">1</option>
+                <option value="Term 2">2</option>
+                <option value="Term 3">3</option>
+            </select>  
+
+            <span class="input-group-text">Year</span>
+            <input type="number" class="form-control" name="year"  value="{{ year }}" >
+
+            <button class="btn btn-warning" >Filter</button>
+       </div>
+        </form>
+        <br>
+    
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th><h6>ID</h6></th>
+             <th><h6>Term</h6></th>
+            <th><h6>Year</h6></th>
+            <th><h6>Grade</h6></th>
+            <th><h6>Amount</h6></th>
+
+          </tr>
+        </thead>
+        <tbody>
+          
+            {% for term in terms %}
+            <tr>
+              <td><h6>{{ forloop.counter }}</h6></a></td>
+              <td><a href="{% url 'manage-fees' term.id %}">{{ term.term.term }}</a></td>
+              <td>{{ term.term.year }}</td>
+              <td>{{ term.grade }}</td>
+              <td>{{ term.amount }}</td>
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+     </table>
+
+
+
+</div>
+
+{% endblock %}

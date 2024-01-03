@@ -1,0 +1,96 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+    
+        <div class="mb-3">
+            <input type="text" class="form-control"   placeholder="{{ transaction.transaction_id.receipt }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+        <div class="mb-3">
+            <input type="text" class="form-control"   placeholder="{{ transaction.user.personalprofile.f_name }} {{ transaction.user.personalprofile.l_name }} {{ transaction.user.personalprofile.surname }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+        
+
+
+        <div class="mb-3">
+            <input type="text" class="form-control"  placeholder="{{ transaction.date }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+
+        <div class="mb-3">
+            <input type="text" class="form-control" name="recipient" placeholder="{{ transaction.transaction_id.adm_no }}" aria-label="Recipient's username" aria-describedby="button-addon2">
+        </div>
+
+        <div class="mb-3">
+            <input type="text" class="form-control"  placeholder="{{ transaction.transaction_id.amount }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+
+        <div class="mb-3">
+            <span>Balance</span>
+            <input type="text" class="form-control"  placeholder="{{ transaction.balance }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+
+
+<br><br><br>
+{% if user.rloe == 'Supervisor' %}
+    <form  method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <span>Transfer To</span>
+            <input type="text" class="form-control" name="adm_no" value="{{ adm_no }}"  placeholder="ADM NO" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+        </div>
+
+        <button class="btn btn-info" style="color: white;" name="verify">VERIFY</button>
+        <br>
+    </form>
+{% else %}
+{% endif %}
+        {% if student %}
+        <br>
+        <input type="text" class="form-control"  placeholder="{{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        <br>
+        <input type="text" class="form-control"  placeholder="{{ student.academicprofile.current_class }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        <br>
+        <button class="btn btn-warning" style="color: white;" id="next" onclick="showConfirm()"  name="next">NEXT</button>
+        {% else %}
+        
+        {% endif %}
+    
+    
+
+
+
+
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="confirmation" style="display: none;" id="confirm">
+        You are trying to transfer the payment of {{ transaction.transaction_id.amount }} from 
+         {{ transaction.user.personalprofile.f_name }} {{ transaction.user.personalprofile.f_name }} {{ transaction.user.personalprofile.f_name }}
+         of Admission Number {{ transaction.user }} to  {{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}.
+         To complete this action enter the  WORD <strong style="color: crimson;"><h4>TRANSFER</h4></strong> below.
+         <br><br>
+         <input type="text" class="form-control" name="adm_no" value="{{ adm_no }}" style="display: none;"  placeholder="ADM NO" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+
+         <input type="text" class="form-control" name="random"   placeholder="42134431" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+         <br>
+         <button name="transfer" class="btn btn-danger">Transfer</button>
+    
+       
+    </div>
+    
+</form>
+
+<script>
+    function showConfirm() {
+        // Get the element by ID
+        var confirmElement = document.getElementById('confirm');
+
+        // Change the display property to block
+        confirmElement.style.display = 'block';
+    }
+</script>
+{% endblock %}

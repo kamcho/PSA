@@ -8,6 +8,5 @@ admin.site.register(StudentTest)
 admin.site.register(StudentsAnswers)
 admin.site.register(ClassTest)
 admin.site.register(ClassTestStudentTest)
-admin.site.register(KNECGradeExams)
-admin.site.register(StudentKNECExams)
+
 admin.site.register(GeneralTest)

@@ -1,0 +1,52 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+<a class="btn btn-info" href="{% url 'fees-list' %}">Manage Fees Structure</a>
+<br><br>
+<form method="post">
+    {% csrf_token %}
+        <div class="mb-3">
+          <select class="form-select" aria-label="Default select example" name="term" required>
+            {% for term in terms %}
+                <option value="{{ term.id }}">{{ term.term }} - {{ term.year }}</option>
+            {% endfor %}
+            
+            
+          </select>            
+        </div>
+        <br>
+
+        <div class="mb-3">
+            <select class="form-select" aria-label="Default select example" name="grade" required>
+              
+                  <option value="1">Grade 1</option>
+                  <option value="2">Grade 2</option>
+                  <option value="3">Grade 3</option>
+                  <option value="4">Grade 4</option>
+                  <option value="5">Grade 5</option>
+                  <option value="6">Grade 6</option>
+                  <option value="7">Grade 7</option>
+            
+              
+              
+            </select>            
+          </div>
+          <br>
+
+        <div class="mb-3">
+          <label  class="form-label">Year</label>
+          <input type="number" class="form-control" name="amount" value="{{ term.year }}"  placeholder="10,000" required>
+        </div>
+
+        <button class="btn btn-warning" type="submit">Save</button>
+
+
+</form>
+</div>
+
+
+{% endblock %}

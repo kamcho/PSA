@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from SubjectList.models import Topic, Subject, Subtopic
-from Supervisor.models import KnecQuizzes, KnecQuizAnswers
+# from Supervisor.models import KnecQuizzes, KnecQuizAnswers
 
 from Users.models import MyUser, SchoolClass
 
@@ -93,30 +93,30 @@ class BaseGroupTest(models.Model):
         abstract = True
 
 
-class KNECGradeExams(BaseGroupTest):
-    grade = models.CharField(max_length=2)
-    term = models.CharField(max_length=100, default='2')
-    year = models.CharField(max_length=6, default='2023')
-    quiz = models.ManyToManyField(KnecQuizzes)
+# class KNECGradeExams(BaseGroupTest):
+#     grade = models.CharField(max_length=2)
+#     term = models.CharField(max_length=100, default='2')
+#     year = models.CharField(max_length=6, default='2023')
+#     quiz = models.ManyToManyField(KnecQuizzes)
 
 
-    def __str__(self):
-        return str(self.uuid)
+#     def __str__(self):
+#         return str(self.uuid)
  
 
-class StudentKNECExams(BaseTest):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    test = models.ForeignKey(KNECGradeExams, on_delete=models.CASCADE)
-    uuid = models.CharField(max_length=100, default=uuid.uuid4)
-    date = models.DateTimeField(auto_now=True)
-    marks = models.CharField(max_length=100, default='0')
-    finished = models.BooleanField(default=False)
+# class StudentKNECExams(BaseTest):
+#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     test = models.ForeignKey(KNECGradeExams, on_delete=models.CASCADE)
+#     uuid = models.CharField(max_length=100, default=uuid.uuid4)
+#     date = models.DateTimeField(auto_now=True)
+#     marks = models.CharField(max_length=100, default='0')
+#     finished = models.BooleanField(default=False)
 
-    def __str__(self):
-        return str(self.user)
+#     def __str__(self):
+#         return str(self.user)
 
-    class Meta:
-        unique_together = ('user', 'uuid')
+#     class Meta:
+#         unique_together = ('user', 'uuid')
 
 
 
@@ -165,17 +165,17 @@ class StudentsAnswers(models.Model):
         unique_together = ('user', 'uuid')
 
 
-class StudentsKnecAnswers(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    uuid = models.UUIDField(default=uuid.uuid4)
-    quiz = models.ForeignKey(KnecQuizzes, on_delete=models.CASCADE)
-    selection = models.ForeignKey(KnecQuizAnswers, on_delete=models.CASCADE)
+# class StudentsKnecAnswers(models.Model):
+#     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+#     uuid = models.UUIDField(default=uuid.uuid4)
+#     quiz = models.ForeignKey(KnecQuizzes, on_delete=models.CASCADE)
+#     selection = models.ForeignKey(KnecQuizAnswers, on_delete=models.CASCADE)
 
-    test = models.ForeignKey(StudentKNECExams, on_delete=models.CASCADE)
-    is_correct = models.BooleanField(default=False)
+#     test = models.ForeignKey(StudentKNECExams, on_delete=models.CASCADE)
+#     is_correct = models.BooleanField(default=False)
 
-    def __str__(self):
-        return str(self.user)
+#     def __str__(self):
+#         return str(self.user)
 
-    class Meta:
-        managed = False
+#     class Meta:
+#         managed = False

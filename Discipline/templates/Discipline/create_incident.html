@@ -1,0 +1,33 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+    <form  method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <span>Offence Name</span>
+            <input type="text" class="form-control" name="name"   placeholder="Noise Making" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+        </div>
+
+        <div class="mb-3">
+            <span>Degree</span>
+            <input type="text" class="form-control" name="degree"   placeholder="CRITICAL" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+        </div>
+
+        <div class="mb-3">
+            <span>Description</span>
+            <textarea type="textarea" class="form-control" name="description"   placeholder="Offence for causing noise disturbance."  required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <span>Points</span>
+            <input type="number" class="form-control" name="points"   placeholder="Noise Making" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+        </div>
+
+
+        <button class="btn btn-info" style="color: white;">Save</button>
+    </form>
+</div>
+{% endblock %}

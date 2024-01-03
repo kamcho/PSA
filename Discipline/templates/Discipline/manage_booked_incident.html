@@ -1,0 +1,46 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+  {% if incident %}
+    <form  method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+           
+            <input type="text" class="form-control" name="user" value="{{ incident.user.personalprofile.f_name }} {{ incident.user.personalprofile.l_name }} {{ incident.user.personalprofile.surname }}"   placeholder="Noise Making" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+        <div class="mb-3">
+            <select class="form-select" aria-label="Default select example" name="name">
+                <option value="{{ incident.incident.id }}" selected>{{ incident.incident }}</option>
+                {% for incident in incidents %}
+                    <option value="{{ incident.id }}">{{ incident.name }}</option>
+                {% endfor %}
+                
+                
+              </select>
+        </div>
+
+        <div class="mb-3">
+            
+            <input type="text" class="form-control" name="degree" value="{{ incident.incident.incident_degree }}"   placeholder="CRITICAL" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+
+        <div class="mb-3">
+            
+            <textarea type="textarea" class="form-control" name="description"  placeholder="Offence for causing noise disturbance."  readonly>{{ incident.incident.description }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <span>Points</span>
+            <input type="number" class="form-control" name="points" value="{{ incident.incident.points }}"   placeholder="Noise Making" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+        </div>
+
+
+        <button class="btn btn-warning" style="color: white;" name="update">Update</button> <button class="btn btn-danger" name="delete" style="color: white; margin-left: 40px;">Delete</button>
+    </form>
+    {% else %}
+    {% endif %}
+</div>
+{% endblock %}

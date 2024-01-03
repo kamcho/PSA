@@ -1,0 +1,65 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+    <div class="accordion" id="accordionExample">
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                {{ receipt.user.personalprofile.f_name }} {{ receipt.user.personalprofile.surname }} {{ receipt.user.personalprofile.l_name }}            </button>
+            </h2>
+            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Receipt {{ receipt.receipt }}.</strong>
+                        Payment of {{ receipt.amount }} to {{ receipt.user.personalprofile.f_name }} on {{ receipt.date }} for Remedial services.
+                        Payment was made to {{ receipt.phone }} via M-Pesa services.
+                        <br><br>
+                        <a class="btn btn-warning" >Payment Complete</a>
+                    </div>
+            </div>
+        </div>
+    
+    </div>
+
+    <br>
+
+    <div class="accordion" id="accordionExample">
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                Payment Parent Info {{ receipt.checkout_id.initiator_id.checkout_id }} 
+            </button>
+            </h2>
+            <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Initiator ID {{ receipt.checkout_id.initiator_id.checkout_id }}.</strong>
+                        This payment was initiated on {{ receipt.checkout_id.initiator_id.date }} and processed at {{ receipt.checkout_id.processed_at }} Successfully. 
+                        <h6 ><strong>Processed Together with.</strong></h6>
+                        
+                        <br>
+                        <div class="beneficiary-body">
+                            {% for beneficiary in receipt.checkout_id.initiator_id.beneficiaries.all %}
+                                <p class="receipt-beneficiaries">{{ beneficiary.personalprofile.f_name }} {{ beneficiary.personalprofile.surname }} {{ beneficiary.personalprofile.l_name }}</p>
+                            {% endfor %}
+                        </div>
+                        <br><br>
+                        <a href="{% url 'processed-receipt' receipt.checkout_id.transaction_id %}" class="btn btn-info">Parent Info</a>
+                    </div>
+            </div>
+        </div>
+    
+    </div>
+
+
+
+
+
+
+
+</div>
+{% endblock %}

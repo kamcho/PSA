@@ -1,0 +1,60 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+  <button class="btn btn-info" style="color:white;">
+    {{ profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }} {{ profile.user.personalprofile.surname }}
+  </button>
+  <button class="btn btn-success">{{ profile.points }}</button>
+  {% if incidents %}
+
+  
+
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+         <th><h6>Class</h6></th>
+         <th><h6>Offence</h6></th>
+        <th><h6>Deductions</h6></th>
+        <th><h6>Points Remaining</h6></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for incident in incidents %}
+        
+            <tr>
+                
+                <td><input type="checkbox"></td>
+                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+                <td>{{ incident.user.academicprofile.current_class }}</td>
+                <td>{{ incident.incident.name }}</td>
+                <td>{{ incident.incident.points }}</td>
+                <td>{{ incident.user.studentdisciplinescore.points }}</td>
+         
+              </tr>
+        
+        
+      {% endfor %}
+    </tbody>
+ </table>
+
+ {% else %}
+
+ {% endif %}
+
+
+
+
+
+
+
+
+</div>
+{% endblock %}

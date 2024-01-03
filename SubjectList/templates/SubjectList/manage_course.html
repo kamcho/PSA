@@ -1,0 +1,84 @@
+{% extends 'Supervisor/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+
+<div class="container">
+    <br><br><br><br>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger" style="color: white;" name="delete">DELETE</button>
+    </form>
+
+    <div class="text-center">
+        
+           <h3><i class="bi bi-bookmark-plus"></i> {{ course }}</h3>
+            <small >{{ course.discipline }}</small>
+        
+    </div>
+
+    <div class="text-center subject-course-view">
+    
+        {% for subject in subjects %}
+            <a href="{% url 'manage-subject' subject.id %}"><h6><i class="bi bi-bookmark-plus"></i> {{ subject.name }} grade {{ subject.grade }}</h6></a>
+        {% endfor %}
+
+    </div>
+    
+    <br><br><hr class="text-center"><br><br>
+    <h5 style="font-size: 30px;"><i class="bi bi-plus-square-fill"> </i>Create Subject</h5>
+    <br>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-md-6">
+            
+                <label for="inputField1" class="form-label">Name</label>
+                <input type="text" class="form-control"  name="name" placeholder="Mathematics" required>
+            </div>
+           
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">Grade</label>
+                <select class="form-select"  aria-label="Default select example" name="grade" required>
+                   <option value="1">Grade 1</option>
+                   <option value="2">Grade 2</option>
+                   <option value="3">Grade 3</option>
+                   <option value="4">Grade 4</option>
+                   <option value="5">Grade 5</option>
+                   <option value="6">Grade 6</option>
+                   <option value="7">Grade 7</option>
+                   <option value="8">Grade 8</option>
+                    
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+            
+                <label for="inputField1" class="form-label">Number Of Topics</label>
+                <input type="number" class="form-control"  name="count" placeholder="4" required>
+            </div>
+           
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">Course</label>
+                <select class="form-select"  aria-label="Default select example" name="course" required disabled>
+                    <option value="{{ course }}">{{ course }}</option>
+                    
+                     
+                 </select>
+            </div>
+        </div>
+
+        <button class="btn btn-info" style="color: white;">Save</button>
+    </form>
+    
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'Supervisor/base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+
+
+
+<div class="container">
+    <br><br><br><br>
+    <form method="post">
+        {% csrf_token %}
+        <button class="btn btn-danger" style="color: white;" name="delete">DELETE</button>
+    </form>
+
+    <div class="text-center">
+        
+           <h3><i class="bi bi-bookmark-plus"></i> {{ subtopic.subject.name }} Grade {{ subtopic.subject.grade }}</h3>
+           <h5>{{ subtopic.topic.order }}. {{ subtopic.topic }}</h5>
+            <small >{{ subtopic.order }}. {{ subtopic }}</small>
+
+        
+    </div>
+    
+
+    
+    <br><br><hr class="text-center"><br><br>
+    <h5 class="text-center" style="font-size: 30px;"> <i class="bi bi-plus-square-fill" ></i> Manage Subtopic</h5>
+    <br>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <br>
+        <div class="text-center">
+            
+            <label for="inputField1" class="form-label" >Order</label>
+            <input type="number" class="form-control"  name="order" placeholder="1" required>
+        </div>
+        <br>
+        <div class="row mb-3">
+            <div class="col-md-6">
+            
+                <label for="inputField1" class="form-label">PDF File <small>{{ subtopic.file1 }}</small></label>
+                <input type="file" class="form-control"  name="pdf" placeholder="Addition" required>
+            </div>
+           
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">MP4 File <small>{{ subtopic.file2 }}</small></label>
+                <input type="file" class="form-control"  name="video" placeholder="4" required>
+               
+           
+            </div>
+        </div>
+        <br>
+        
+
+        <button class="btn btn-info" style="color: white;">Save</button>
+    </form>
+    
+
+</div>
+
+
+
+{% endblock %}

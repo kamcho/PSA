@@ -91,6 +91,12 @@
 
     <br>
     <br>
+     {% if not subjects %}
+
+
+      {% else %}
+
+
     <table class="table">
       <thead>
         <tr>
@@ -107,11 +113,7 @@
 
         </tr>
       </thead>
-      {% if not subjects %}
-
-
-      <p>You have no learning history.</p>
-      {% else %}
+     
       <tbody>
         {% for subject in subjects %}
         <tr>

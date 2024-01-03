@@ -5,7 +5,12 @@
 
 {% block content %}
 <br><br><br><br>
-<div class="container">
+
+<div class="">
+    <br>
+<div class="container" style="background-color: white;">
+    
+    
     <h6><button type="button" class="btn btn-outline-primary" disabled>{{ class|title }}</button> </h6>
    <button type="button" class="btn btn-primary">
     Grade  <span class="badge text-bg-secondary">{{ class.grade }}</span>
@@ -40,7 +45,7 @@
         <button class="btn btn-warning" >Filter</button>
    </div>
     </form>
-    <br>
+
 
     {% if not subjects %}
     <h6>We could not find Subjects for Grade {{ grade }}</h6>
@@ -73,7 +78,7 @@
 
     </div>
 
-
+</div>
 
 
 

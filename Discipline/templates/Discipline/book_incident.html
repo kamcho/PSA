@@ -1,0 +1,72 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+    <form  method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <span>Enter Admission Number</span>
+            <input type="text" class="form-control" name="adm_no" value="{{ student }}"  placeholder="ADM NO" aria-label="Recipient's username" aria-describedby="button-addon2" required>
+        </div>
+
+        <button class="btn btn-info" style="color: white;" name="verify">VERIFY</button>
+        <br>
+    </form>
+    <br>
+
+    {% if student %}
+    <form  method="post">
+        {% csrf_token %}
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                {{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}
+            </h2>
+            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Admission No {{ student.email }}.</strong>
+                        <input value="{{ student }}" name="adm_no" style="display: none;">
+                        <br>
+                        <h6 ><strong>Class {{ student.academicprofile.current_class }}</strong></h6>
+    
+
+                        <br>
+                    <button class="btn btn-danger" style="color: white;">BOOK</button>
+                    </div>
+
+                    
+            </div>
+        </div>
+    
+    </div>
+
+    {% else %}
+
+    {% endif %}
+
+
+<br><br>
+
+
+
+
+
+
+  <select class="form-select" id="class-id" name="incident" aria-label="Default select example">
+    {% for incident in classes %}
+        <option value="{{ incident.id }}">{{ incident.name }}</option>
+    {% endfor %}
+
+</select>
+
+
+
+
+</form>
+
+</div>
+
+{% endblock %}

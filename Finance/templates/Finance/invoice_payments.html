@@ -1,0 +1,41 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+<table class="table">
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+        <th><h6>User</h6></th>
+         <th><h6>Date</h6></th>
+        <th><h6>Amount</h6></th>
+    
+        <th><h6>Balance</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for invoice in payments %}
+        <tr>
+          
+          <td><input type="checkbox"></td>
+          <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+          <td><a href="{% url 'invoice-payment-id' invoice.id %}">{{ invoice.invoice.received_from }}</a></td>
+          <td>{{ invoice.date }}</td>
+
+          <td>{{ invoice.amount }}</td>
+          <td>{{ invoice.balance }}</td>
+      
+          
+        </tr>
+      {% endfor %}
+    </tbody>
+ </table>
+
+</div>
+
+ {% endblock %}

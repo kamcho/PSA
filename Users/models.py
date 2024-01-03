@@ -59,7 +59,8 @@ class MyUser(AbstractBaseUser):
         Teacher = "Teacher"
         ADMIN = "ADMINISTRATOR"
         Guardian = "Guardian"
-        Partner = "Partner"
+        Supervisor = "Supervisor"
+        Finance = "Finance"
 
 
     base_role = Role.Student
@@ -134,45 +135,41 @@ class Guardian(MyUser):
         proxy = True
 
 
-class PartnerManager(BaseUserManager):
+class SupervisorManager(BaseUserManager):
     def get_queryset(self, *args, **kwargs):
         result = super().get_queryset(*args, **kwargs)
-        return result.filter(role=MyUser.Role.Partner)
+        return result.filter(role=MyUser.Role.Supervisor)
 
 
-class Partner(MyUser):
-    base_role = MyUser.Role.Partner
-    partner = PartnerManager()
+class Supervisor(MyUser):
+    base_role = MyUser.Role.Supervisor
+    partner = SupervisorManager()
 
     class Meta:
         proxy = True
 
+class FinanceManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        result = super().get_queryset(*args, **kwargs)
+        return result.filter(role=MyUser.Role.Finance)
+
+
+class Finance(MyUser):
+    base_role = MyUser.Role.Finance
+    partner = SupervisorManager()
+
+    class Meta:
+        proxy = True
 
 class SchoolClass(models.Model):
     class_id = models.UUIDField(default=uuid.uuid4, unique=True)
     grade = models.PositiveIntegerField()
     class_name = models.CharField(max_length=100)
     class_size = models.PositiveIntegerField(default=30)
+    class_teacher = models.ForeignKey(MyUser, default='2', on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.class_name)
-
-
-class PersonalProfile(models.Model):
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
-    f_name = models.CharField(max_length=30)
-    ref_id = models.CharField(max_length=100, blank=True)
-    l_name = models.CharField(max_length=30)
-    surname = models.CharField(max_length=30, blank=True)
-    gender = models.CharField(max_length=10, blank=True)
-    phone = models.CharField(max_length=15, null=True, unique=True)
-
-
-
-
-    def __str__(self):
-        return self.user.email
-
 
 class AcademicProfile(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
@@ -181,8 +178,42 @@ class AcademicProfile(models.Model):
 
     def __str__(self):
         return self.user.email
+    
+class PersonalProfile(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    f_name = models.CharField(max_length=30)
+    ref_id = models.CharField(max_length=100, blank=True)
+    l_name = models.CharField(max_length=30)
+    surname = models.CharField(max_length=30, blank=True)
+    gender = models.CharField(max_length=10, blank=True)
+    phone = models.CharField(max_length=15, null=True)
+
+    def __str__(self):
+        return self.user.email
+    
+
+class TeacherPaymentProfile(models.Model):
+    options = (
+        ('Phone', 'Phone'),
+        ('Bank', 'Bank')
+    )
+    
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    balance = models.IntegerField(default=0)
+    salary = models.PositiveIntegerField(default=20000)
+    default_payment = models.CharField(max_length=100, choices=options)
+
+    def __str__(self):
+        return self.user.email
+    
 
 
+class StudentsFeeAccount(models.Model):
+    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    balance = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.user.email
 
 
 

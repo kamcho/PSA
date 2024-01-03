@@ -1,0 +1,44 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+    <a class="btn btn-warning" href="{% url 'terms' %}">Manage Terms</a>
+    <br><br>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label  class="form-label">Year</label>
+            <input type="number" class="form-control" name="year"  placeholder="2024">
+        </div>
+
+        <div class="mb-3">
+            <select class="form-select" aria-label="Default select example" name="term">
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+                
+              </select>
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text">Starts At</span>
+                <input type="date" class="form-control" name="from" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
+    
+        
+        
+                <span class="input-group-text">Ends At</span>
+                <input type="date" class="form-control" name="to" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
+                </select>  
+                <button class="btn btn-warning" >Save</button>
+           </div>
+    </form>
+
+
+
+
+</div>
+
+{% endblock %}

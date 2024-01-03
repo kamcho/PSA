@@ -1,0 +1,56 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+    <a href="{% url 'manage-user' email %}" class="btn btn-info" style="color: white;">Manage Teacher</a>
+    <h6>{{ email }}</h6>
+
+    <div class="subjects-select-view">
+        <a href="{% url 'teachers-info' email %}">
+            <div class="subject-select-card">
+                Staff Personal Profile
+                <br>
+                {{ teacher.personalprofile.f_name }} {{ teacher.personalprofile.l_name.0 }} {{ teacher.personalprofile.surname }}
+                <br>
+                {{ teacher.personalprofile.phone }}
+                <br>
+                {{ teacher.personalprofile.gender }}
+    
+                
+            </div>
+        </a>
+        
+        <a href="{% url 'teachers-info' email %}">
+            <div class="subject-select-card">
+                Teachers Classes $ T.T
+                <br>
+                <div>
+                    {% is_class_teacher teacher %}
+                </div>
+                {% for class in classes %}
+                    <div>
+                        <p>{{ class.class_id.class_name }} - {{ class.subject }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </a>
+
+        <a href="{% url 'teachers-financials' email %}">
+            <div class="subject-select-card">
+                Teachers Finance
+            </div>
+        </a>
+
+        
+
+
+    </div>
+
+
+
+
+
+</div>
+{% endblock %}

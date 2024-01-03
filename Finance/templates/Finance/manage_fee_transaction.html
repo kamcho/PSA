@@ -1,0 +1,33 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+    <div class="mb-3">
+        <input type="text" class="form-control"   placeholder="{{ transaction.receipt }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control"   placeholder="{{ transaction.phone }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+    </div>
+    
+
+
+    <div class="mb-3">
+        <input type="text" class="form-control"  placeholder="{{ transaction.date }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control" name="recipient" placeholder="{{ transaction.adm_no }}" aria-label="Recipient's username" aria-describedby="button-addon2">
+    </div>
+
+    <div class="mb-3">
+        <input type="text" class="form-control"  placeholder="{{ transaction.amount }}" aria-label="Recipient's username" aria-describedby="button-addon2" readonly>
+    </div>
+
+    
+
+</div>
+
+{% endblock %}

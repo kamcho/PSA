@@ -1,0 +1,17 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br>
+    {% for class in classes %}
+        <a href="{% url 'class-balances' class.class_name %}">{{ class.class_name }}</p>
+    {% endfor %}
+
+
+
+
+
+</div>
+
+{% endblock %}

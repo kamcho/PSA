@@ -10,9 +10,12 @@
 <br>
 
 <div class="container">
-    <div>
-        <h5>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h5>
+    <a  href="{% url 'manage-user' user %}" class="btn btn-warning" style="color: white;">Manage Student</a>
+    <br><br>
+    <div class="badge bg-dark">
+        <h5 >{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h5>
     </div>
+    <br><br>
     <div class="profile-card">
         <div class="test-progress">
         {% for subject in subjects %}
@@ -29,8 +32,8 @@
             <h6>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h6>
             <p>Grade {{ user.academicprofile.current_class|title }}</p>
             <p>Adm No C14/177</p>
-            <p>Position 3 0f 256</p>
-            <p>School Fees Cleared</p>
+            <p>Discipline Score <button class="btn btn-info" style="color: white;">{{ user.studentdisciplinescore.points }}</button></p>
+            <p>School Fees Balance <button  class="btn btn-info" style="color: white;">{{ user.studentsfeeaccount.balance }}</button></p>
             {% if user.is_active %}
                 <p style="color:green">Active</p>
             {% else %}
@@ -43,32 +46,49 @@
 </div>
 
 <div class="subjects-select-view">
+<div>
 
-    <a href="{% url 'students-task-slect' user %}">
         <div class="subject-select-card">
-            E-Learning
-    
-            <p>View {{ user.personalprofile.f_name|title }}'s E-learning progress and tests results.</p>
+            
+            <h6 >I AM Learning</h6>
+            <br>
+            <p>To view a students online learning progress and exams click here
+                
+            </p>
+            <a class="btn btn-info" href="{% url 'task-view-select' user %}">E-Learning</a>
+
+
+            <p>To view students school graded exams, click here
+                
+            </p>
+            <a  class="btn btn-warning" href="{% url 'students-exam-profile' user %}">Exams</a>
+            
+            
+  
         </div>
 
-    </a>
 
     
-    <div class="subject-select-card">
-        Extra Curricular
-        <p>My activites.</p>
-        <pre>
-            Games
-            clubs
-            competitions
-        </pre>
-    </div>
-
-    <a href="{% url 'students-exam-profile' user %}">
+</div>
+    <a href="{% url 'students-discipline' user %}">
         <div class="subject-select-card">
-            Exams
+            <h6>Extra Curricular</h6>
+            <br>
+            <p>View students discipline, conduct and Extra Curricular activities</p>
+            <pre>
+                Games
+                clubs
+                competitions
+            </pre>
+        </div>
+    </a>
     
-            <p>School graded physical examinations</p>
+
+    <a href="{% url 'student-fee-profile' user %}">
+        <div class="subject-select-card">
+            Fees
+    
+            <p>View and Manage School Fees Payments</p>
         </div>
     </a>
     

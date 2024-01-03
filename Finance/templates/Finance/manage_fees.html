@@ -1,0 +1,49 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button class="btn btn-danger" name="delete">Delete</button>
+        <br><br>
+
+
+        <div class="accordion" id="accordionExample">
+
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse1" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                        {{ fee.term }} - {{ fee.term.year }} Grade {{ fee.grade }}
+                    </button>
+                </h2>
+                <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}"
+                    data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>Fees Amount - {{ fee.amount }}.</strong>
+
+                        <br><br>
+                        <div class="">
+                            Edit<br>
+                            <input type="number" class="form-control" name="amount">
+
+                        </div>
+                        <br>
+                        <button class="btn btn-info" name="edit" type="submit">Edit</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+{% endblock %}

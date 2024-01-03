@@ -1,0 +1,71 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                {{ invoice.received_from }} {{ invoice.amount }}
+            </h2>
+            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>{{ invoice.title }} received on {{ invoice.date }}</strong>
+                        <br>
+                        {{ invoice.description }}
+                        
+                        <br>
+                        Balance is {{ invoice.balance }}
+                        
+                        <br><br>
+                        <a class="btn btn-warning" >Amount {{ invoice.amount }}</a>
+                        <a class="btn btn-danger">Balance {{ invoice.balance }}</a>
+                    </div>
+            </div>
+        </div>
+    
+    </div>
+    <br><br><br><br><br><br><br>
+
+    {% if invoice.balance == 0 %}
+
+
+    {% else %}
+<div class="text-center">
+    <h5>Pay Invoice</h5>
+
+
+    <form method="post" style="margin: 0 auto; width: 70%;">
+        {% csrf_token %}
+        
+
+        <br>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" name="phone" id="floatingInput" placeholder="{{ invoice.contact_info }}">
+                    <label for="floatingInput">{{ invoice.contact_info }}</label>
+                </div>
+            </div>
+            <div class="col-md-6">    
+                <div class="form-floating mb-3">
+                <input type="number" class="form-control" name="amount" id="floatingInput" placeholder="payment for">
+                <label for="floatingInput">Amount</label>
+                </div>
+            </div>
+            
+        </div>
+        <br>
+        <button class="btn btn-danger" style="color: white;">Pay</button>
+
+    </form>
+
+</div>
+{% endif %}
+</div>
+
+{% endblock %}

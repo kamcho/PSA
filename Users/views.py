@@ -17,6 +17,57 @@ logger = logging.getLogger('django')
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
 
+
+# views.py
+# views.py
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import MyUser, AcademicProfile, PersonalProfile
+from .serializers import MyUserSerializer, AcademicProfileSerializer, PersonalProfileSerializer
+
+class CreateUserView(APIView):
+    def post(self, request, *args, **kwargs):
+        user_data_list = request.data  # Assuming request.data is a list
+        errors = []
+
+        for user_data in user_data_list:
+            user_serializer = MyUserSerializer(data=user_data.get('user', {}))
+            if user_serializer.is_valid():
+                user = user_serializer.save()
+
+                academic_profile_data = user_data.get('academic_profile', {})
+                
+                if academic_profile_data:
+                    academic_profile_data['user'] = user.id
+                    academic_profile_serializer = AcademicProfileSerializer(data=academic_profile_data)
+                    if academic_profile_serializer.is_valid():
+                        academic_profile_serializer.save()
+                    else:
+                        errors.append({'academic_profile_error': academic_profile_serializer.errors})
+                        user.delete()
+
+                personal_profile_data = user_data.get('personal_profile', {})
+                if personal_profile_data:
+                    personal_profile_data['user'] = user.id
+                    personal_profile_serializer = PersonalProfileSerializer(data=personal_profile_data)
+                    if personal_profile_serializer.is_valid():
+                        personal_profile_serializer.save()
+                    else:
+                        errors.append({'personal_profile_error': personal_profile_serializer.errors})
+                        user.delete()
+
+            else:
+                errors.append({'user_error': user_serializer.errors})
+
+        if errors:
+            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'message': 'Users created successfully'})
+    
+
+
+    
 class StaticViewSitemap(Sitemap):
     changefreq = 'daily'
     priority = 0.5
@@ -113,8 +164,8 @@ class MyProfile(LoginRequiredMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
-        elif self.request.user.role == 'Partner':
-            context['base_html'] = 'Partner/base.html'
+        elif self.request.user.role in ['Supervisor', 'Finance']:
+            context['base_html'] = 'Supervisor/base.html'
         
         else:
             # If logged in user's role doesn't match any criteria log out the user and show message
@@ -268,8 +319,8 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
                     return redirect('guardian-home')
                 elif role == 'Teacher':
                     return redirect('teachers-home')
-                elif role == 'Partner':
-                    return redirect('partner-home')
+                elif role in ['Supervisor', 'Finance']:
+                    return redirect('supervisor-home')
                 
                 else:
 
@@ -349,8 +400,8 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                     return redirect('guardian-home')
                 elif request.user.role == 'Teacher':
                     return redirect('teachers-home')
-                elif request.user.role == 'Partner':
-                    return redirect('partner-home')
+                elif request.user.role in ['Supervisor', 'Finance']:
+                    return redirect('supervisor-home')
                 else:
                     messages.error(request, 'Role not found')
                     return redirect(request.get_full_path())

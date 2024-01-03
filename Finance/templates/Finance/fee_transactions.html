@@ -1,0 +1,69 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+
+    <form  method="post">
+        {% csrf_token %}
+       <div class="input-group mb-3">
+        <span class="input-group-text">From</span>
+            <input type="date" class="form-control" pattern="" name="date" placeholder="01/12/2023" aria-label="Recipient's username" aria-describedby="button-addon2">
+
+    
+    
+            <!-- <span class="input-group-text">To</span>
+            <input type="date" class="form-control" name="to" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2"> -->
+            <span class="input-group-text">Receipt</span>
+            <input type="text" class="form-control" name="receipt" placeholder="QWERTYUIOP" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <span class="input-group-text">Adm No</span>
+            <input type="text" class="form-control" name="adm_no" placeholder="14177" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <span class="input-group-text">Phone</span>
+            <input type="text" class="form-control" name="phone" placeholder="0742134431" aria-label="Recipient's username" aria-describedby="button-addon2">
+            <button class="btn btn-warning" >Filter</button>
+       </div>
+        </form>
+        <br>
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <!-- <th><h6><input type="checkbox"></h6></th> -->
+        <th><h6>Id</h6></th>
+         <th><h6>Date</h6></th>
+        <th><h6>Receipt</h6></th>
+        <th><h6>Phone</h6></th>
+        <th><h6>Account</h6></th>
+        <th><h6>Amount</h6></th>
+        <th><h6>Recipients</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for payment in transactions %}
+        
+            <tr>
+                
+          
+                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+                <td>{{ payment.date }}</td>
+                <td><a href="{% url 'manage-fee-transaction' payment.id %}">{{ payment.receipt }}</a></td>
+                <td>{{ payment.phone }}</td>
+                
+                <td>M-Pesa</td>
+                <td>{{ payment.amount }}</td>
+                <td>{{ payment.adm_no }}<br></td>
+                
+              </tr>
+        
+        
+      {% endfor %}
+    </tbody>
+ </table>
+
+ </div>
+
+ {% endblock %}

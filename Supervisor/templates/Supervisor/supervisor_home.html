@@ -11,9 +11,9 @@
 
 <!--<h6>{{ user.role }}</h6>-->
 
- 
-
-<div class="supervisor-home-view">
+ <div class="subject-select-content-container">
+<br><br><br><br>
+<div class="subjects-select-view">
     <a href="{% url 'students-view' %}">
 
     <div class="subject-select-card">
@@ -39,7 +39,7 @@
         </ul>
     </div>
     </a>
-    <a href="{% url 'test-type' %}">
+    <a href="{% url 'teachers-view' %}">
         <div class="subject-select-card">
         <h6>Teachers</h6>
         <p>View teachers profiles and their class assignments results analytics.</p>
@@ -57,7 +57,7 @@
 </div>
 
 
-<div class="container">
+<!-- <div class="container">
     <br><br><br>
 
     <h6>Recent Actions By You</h6>
@@ -79,6 +79,8 @@
           </tr>
         </tbody>
      </table>
-</div>
+</div> -->
 
+
+</div>
 {% endblock %}

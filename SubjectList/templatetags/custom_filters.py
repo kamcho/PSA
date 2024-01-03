@@ -7,8 +7,9 @@ from django.db.models import Sum
 from django.shortcuts import redirect
 import datetime
 
-from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, ClassTest, StudentKNECExams, GeneralTest, \
+from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, ClassTest,  GeneralTest, \
     TopicalQuizes, TopicalQuizAnswers
+from Finance.models import Invoices
 from SubjectList.models import *
 from Term.models import Exam
 
@@ -333,6 +334,25 @@ def get_class_overall_average(class_id, grade, term):
         return round(average,3)
     else:
         return 'Not Found'
+    
+
+@register.simple_tag
+def get_stream_overall_average(class_id, grade, term):
+    class_id = SchoolClass.objects.get(class_id=class_id)
+    class_id = SchoolClass.objects.filter(grade=class_id.grade).values_list('class_id')
+
+    scores = Exam.objects.filter(user__academicprofile__current_class__class_id__in=class_id, subject__grade=grade, term__term=term)
+    # print(scores)
+    ranking = scores.values('user','score').order_by().aggregate(total_marks=Sum('score'))['total_marks']
+    total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
+
+    if total_marks:
+
+        average = (int(total_marks)/ int(scores.count()))
+
+        return round(average,3)
+    else:
+        return 'Not Found'
 
 @register.simple_tag
 def get_user_term_average(user, grade, term):
@@ -364,22 +384,20 @@ def get_class_overall_ranking(class_id, grade, term):
     else:
         return 'Not Found'
 
+
 @register.simple_tag
-def get_stream_overall_ranking(class_id, grade, term):
-    class_id = SchoolClass.objects.filter(class_id=class_id).values_list().last()
-    scores = Exam.objects.filter(user__academicprofile__current_class__class_id__in=class_id, subject__grade=grade, term__term=term)
-    # print(scores)
-    ranking = scores.values('user','score').order_by().aggregate(total_marks=Sum('score'))['total_marks']
-    total_marks = scores.aggregate(total_marks=Sum('score'))['total_marks']
+def is_class_teacher(user):
+    class_id = SchoolClass.objects.filter(class_teacher=user).values_list('class_name')
+    classes = ""
+    if class_id:
+        for class_name in class_id:
+            classes += str((class_name)[0]) + ', '
 
-    if scores:
 
-      
-
-        return scores
+        return str(classes)
     else:
-        return 'Not Found'
-
+        return None
+    
 
 
 
@@ -395,3 +413,5 @@ def get_subject_score(user, grade, subject, term):
         return score.score
     else:
         return 'Not Found'
+    
+

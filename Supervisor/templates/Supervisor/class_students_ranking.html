@@ -8,6 +8,8 @@
 <br><br><br><br>
 
 <div class="container">
+    <button id="downloadPdf" class="btn btn-danger" style="position: fixed; right: 14.5%;top: 10%;">Download PDF</button>
+    <br><br>
     <form method="post">
         {% csrf_token %}
 
@@ -55,15 +57,29 @@
             <button class="btn btn-warning" name="config">Filter</button>
        </div>
         </form>
+        
+        
+   
+        {% if class_id.class_teacher == user%}
+        <br>
+        <button class="btn btn-danger" name="config">Print Document</button>
+        {% else %}
+
+        {% endif %}
+
         <br>
         <br>
        
-        <table class="container table">
-            <caption>{{ class_id }} 
-                Mean {% get_class_overall_average class_id.class_id grade term %}
-                <br>
+        <table class="container table" id="tab">
+            <caption>
+                {% for class in classes %} 
+                     {{ class }} Mean
+                     {% get_class_overall_average class.class_id grade term %}
+                     <br>
+                {% endfor %}
+        
                 Stream
-                Mean {% get_class_overall_average class_id.class_id grade term %}
+                Mean {% get_stream_overall_average class_id.class_id grade term %}
             </caption>
 
             <thead>
@@ -91,16 +107,30 @@
                 {% for subject in subjects %}
                     <td>{% get_subject_score user.user__email grade subject.id term %}</td>
                 {% endfor %}
+                
+                <td>{{ user.total_score }}</td>
                 {% if stream %}
                     <td><h6>{{ user.user__academicprofile__current_class__class_name }}</h6></td>
                 {% else %}
                 {% endif %}
-                <td>{{ user.total_score }}</td>
               </tr>
             {% endfor %}
             </tbody>
          </table>
     {% endif %}
 </div>
+<script>
+    document.getElementById('downloadPdf').addEventListener('click', function() {
+        // Use html2pdf library to convert the HTML table to PDF
+        var element = document.getElementById('tab'); // Replace 'tab' with the actual ID of your table
+        var classId = "{{ class_id }}"
+
+        html2pdf(element, {
+            margin: 5,
+            filename: `fee_balance_${classId}.pdf`, // You can customize the filename
+            image: { type: 'jpeg', quality: 1.0 } 
+        });
+    });
+  </script>
 
 {% endblock %}

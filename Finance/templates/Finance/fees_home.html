@@ -1,0 +1,47 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+
+    <div class="subjects-select-view">
+        <a href="{% url 'set-fees' %}">
+            <div class="subject-select-card">
+                <h6>Set School Fees Info</h6>
+                <p>Set school fees amount for existing terms</p>
+                
+                
+            </div>
+        </a>
+        
+        <a href="{% url 'fee-transactions' %}">
+            <div class="subject-select-card">
+                <h6>View SchoolFees Transactions Made</h6>
+                <p>View all unprocessed Transactions made for school fees Payment.</p>
+               
+                
+            </div>
+        </a>
+
+        <a href="{% url 'processed-fee-payments' %}">
+            <div class="subject-select-card">
+                <h6>Processed School Fees Payments</h6>
+                <p>View Processed SchoolFees and updated Records</p>
+               
+                
+            </div>
+        </a>
+
+     
+
+        
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

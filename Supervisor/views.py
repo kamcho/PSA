@@ -1,24 +1,28 @@
 import datetime
+import email
 from itertools import groupby
+from re import L
 from tkinter import N
 from typing import Any
 from urllib import request
 from django import contrib
 from django.db.models import F, IntegerField, Count, Sum
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib import messages
-from django.db import transaction
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.utils import timezone
 from django.views.generic import TemplateView
+from Finance.models import MpesaPayouts
+from Teacher.models import StudentList, TeacherProfile
 from Term.models import ClassTermRanking, CurrentTerm, Exam
-from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass
-from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes, KNECGradeExams, TopicalQuizAnswers
+from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, StudentsFeeAccount, TeacherPaymentProfile
+from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes, TopicalQuizAnswers
 from SubjectList.models import Subject, Topic, Subtopic, Course
-from Supervisor.models import KnecQuizzes, KnecQuizAnswers
 
 
 class SupervisorHomeView(TemplateView):
@@ -27,6 +31,24 @@ class SupervisorHomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(SupervisorHomeView, self).get_context_data(**kwargs)
         return context
+
+
+
+class SupervisorDashboard(TemplateView):
+    template_name = 'Supervisor/admin_dashboard.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        current_term = CurrentTerm.objects.all().first()
+        print(current_term)
+        if current_term:
+            context['current_term'] = current_term
+        else:
+            context['current_term'] = False
+
+
+        return context
+
 
 
 class CreateUser(TemplateView):
@@ -46,6 +68,7 @@ class CreateUser(TemplateView):
                 l_name = request.POST.get('l_name')
                 surname = request.POST.get('surname')
                 role = request.POST.get('role')
+                gender = request.POST.get('gender')
                 print(role,f_name)
                 if role == 'Student':
                     class_id = request.POST.get('class')
@@ -56,6 +79,7 @@ class CreateUser(TemplateView):
                     profile.f_name = f_name
                     profile.l_name = l_name
                     profile.surname = surname
+                    profile.gender = gender
                     profile.save()
                     academia = AcademicProfile.objects.get(user=user)
                     academia.current_class = class_id
@@ -72,10 +96,12 @@ class CreateUser(TemplateView):
                     profile.save()
 
                     return redirect(request.get_full_path())
+            except IntegrityError:
+               messages.error(self.request, 'A user with this email/adm_no already exists !') 
             except Exception:
                 messages.error(self.request, 'We could not save the user. Contact @support')
 
-                return redirect(request.get_full_path())
+            return redirect(request.get_full_path())
 
 
 
@@ -118,7 +144,94 @@ class StudentsView(TemplateView):
                     pass
                 
             return redirect(request.get_full_path())
+        
+
+class TeachersView(TemplateView):
+    template_name = 'Supervisor/teachers_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            params = self.request.session.get('params', None)
+            if params:
+                users = PersonalProfile.objects.filter(Q(f_name__contains=params) | Q(l_name__contains=params)
+                                                    | Q(surname__contains=params) | Q(user__email__contains=params) ).values_list('user__email')
+                users = MyUser.objects.filter(email__in=users, role='Teacher')
+                if not users:
+                    messages.warning(self.request, 'We could not find any users matching your query')
+            else:
+                users  = MyUser.objects.filter(role='Teacher', is_active=True)
+            context['users'] = users
+        except Exception:
+            messages.error(self.request, 'We could not fetch Teachers from the database')
+        return context
     
+    def post(self, request, *args, **kwargs):
+        if request.method == 'POST':
+
+            params = request.POST.get('search')
+            if params:
+
+                
+                self.request.session['params'] = params
+            else:
+                try:
+                    del self.request.session['params']
+                except KeyError:
+                    pass
+                
+            return redirect(request.get_full_path())
+        
+
+class TeachersProfile(TemplateView):
+    template_name = 'Supervisor/teachers_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        email = self.kwargs['email']
+        user = MyUser.objects.get(email=email)
+        my_class = StudentList.objects.filter(user=user)
+        context['classes'] = my_class
+        context['teacher'] = user
+
+        return context
+    
+class TeachersInfo(TemplateView):
+    template_name = 'Supervisor/teacher_info.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        email = self.kwargs['email']
+        user = MyUser.objects.get(email=email)
+        my_class = StudentList.objects.filter(user=user)
+   
+            # get teacher profile
+       
+        context['classes'] = my_class
+        context['teacher'] = user
+
+        return context
+class TeachersFinancials(TemplateView):
+    template_name = 'Supervisor/teacher_financials.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        email = self.kwargs['email']
+        try:
+            profile = TeacherPaymentProfile.objects.get(user__email=email)
+            context['profile'] = profile
+        except ObjectDoesNotExist:
+            try:
+                user = MyUser.objects.get(email=email)
+                profile = TeacherPaymentProfile.objects.create(user=user)
+                context['profile'] = profile
+            except:
+                messages.error(self.request, 'An error occured !!. Please DO NOT edit the url')
+        payouts = MpesaPayouts.objects.filter(user__email=email)
+        context['payouts'] = payouts
+        return context
+
+
 class StudentProfile(TemplateView):
     template_name = 'Supervisor/students_profile.html'
 
@@ -127,10 +240,82 @@ class StudentProfile(TemplateView):
         email = self.kwargs['email']
         user  = MyUser.objects.get(email=email)
         subjects = Subject.objects.filter(grade=4)
+        
         context['subjects'] = subjects
         context['user'] = user
         return context
     
+
+
+    
+class ManageStudent(TemplateView):
+    template_name = 'Supervisor/manage_student.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs) 
+        email = self.kwargs['email']
+        student = MyUser.objects.get(email=email)
+        classes = SchoolClass.objects.all()
+        context['classes'] = classes
+        context['student'] = student
+
+        return context
+    
+    def post(self, request, **kwargs):
+        if request.method == 'POST':
+            email = request.POST.get('email')
+            f_name = request.POST.get('f_name')
+            l_name = request.POST.get('l_name')
+            surname = request.POST.get('surname')
+            class_id = request.POST.get('class')
+
+            gender = request.POST.get('gender')
+
+            if 'update' in request.POST:
+                email = self.kwargs['email']
+                profile = PersonalProfile.objects.get(user__email=email)
+                if profile.user.role == 'Student':
+                    class_id = SchoolClass.objects.get(class_id=class_id)
+                    acd_profile = AcademicProfile.objects.get(user__email=email)
+                    acd_profile.current_class = class_id
+                    acd_profile.save()
+                profile.f_name = f_name
+                profile.l_name = l_name
+                profile.surname = surname
+                profile.gender = gender
+                profile.save()
+                
+
+                return redirect(request.get_full_path())
+            elif 'delete' in request.POST:
+                user = MyUser.objects.get(email=email)
+                user.is_active = False
+                user.save()
+                messages.info(request, f'You have succesfully deleted {email} from Students Database')
+                return redirect('students-view')
+
+            else:
+                user = MyUser.objects.get(email=email)
+                user.is_active = True
+                user.save()
+                messages.success(request, f'You have succesfully restored {email} and all acount related data')
+                return redirect(self.request.get_full_path())
+
+                
+            
+
+class ArchivedUsers(TemplateView):
+    template_name = 'Supervisor/archived_users.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        users = MyUser.objects.filter(is_active='False')
+        context['users'] = users
+
+        return context
+
+
+            
 
 class StudentExamProfile(TemplateView):
     template_name = 'Supervisor/students_exam_profile.html'
@@ -332,7 +517,9 @@ class ClassStudentsRanking(TemplateView):
             # context['file'] = file
 
             context['class_id'] = class_instance
-            class_id = SchoolClass.objects.filter(grade=class_instance.grade).values_list('class_id')
+            class_id = SchoolClass.objects.filter(grade=class_instance.grade)
+            context['classes'] = class_id
+            class_id = class_id.values_list('class_id')
             print(class_id)
 
         

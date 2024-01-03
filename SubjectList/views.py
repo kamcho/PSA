@@ -1,4 +1,7 @@
 import logging
+from pydoc_data import topics
+from re import sub
+from sqlite3 import IntegrityError
 from typing import Any
 import uuid
 from ElasticEmail.model.email_content import EmailContent
@@ -15,6 +18,7 @@ from django.db import DatabaseError
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.utils import timezone
+from numpy import delete
 from Exams.models import ClassTest, ClassTestStudentTest, StudentTest
 from SubjectList.models import Subject, Subtopic, Progress, TopicExamNotifications, Topic, TopicalExamResults, Course, \
      AccountInquiries
@@ -23,6 +27,160 @@ from Users.models import AcademicProfile
 from django.views.generic import TemplateView
 
 logger = logging.getLogger('django')
+
+class CreateCourse(TemplateView):
+    template_name = 'SubjectList/create_course.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        courses = Course.objects.all()
+        context['courses'] = courses
+        return context
+    
+    def post(self, args, **kwargs):
+        if self.request.method == 'POST':
+            name = self.request.POST.get('name')
+            discipline = self.request.POST.get('discipline')
+            try:
+                course = Course.objects.create(name=name, discipline=discipline)
+            except IntegrityError:
+                messages.error(self.request, 'Subject Already Exists !!')
+
+            return redirect(self.request.get_full_path())
+        
+class ManageCourse(TemplateView):
+    template_name = 'SubjectList/manage_course.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        course_id = self.kwargs['id']
+        course = Course.objects.get(id=course_id)
+        subjects = Subject.objects.filter(course__id=course_id)
+        context['subjects'] = subjects
+        context['course'] = course
+        return context
+    
+    def post(self, args, **kwargs):
+        if self.request.method == 'POST':
+            course = self.get_context_data().get('course')
+            if 'delete' in self.request.POST:
+                purge = course.delete()
+                messages.success(self.request, f'Successfully deleted {course} from system !!')
+
+                return redirect('create-course')
+            else:
+                name = self.request.POST.get('name')
+                grade = self.request.POST.get('grade')
+                
+                topics_count = self.request.POST.get('count')
+                subject = Subject.objects.create(name=name, topics=topics_count, grade=grade, course=course)
+
+
+
+                return redirect(self.request.get_full_path())
+            
+class ManageSubject(TemplateView):
+    template_name = 'SubjectList/manage_subject.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        subject = self.kwargs['id']
+        subject = Subject.objects.get(id=subject)
+        topics = Topic.objects.filter(subject__id=subject.id).order_by('order')
+        context['topics'] = topics
+        context['subject'] = subject
+
+        return context
+    
+    def post(self, args, **kwargs):
+        if self.request.method == 'POST':
+            subject = self.get_context_data().get('subject')
+            name = self.request.POST.get('name')
+            order = self.request.POST.get('order')
+            subtopics = self.request.POST.get('subtopics')
+            test_size = self.request.POST.get('size')
+            time = self.request.POST.get('time')
+            if 'delete' in self.request.POST:
+                delete = subject.delete()
+                messages.success(self.request, f'Successfully deleted {subject.name} grade {subject.grade} from system')
+
+                return redirect('create-course')
+            else:
+                topic = Topic.objects.create(subject=subject, name=name, order=order, time=time,
+                                              topics_count=subtopics, test_size=test_size)
+                
+
+                return redirect(self.request.get_full_path())
+
+class ManageTopic(TemplateView):
+    template_name = 'SubjectList/manage_topic.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        topic = self.kwargs['id']
+        topic = Topic.objects.get(id=topic)
+        subtopics = Subtopic.objects.filter(topic__id=topic.id)
+        context['subtopics'] = subtopics
+        context['topic'] = topic
+
+        return context
+    
+    def post(self, args, **kwargs):
+        if self.request.method == 'POST':
+            if 'delete' in self.request.POST:
+
+                topic = self.kwargs['id']
+                topic = self.get_context_data().get('topic')
+                delete = topic.delete()
+                messages.success(self.request, f'You have successfully deleted { topic } from the system')
+
+                return redirect('create-course')
+            else:
+                name = self.request.POST.get('name')
+                order = self.request.POST.get('order')
+                topic_id = self.get_context_data().get('topic')
+                subject = topic_id.subject
+                subtopic = Subtopic.objects.create(name=name, order=order, subject=subject, topic=topic_id)
+
+                return redirect(self.request.get_full_path())
+
+class ManageSubTopic(TemplateView):
+    template_name = 'SubjectList/manage_subtopic.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        subtopic = self.kwargs['id']
+        
+        subtopics = Subtopic.objects.get(id=subtopic)
+
+        context['subtopic'] = subtopics
+
+        return context
+    
+    def post(self, args, **kwargs):
+        if self.request.method == 'POST':
+            subtopic = self.get_context_data().get('subtopic')
+            if 'delete' in self.request.POST:
+
+                
+                delete = subtopic.delete()
+                messages.success(self.request, f'Successfuly deleted { subtopic.name } from system')
+
+                return redirect('create-course')
+            
+            else:
+                pdf = self.request.FILES.get('pdf')
+                video = self.request.FILES.get('video')
+                order = self.request.POST.get('order')
+                subtopic.file1 = pdf
+                subtopic.file2 = video
+                subtopic.order = order
+                subtopic.save()
+
+                messages.success(self.request, f'Successfuly updated {subtopic.name}')
+
+                return redirect(self.request.get_full_path())
+
 
 
 class IsStudent(UserPassesTestMixin):

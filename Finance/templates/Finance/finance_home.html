@@ -1,0 +1,36 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<div class="subject-select-content-container">
+    <div class="subjects-select-view">
+        <a href="{% url 'invoices' %}">
+            <div class="subject-select-card">
+                <h6>Invoices</h6>
+                <p>Get receipts for all initiated/started transactions for staff payments</p>
+                
+                
+            </div>
+        </a>
+        
+        <a href="{% url 'transactions' %}">
+            <div class="subject-select-card">
+                <h6>Payments</h6>
+                <p>Get receipts for all processed transactions for staff payments, both failed and succesul transactions.</p>
+               
+                
+            </div>
+        </a>
+
+        <a href="{% url 'succesful-payouts' %}">
+            <div class="subject-select-card">
+                <h6>Balances</h6>
+                <p>Get receipts for all succesful payments to staff.</p>
+            </div>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

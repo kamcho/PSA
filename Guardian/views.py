@@ -8,7 +8,7 @@ from django.db.models import Count
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, StudentKNECExams, StudentsKnecAnswers, \
+from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, \
     GeneralTest
 from SubjectList.models import Progress, Topic, Subject
 from Users.models import MyUser, PersonalProfile, AcademicProfile

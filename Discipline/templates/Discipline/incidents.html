@@ -1,0 +1,42 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+  <br><br><br><br>
+  <a class="btn btn-info" style="color: white;" href="{% url 'create-incident' %}">Create Incident</a>
+  <br><br>
+  <table class="table">
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+         <th><h6>Incident</h6></th>
+         <th><h6>Degree</h6></th>
+        <th><h6>Points</h6></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for incident in incidents %}
+        
+            <tr>
+                
+                <td><input type="checkbox"></td>
+                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+                <td><a href="{% url 'manage-incident' incident.id %}">{{ incident.name }}</a></td>
+                <td>{{ incident.incident_degree }}</td>
+                <td>{{ incident.points }}</td>
+         
+              </tr>
+        
+        
+      {% endfor %}
+    </tbody>
+ </table>
+
+
+</div>
+
+{% endblock %}

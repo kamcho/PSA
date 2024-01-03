@@ -1,0 +1,59 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+
+<div class="container">
+    <a href="{% url 'create-user' %}"><button class="btn btn-warning">Add Student</button></a>
+
+    <br><br>
+    <form method="post">
+      {% csrf_token %}
+      <div class="input-group mb-3">
+          <input type="text" class="form-control" name="search" placeholder="search by name, email or admission" aria-label="Recipient's username" aria-describedby="button-addon2">
+          <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
+      </div>
+    </form>
+    
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th><h6>First Name</h6></th>
+             <th><h6>Last Name</h6></th>
+            <th><h6>Surname</h6></th>
+            <th><h6>Class</h6></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            {% for user in users %}
+            <tr>
+              <td><a href="{% url 'manage-user' user %}"><h6>{{ user.personalprofile.f_name }}</h6></a></td>
+              <td>{{ user.personalprofile.l_name }}</td>
+              <td>{{ user.personalprofile.surname }}</td>
+              <td>{{ user.academicprofile.current_class }} </td>
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+     </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

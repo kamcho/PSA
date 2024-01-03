@@ -1,0 +1,96 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br><br>
+<div class="container">
+
+    <form method="post">
+        {% if student.is_active %}
+
+        <button class="btn btn-danger" style="color: white;" name="delete">DELETE</button>
+        {% else %}
+        <button class="btn btn-info" style="color: white;" name="restore">Restore</button>
+        {% endif %}
+        <br><br>
+        {% csrf_token %}
+        {% if student.role == 'Student' %}
+        <div class="col-md-6">
+            
+            <label for="inputField1" class="form-label">ADM NO</label>
+            <input type="text" class="form-control" value="{{ student }}" id="inputField1" name="adm_no" placeholder="johndoe@gmail.com" required>
+        </div>
+        {% else %}
+        {% endif %}
+        <div class="row mb-3">
+            <div class="col-md-6">
+            
+                <label for="inputField1" class="form-label">Email</label>
+                <input type="email" class="form-control" value="{{ student }}" id="inputField1" name="email" placeholder="johndoe@gmail.com" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputField1" class="form-label">Gender</label>
+
+                <select class="form-select"  aria-label="Default select example" name="gender" required>
+                    <option value="{{ student.personalprofile.gender }}" selected>{{ student.personalprofile.gender }}</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+           
+            
+        </div>
+        <br>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="inputField2" class="form-label">First Name</label>
+                <input type="text" class="form-control" value="{{ student.personalprofile.f_name }}" id="inputField2" name="f_name" placeholder="First Name" required>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputField3" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="inputField3" value="{{ student.personalprofile.l_name }}" name="l_name" placeholder="Last Name" required>
+            </div>
+            
+            
+        </div>
+        
+      
+        <div class="row mb-3">
+            
+            <div class="col-md-6">
+                <label for="inputField4" class="form-label">Surname</label>
+                <input type="text" class="form-control" id="inputField4" value="{{ student.personalprofile.surname }}" name="surname" placeholder="Surname">
+            </div>
+            {% if student.role == 'Student' %}
+            
+            <div class="col-md-6">
+            
+                <label for="inputField4" class="form-label">Class</label>
+                <select class="form-select" id="classInput" name="class" aria-label="Default select example" required>
+                    <option value="{{ student.academicprofile.current_class.class_id }}" selected>{{ student.academicprofile.current_class }}</option>
+                    {% for class in classes %}
+                        <option value="{{ class.class_id }}">{{ class }}</option>
+                    {% endfor %}
+                  
+                </select>
+                <br>
+            </div>
+            {% else %}
+
+            {% endif %}
+
+            
+        </div>
+    
+        
+        <button type="submit" class="btn btn-primary" name="update">Submit</button>
+    </form>
+
+
+</div>
+
+{% endblock %}

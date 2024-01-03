@@ -1,0 +1,45 @@
+{% extends 'Supervisor/base.html' %}
+{% block content %}
+
+<br><br><br><br>
+
+<div class="container">
+    <table class="table">
+        <thead>
+          <tr>
+            <th><h6>ID</h6></th>
+             <th><h6>Term</h6></th>
+            <th><h6>Year</h6></th>
+            <th><h6>Start</h6></th>
+            <th><h6>End</h6></th>
+
+          </tr>
+        </thead>
+        <tbody>
+          
+            {% for term in terms %}
+            <tr>
+              <td><h6>{{ forloop.counter }}</h6></a></td>
+              <td><a href="{% url 'term-info' term.id %}">{{ term.term }}</a></td>
+              <td>{{ term.year }}</td>
+              <td>{{ term.starts_at }}</td>
+              <td>{{ term.ends_at }}</td>
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+     </table>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+{% endblock %}

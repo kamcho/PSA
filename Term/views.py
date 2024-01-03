@@ -2,7 +2,7 @@ from typing import Any
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 from SubjectList.models import Subject
-from Term.models import CurrentTerm, Exam
+from Term.models import CurrentTerm, Exam, Terms
 from django.contrib.messages import success,error
 from Users.models import AcademicProfile, MyUser
 # Create your views here.
@@ -44,3 +44,53 @@ class AddSubjectScore(TemplateView):
 
 
     
+class TermListView(TemplateView):
+    template_name = 'Term/terms_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        terms = Terms.objects.all().order_by('-id')
+        context['terms'] = terms
+
+        return context
+    
+class TermInfo(TemplateView):
+    template_name = 'Term/term_info.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        term_id = self.kwargs['term']
+        term = Terms.objects.get(id=term_id)
+        context['term'] = term
+
+        return context 
+    
+    def post(self, request, **kwargs):
+        if request.method == 'POST':
+            year = request.POST.get('year')
+            term_ins = request.POST.get('term')
+            starts_at = request.POST.get('start')
+            ends_at = request.POST.get('end')
+            term_id = self.kwargs['term']
+            term = Terms.objects.get(id=term_id)
+
+            if 'delete' in request.POST:
+                term.delete()
+
+                return redirect('terms')
+            elif 'edit' in request.POST:
+                term_id = self.kwargs['term']
+                term = Terms.objects.get(id=term_id)
+                term.year = year
+                term.term = term_ins
+                term.starts_at = starts_at
+                term.ends_at = ends_at
+                term.save()
+
+                return redirect(request.get_full_path())
+            else:
+                current_term = CurrentTerm.objects.all().delete()
+                current_term = CurrentTerm.objects.create(term=term)
+
+                return redirect(request.get_full_path())
+

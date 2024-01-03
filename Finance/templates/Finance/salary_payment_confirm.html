@@ -1,0 +1,24 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+    <br><br><br><br>
+    <div class="container">
+        <a class="btn btn-danger" style="color: white;font-size: 20px;">{{ amount }}</a>
+        <br><br>
+        <div style="padding: 40px;">
+            <h5>Beneficiaries</h5>
+            {% for beneficiary in beneficiaries %}
+                <h6>{{ beneficiary.user.personalprofile.f_name }} {{ beneficiary.user.personalprofile.l_name }} {{ beneficiary.user.personalprofile.surname }} - {{ beneficiary.salary }}</h6>
+            {% endfor %}
+        </div>
+        
+
+        <br><br>
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn btn-info">Pay</button>
+        </form>
+    </div>
+
+{% endblock %}

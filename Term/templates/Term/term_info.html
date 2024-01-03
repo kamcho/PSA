@@ -1,0 +1,49 @@
+{% extends 'Supervisor/base.html' %}
+{% block content %}
+
+<br><br><br><br>
+
+<div class="container">
+
+
+
+    <form method="post">
+
+      <button class="btn btn-warning" name="set-term">Set As Current Term</button>
+      <br><br>
+        {% csrf_token %}
+            <div class="mb-3">
+              <label  class="form-label">Term</label>
+              <select class="form-select" aria-label="Default select example" name="term">
+                <option value="{{ term.term }}">{{ term.term }}</option>
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+                
+              </select>            
+            </div>
+
+            <div class="mb-3">
+              <label  class="form-label">Year</label>
+              <input type="number" class="form-control" name="year" value="{{ term.year }}"  placeholder="{{ term.year }}">
+            </div>
+
+
+            <div class="mb-3">
+              <label  class="form-label">Starts At {{ term.starts_at }}</label>
+              <input type="date" class="form-control" name="start" value="" placeholder="{{ term.starts_at }}">
+            </div>
+
+            <div class="mb-3">
+              <label  class="form-label">Ends At {{ term.ends_at }}</label>
+              <input type="date" class="form-control" name="end" placeholder="{{ term.ends_at }}">
+            </div>
+
+            <button class="btn btn-info" name="edit">Save</button> <button class="btn btn-danger" name="delete">Delete</button>
+    </form>
+
+
+
+</div>
+
+{% endblock %}

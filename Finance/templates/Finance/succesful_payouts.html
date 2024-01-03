@@ -1,0 +1,57 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+
+    <form  method="post">
+        {% csrf_token %}
+       <div class="input-group mb-3">
+        <span class="input-group-text">From</span>
+            <input type="date" class="form-control" name="from" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
+
+    
+    
+            <span class="input-group-text">To</span>
+            <input type="date" class="form-control" name="to" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
+            </select>  
+            <button class="btn btn-warning" >Filter</button>
+       </div>
+        </form>
+        <br>
+<table class="table">
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+        <th><h6>User</h6></th>
+         <th><h6>Date</h6></th>
+        <th><h6>Receipt</h6></th>
+        <th><h6>Account</h6></th>
+        <th><h6>Amount</h6></th>
+        <th><h6>Payed To</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for payment in transactions %}
+        <tr>
+          
+          <td><input type="checkbox"></td>
+          <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+          <td><a  href="{% url 'payout-receipt' payment.receipt  %}">{{ payment.user.personalprofile.f_name }} {{ payment.user.personalprofile.l_name }} {{ payment.user.personalprofile.surname }}</a></td>
+          <td>{{ payment.date }}</td>
+          <td>{{ payment.receipt }}</td>
+          <td>M-Pesa</td>
+          <td>{{ payment.amount }}</td>
+          <td>{{ payment.phone }}</td>
+          
+        </tr>
+      {% endfor %}
+    </tbody>
+ </table>
+
+</div>
+
+ {% endblock %}

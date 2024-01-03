@@ -1,0 +1,110 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+  {% if profiles %}
+
+  Add negative sign (-) to query students with fee balances.
+  <br><br>
+  <button id="downloadPdf" class="btn btn-danger" style="position: fixed; right: 14.5%;top: 10%;">Download PDF</button>
+    <br><br>
+  <form method="post">
+    {% csrf_token %}
+    
+    <div class="input-group mb-3">
+      <span class="input-group-text">Balance</span>
+      <input type="number" class="form-control" value="{{ limit }}" name="limit" placeholder="From"
+        aria-label="Recipient's username" aria-describedby="button-addon2" required>
+
+
+
+
+      <button class="btn btn-warning">Filter</button>
+    </div>
+  </form>
+  <br>
+  <table class="table" id="tab">
+    <caption>
+      Fee Balances {{ balance }}
+      Query Fee Balance {{ query_balance }}
+    </caption>
+    <thead>
+      <tr>
+        <th>
+          <h6><input type="checkbox"></h6>
+        </th>
+        <th>
+          <h6>Id</h6>
+        </th>
+        <th>
+          <h6>Student</h6>
+        </th>
+        <th>
+          <h6>Class</h6>
+        </th>
+        <th>
+          <h6>Balance</h6>
+        </th>
+        <th>
+          <h6>Contact Info</h6>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+
+      {% for profile in profiles %}
+      {% if profile.balance > -1 %}
+      <tr style="color: green; font-size: 20px;">
+
+        <td><input type="checkbox"></td>
+        <td><a>
+            <h6>{{ forloop.counter }}</h6>
+          </a></td>
+        <td><a href="{% url 'student-fee-profile' profile.user %}" style="color: rgb(9, 14, 14) !important;">{{profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }} {{profile.user.personalprofile.surname }}</a>
+          </td>
+        <td>{{ profile.user.academicprofile.current_class }}</td>
+        <td>{{ profile.balance }}<br></td>
+        <td>{{ profile.user.personalprofile.phone }}</td>
+      </tr>
+      {% else %}
+      <tr style="color: crimson; font-size: 20px; font-family: Arial, Helvetica, sans-serif;">
+
+        <td><input type="checkbox"></td>
+        <td><a>
+            <h6>{{ forloop.counter }}</h6>
+          </a></td>
+        <td><a href="{% url 'student-fee-profile' profile.user %}" style="color: rgb(9, 14, 14) !important;">{{ profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }} {{ profile.user.personalprofile.surname }}</a></td>
+        <td>{{ profile.user.academicprofile.current_class }}</td>
+        <td>{{ profile.balance }}<br></td>
+        <td>{{ profile.user.personalprofile.phone }}</td>
+      </tr>
+      {% endif %}
+
+
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% else %}
+{% endif %}
+
+  <!-- JavaScript to handle the button click event -->
+  <script>
+    document.getElementById('downloadPdf').addEventListener('click', function() {
+        // Use html2pdf library to convert the HTML table to PDF
+        var element = document.getElementById('tab'); // Replace 'tab' with the actual ID of your table
+        var classId = "{{ class_id }}"
+
+        html2pdf(element, {
+            margin: 5,
+            filename: `fee_balance_${classId}.pdf`, // You can customize the filename
+            image: { type: 'jpeg', quality: 1.0 } 
+        });
+    });
+  </script>
+	
+  
+{% endblock %}

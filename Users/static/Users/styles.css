@@ -548,9 +548,11 @@ border-radius:10px ;
 }
 
 table th{
-    font-weight: lighter;
+    font-weight: bolder;
+    font-size: 28px !important;
     padding-left: 20px;
     margin-top:10px;
+    background-color: #115DFC;
 }
 tr:nth-child(even) {
     background-color: #f2f2f2;

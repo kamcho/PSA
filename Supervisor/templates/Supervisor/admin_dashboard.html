@@ -1,0 +1,58 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+
+<br><br><br><br>
+<div class="subject-select-content-container">
+
+<div class="container">
+    <br><br>
+    {% if current_term %}
+    <h5 style="color: white;">Current Term</h5>
+        <a class="btn btn-info" href="{% url 'terms' %}">{{ current_term }} - {{ current_term.term.year }}</a>
+    {% else %}
+        <a class="btn btn-info"  href="{% url 'terms' %}">Set Current Term</a>
+    {% endif %}
+
+    <div class="subjects-select-view">
+      
+        
+        <a href="{% url 'create-term' %}">
+            <div class="subject-select-card">
+                <h6>Set Term Info</h6>
+                <p>Create and set the beginning and end of terms.</p>
+               
+                
+            </div>
+        </a>
+
+        <a href="{% url 'create-course' %}">
+            <div class="subject-select-card">
+                <h6>School Course Management</h6>
+                <p>Create and manage courses, subjects, topics and subtopics</p>
+               
+                
+            </div>
+        </a>
+
+        <a href="{% url 'incidents' %}">
+            <div class="subject-select-card">
+                <h6>Discipline</h6>
+                <p>Set discipline score before suspension.</p>
+            </div>
+        </a>
+
+        
+
+
+    </div>
+
+
+</div>
+
+</div>
+
+{% endblock %}

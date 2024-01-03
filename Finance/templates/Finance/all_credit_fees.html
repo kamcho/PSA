@@ -1,0 +1,73 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+<div class="container">
+    {% if profiles %}
+    Add negative sign (-) to query students with fee balances.
+    <br><br>
+    <form  method="post">
+        {% csrf_token %}
+       <div class="input-group mb-3">
+        <span class="input-group-text">Balance</span>
+            <input type="number" class="form-control" value="{{ limit }}" name="limit" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
+
+    
+    
+            <span class="input-group-text">Grade</span>
+            <input type="number" class="form-control" value="{{ grade }}" name="grade" placeholder="From" aria-label="Recipient's username" aria-describedby="button-addon2">
+            </select>  
+            <button class="btn btn-warning" >Filter</button>
+       </div>
+        </form>
+        <br>
+<table class="table">
+  <caption>
+    Fee Total Balances {{ balance }}
+    <br>
+    Query Total Balance {{ query_balance }}
+  </caption>
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+        <th><h6>Student</h6></th>
+        <th><h6>Class</h6></th>
+        <th><h6>Balance</h6></th>
+        <th><h6>Contact Info</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for profile in profiles %}
+      {% if profile.balance > -1 %}
+            <tr style="color: green; font-size: 20px;">
+        
+                <td><input type="checkbox"></td>
+                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+                <td><a href="{% url 'student-fee-profile' profile.user %}" style="color: rgb(9, 14, 14) !important;">{{ profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }} {{ profile.user.personalprofile.surname }}</a></td>
+                <td>{{ profile.user.academicprofile.current_class }}</td>
+                  <td >{{ profile.balance }}<br></td>
+                  <td>{{ profile.user.personalprofile.phone }}</td>
+              </tr>
+              {% else %}
+              <tr style="color: crimson; font-size: 20px; font-family: Arial, Helvetica, sans-serif;">
+        
+                <td><input type="checkbox"></td>
+                <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+                <td><a href="{% url 'student-fee-profile' profile.user %}" style="color: rgb(9, 14, 14) !important;">{{ profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }} {{ profile.user.personalprofile.surname }}</a></td>
+                <td>{{ profile.user.academicprofile.current_class }}</td>
+                  <td >{{ profile.balance }}<br></td>
+                  <td>{{ profile.user.personalprofile.phone }}</td>
+              </tr>
+                {% endif %}
+        
+        
+      {% endfor %}
+    </tbody>
+ </table>
+{% else %}
+{% endif %}
+</div>
+ {% endblock %}

@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -1258,6 +1259,16 @@ class SubjectSelect(IsTeacher, LoginRequiredMixin, TemplateView):
 
             return redirect(self.request.get_full_path())
 
+
+class AmClassTeacher(TemplateView):
+    template_name = 'Teacher/am_class_teacher.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        class_id = SchoolClass.objects.filter(class_teacher=user)
+        context['classes'] = class_id
+        return context
 
 
 class Subscriptions(TemplateView):

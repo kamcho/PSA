@@ -120,5 +120,6 @@ admin.site.register(MyUser, UserAdmin)
 admin.site.register(PersonalProfile)
 admin.site.register(AcademicProfile)
 admin.site.register(SchoolClass)
-
+admin.site.register(TeacherPaymentProfile)
+admin.site.register(StudentsFeeAccount)
 admin.site.unregister(Group)

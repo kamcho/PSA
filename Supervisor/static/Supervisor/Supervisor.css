@@ -51,3 +51,62 @@
     background-color: rgba(221, 14, 152, 0.1);
     border-radius: 10px;
 }
+
+.receipt-card{
+    width: 80%;
+    height: 400px;
+    padding: 20px;
+    margin: 0 auto;
+    position: relative;;
+    
+    background-color: rgba(251, 214, 252, 0.1);
+    border-radius: 10px;
+}
+.receipt-amount{
+    position: absolute;
+    right: 5px;
+    top: 7px;
+}
+.beneficiary-body{
+    padding: 10px;
+    height: 60%;
+    overflow-y: scroll;
+}
+.receipt-beneficiaries{
+    padding-left: 10px;
+
+    
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
+}
+.confirmation{
+    width: 80%;
+    height: 80%;
+    background-color: #000;
+    color: #fff;
+    position: absolute;
+    padding: 30px;
+    opacity: 80%;
+    backface-visibility: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    justify-content: center;
+    align-items: center;
+    top: 15%;
+    right: 10%;
+    /* margin: 0 auto; */
+    
+}
+.course-view{
+    grid-template-columns: auto auto auto;
+    display: grid;
+
+}
+.subject-course-view{
+    grid-template-columns: auto auto ;
+    margin: 0 auto;
+    padding: 40px;
+    width: 50%;
+ 
+    display: grid;
+
+}

@@ -28,5 +28,6 @@ urlpatterns = [
     path('get_subjects/', views.get_subjects, name='get_subjects'),
     path('DashBoard/AcademicProfile/', SubjectSelect.as_view(), name='subjects-selection'),
     path('Subscriptions/', Subscriptions.as_view(), name='subscriptions'),
+    path('AMClassTeacher/', AmClassTeacher.as_view(), name='am-class-teacher')
 
 ]
