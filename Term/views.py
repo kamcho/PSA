@@ -4,7 +4,7 @@ from typing import Any
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 from SubjectList.models import Subject
-from Term.models import CurrentTerm, Exam, Terms
+from Term.models import CurrentTerm, Exam, Grade, Terms
 from django.contrib.messages import success,error
 from Users.models import AcademicProfile, MyUser
 # Create your views here.
@@ -101,7 +101,8 @@ class TermInfo(TemplateView):
 
 
 def test_exam():
-    users = AcademicProfile.objects.filter(current_class__grade=4)
+    grade = Grade.objects.all().first()
+    users = AcademicProfile.objects.filter(current_class__grade=grade)
     # user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     # subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # term = models.ForeignKey(Terms, on_delete=models.CASCADE)
