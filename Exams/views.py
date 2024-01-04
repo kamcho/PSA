@@ -54,9 +54,7 @@ class Exams(LoginRequiredMixin, IsStudent, TemplateView):
             my_class_tests = class_subject_counts.order_by('test__subject__id')
 
             # Retrieve KNEC test data
-            knec_tests = StudentKNECExams.objects.filter(user=user)
-            knec_subject_counts = knec_tests.values('test__subject__id')
-            my_knec_tests = knec_subject_counts.order_by('test__subject__id')
+            
 
             # Retrieve general test data
             general_tests = GeneralTest.objects.filter(user=user)
@@ -76,16 +74,13 @@ class Exams(LoginRequiredMixin, IsStudent, TemplateView):
                 for subject_id in my_class_tests:
                     subject_ids.append(subject_id['test__subject__id'])
 
-            if my_knec_tests:
-                for subject_id in my_knec_tests:
-                    subject_ids.append(subject_id['test__subject__id'])
+            
             # Convert the list of subject IDs to a set to remove duplicates
             subject_ids_set = set(subject_ids)
 
             # Count the total number of tests
             total_tests_count = (
                     topical_subject_counts.count() +
-                    knec_subject_counts.count() +
                     class_subject_counts.count() +
                     general_subject_counts.count()
             )
