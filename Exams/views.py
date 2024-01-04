@@ -53,7 +53,6 @@ class Exams(LoginRequiredMixin, IsStudent, TemplateView):
             class_subject_counts = class_tests.values('test__subject__id')
             my_class_tests = class_subject_counts.order_by('test__subject__id')
 
-            # Retrieve KNEC test data
             
 
             # Retrieve general test data
@@ -148,8 +147,6 @@ class ExamTopicView(LoginRequiredMixin, IsStudent, TemplateView):
             subject_tests = StudentTest.objects.filter(user=user, subject__id=subject_id) \
                 .values('topic__name').order_by('topic').distinct()
 
-            # Retrieve KNEC test data for the subject
-            knec_tests = StudentKNECExams.objects.filter(user=user, subject__id=subject_id)
 
             # Retrieve class test data for the subject, excluding a specific UUID
             class_tests = ClassTestStudentTest.objects.filter(user=user, test__subject__id=subject_id)
@@ -159,10 +156,9 @@ class ExamTopicView(LoginRequiredMixin, IsStudent, TemplateView):
 
             context['subject'] = subject_tests
             context['general'] = general_tests
-            context['tests'] = knec_tests
             context['class_tests'] = class_tests
             context['subject_name'] = self.kwargs['subject']
-            if not (subject_tests or knec_tests or class_tests):
+            if not (subject_tests or  class_tests):
                 messages.info(self.request, 'We could not find results matching your query.')
 
         except DatabaseError as e:
@@ -275,7 +271,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
         instance = self.kwargs['instance']
         try:
             test_uuid = uuid.UUID(test_uuid)  # Convert the string to a UUID object
-            if instance in ['Topical', 'KNECGradeExams', 'ClassTests', 'GeneralTest']:
+            if instance in ['Topical', 'ClassTests', 'GeneralTest']:
                 if instance == 'Topical':
 
 
@@ -296,11 +292,7 @@ class TestDetail(LoginRequiredMixin, IsStudent, TemplateView):
                     undone = test.quiz.exclude(id__in=uuid_strings)
                     context['undone'] = undone
 
-                elif instance == 'KNECGradeExams':
-
-                    model = 'StudentKNECExams'
-                    test = StudentKNECExams.objects.get(user=user, test=test_uuid)
-                    answers = StudentsKnecAnswers.objects.filter(user=user, test=test)
+                
 
                 elif instance == 'ClassTests':
 
@@ -574,7 +566,7 @@ class GeneralTestLobby(LoginRequiredMixin, IsStudent, TemplateView):
 
 def get_test_instance(user, instance, test_id):
     try:
-        instance_list = ['Topical', 'ClassTests', 'GeneralTest', 'KNECGradeExams']
+        instance_list = ['Topical', 'ClassTests', 'GeneralTest']
 
         test_id = uuid.UUID(test_id)
         if instance in instance_list:
@@ -591,9 +583,6 @@ def get_test_instance(user, instance, test_id):
                 questions = GeneralTest.objects.get(user=user, uuid=test_id)
                 instance_type = 'GeneralTest'
 
-            elif instance == 'KNECGradeExams':
-                questions = KNECGradeExams.objects.get(uuid=test_id)
-                instance_type = 'KNECGradeExams'
 
             return questions, instance_type
         else:
@@ -644,11 +633,8 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                         current_question = questions.quiz.all()[question_index]
                         self.request.session['quiz'] = str(current_question)
 
-                        if instance_type == 'KNECGradeExams':
-                            choices = KnecQuizAnswers.objects.filter(quiz=current_question)
-
-                        else:
-                            choices = TopicalQuizAnswers.objects.filter(quiz=current_question).order_by('?')
+                        
+                        choices = TopicalQuizAnswers.objects.filter(quiz=current_question).order_by('?')
                         correct_choice = choices.filter(is_correct=True)
                         print(choices.count())
                         if int(choices.count()) != 4 or correct_choice is None:
@@ -730,16 +716,12 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                     # instance_type = self.get_context_data().get('instance_type')
                     test, instance_type = get_test_instance(user, instance, test_id)
 
-                    if instance_type == 'KNECGradeExams':
-                        quiz = KnecQuizzes.objects.filter(id=request.session['quiz']).first()
-                        selection = KnecQuizAnswers.objects.filter(uuid=selection).first()
-                        correct = KnecQuizAnswers.objects.filter(uuid=selection.uuid, is_correct=True).first()
-                    else:
+                    
 
-                        quiz = TopicalQuizes.objects.filter(id=request.session['quiz']).first()
-                        selection = TopicalQuizAnswers.objects.filter(uuid=selection).first()
-                        correct = selection if selection.is_correct else None
-                        # correct = TopicalQuizAnswers.objects.filter(uuid=selection.uuid, is_correct=True).first()
+                    quiz = TopicalQuizes.objects.filter(id=request.session['quiz']).first()
+                    selection = TopicalQuizAnswers.objects.filter(uuid=selection).first()
+                    correct = selection if selection.is_correct else None
+                    # correct = TopicalQuizAnswers.objects.filter(uuid=selection.uuid, is_correct=True).first()
 
                     if correct:
                         if instance_type == 'ClassTests':
@@ -747,11 +729,7 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                             student_test.marks = int(student_test.marks) + 1
                             student_test.save()
                             is_correct = True
-                        elif instance_type == 'KNECGradeExams':
-                            student_test = StudentKNECExams.objects.get(user=user, test=test)
-                            student_test.marks = int(student_test.marks) + 1
-                            student_test.save()
-                            is_correct = True
+                        
 
 
                         else:
@@ -762,16 +740,11 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
                     else:
                         is_correct = False
 
-                    if instance_type == 'KNECGradeExams':
-                        test_uuid = StudentKNECExams.objects.get(user=user, test=test_id)
-                        answer = StudentsKnecAnswers.objects.create(user=user, quiz=quiz,
-                                                                    selection=selection,
-                                                                    is_correct=is_correct, test=test_uuid)
-                    else:
+                    
 
-                        answer = StudentsAnswers.objects.create(user=user, quiz=quiz, test_object_id=test.uuid,
-                                                                selection=selection,
-                                                                is_correct=is_correct)
+                    answer = StudentsAnswers.objects.create(user=user, quiz=quiz, test_object_id=test.uuid,
+                                                            selection=selection,
+                                                            is_correct=is_correct)
                     if question_index >= int(test_size) - 1:
                         # The exam is completed, redirect to a summary page
                         if 'index' in request.session:
@@ -898,19 +871,7 @@ class Finish(LoginRequiredMixin, IsStudent, TemplateView):
                     context['test'] = test
 
 
-            elif instance_type == 'KNECGradeExams':
-                about = 'Your results for this terms KNEC exams are out. Click the button below to view results.'
-                notifications = TopicalExamResults.objects.create(user=user, test=test.uuid, about=about,
-                                                                  message=message, subject=test.subject,
-                                                                  notification_type='knec-results',
-                                                                  )
-                marks = StudentKNECExams.objects.get(user=user, test=test_id)
-                context['score'] = marks.marks
-                context['test'] = marks
-                context['size'] = test.test_size
-                context['instance'] = instance_type
-                print(instance_type, test_id)
-
+            
         except Exception as e:
             messages.error(self.request, 'An error occurred. Do not be alarmed we have already saved your test.'
                                          ' You can view the results from Exam page')
@@ -1079,210 +1040,3 @@ class SetTest(LoginRequiredMixin, IsGuardian, TemplateView):
     
 
 
-class KNECExamView(LoginRequiredMixin, IsStudent, TemplateView):
-    """
-    View for displaying KNEC exams for a specific grade.
-    """
-    template_name = 'Exams/knec_exam_view.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        Get the context data for rendering the KNEC exam view page.
-
-        Args:
-            **kwargs: Keyword arguments from the URL, including 'grade'.
-
-        Returns:
-            dict: A dictionary containing context data for the template.
-        """
-        context = super(KNECExamView, self).get_context_data(**kwargs)
-        grade = self.kwargs['grade']
-
-        try:
-            # Attempt to retrieve the subjects for the specified grade
-            subjects = KNECGradeExams.objects.filter(grade=grade)
-            if not subjects:
-                messages.info(self.request, 'We could not find Tests matching your query!')
-
-            context['subjects'] = subjects
-            context['grade'] = grade
-
-        except Exception as e:
-            # Handle any exceptions that may occur
-            messages.error(self.request, 'An error occurred while fetching KNEC exams. We are fixing this issue.'
-                                         'Try again later.')
-            error_message = str(e)  # Get the error message as a string
-            error_type = type(e).__name__
-
-            logger.critical(
-                error_message,
-                exc_info=True,  # Include exception info in the log message
-                extra={
-                    'app_name': __name__,
-                    'url': self.request.get_full_path(),
-                    'school': settings.SCHOOL_ID,
-                    'error_type': error_type,
-                    'user': self.request.user,
-                    'level': 'Critical',
-                    'model': 'KNECGradeExams',
-
-                }
-            )
-
-        return context
-
-
-class KNECExamList(LoginRequiredMixin, IsStudent, TemplateView):
-    """
-    View for listing KNEC exams for a specific grade and subject.
-    """
-    template_name = 'Exams/knec_exam_list.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        Get the context data for rendering the KNEC exam list page.
-
-        Args:
-            **kwargs: Keyword arguments from the URL, including 'grade' and 'subject'.
-
-        Returns:
-            dict: A dictionary containing context data for the template.
-        """
-        context = super(KNECExamList, self).get_context_data(**kwargs)
-        grade = self.kwargs['grade']
-        subject = self.kwargs['subject']
-
-        try:
-            # Attempt to retrieve the KNEC exams for the specified grade and subject
-            exams = KNECGradeExams.objects.filter(grade=grade, subject__id=subject)
-
-            context['exams'] = exams
-            context['grade'] = grade
-            if not exams:
-                messages.info(self.request, 'There are no tests matching your query.')
-
-        except Exception as e:
-            # Handle any exceptions that may occur
-            messages.error(self.request, 'An error occurred while fetching KNEC exams. We are fixing this issue.'
-                                         'Try again later.')
-            error_message = str(e)  # Get the error message as a string
-            error_type = type(e).__name__
-
-            logger.critical(
-                error_message,
-                exc_info=True,  # Include exception info in the log message
-                extra={
-                    'app_name': __name__,
-                    'url': self.request.get_full_path(),
-                    'school': settings.SCHOOL_ID,
-                    'error_type': error_type,
-                    'user': self.request.user,
-                    'level': 'Critical',
-                    'model': 'KNECGradeExams',
-
-                }
-            )
-
-
-        return context
-
-
-class StartKnec(LoginRequiredMixin, IsStudent, TemplateView):
-    """
-    View for starting a KNEC exam.
-    """
-    template_name = 'Exams/start_knec.html'
-
-    def get_context_data(self, **kwargs):
-        """
-        Retrieve and prepare context data for rendering the exam start page.
-
-        Args:
-            **kwargs: Keyword arguments from the URL, including 'uuid' and 'grade'.
-
-        Returns:
-            dict: Context data for rendering the template.
-        """
-        context = super(StartKnec, self).get_context_data(**kwargs)
-        test_uuid = self.kwargs['uuid']
-        grade = self.kwargs['grade']
-
-        try:
-            # Attempt to retrieve the KNEC exam based on UUID and grade
-            test = KNECGradeExams.objects.get(uuid=test_uuid, grade=grade)
-            context['test'] = test
-
-        except Exception as e:
-            # Handle the case where no matching exam is found or multiple tests are found
-            messages.error(self.request, 'We could not process your request at this time. Please contact @support')
-            error_message = str(e)  # Get the error message as a string
-            error_type = type(e).__name__
-
-            logger.critical(
-                error_message,
-                exc_info=True,  # Include exception info in the log message
-                extra={
-                    'app_name': __name__,
-                    'url': self.request.get_full_path(),
-                    'school': settings.SCHOOL_ID,
-                    'error_type': error_type,
-                    'user': self.request.user,
-                    'level': 'Critical',
-                    'model': 'KNECGradeExams',
-
-                }
-            )
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        """
-        Handle the POST request to start a KNEC exam.
-
-        Args:
-            request (HttpRequest): The HTTP request object.
-            *args: Additional positional arguments.
-            **kwargs: Keyword arguments from the URL, including 'uuid' and 'grade'.
-
-        Returns:
-            HttpResponseRedirect: Redirects to the appropriate exam page.
-        """
-        if request.method == "POST":
-            user = self.request.user
-            test_uuid = self.kwargs['uuid']
-
-            try:
-                # Attempt to retrieve the KNEC exam based on UUID and grade
-                knec_test = self.get_context_data().get('test')
-                subject = Subject.objects.get(id=knec_test.subject.id)
-
-                # Create a StudentKNECExams object for the user
-                student_test = StudentKNECExams.objects.create(user=user, subject=subject, test=knec_test)
-
-                # Redirect to the KNEC exam page
-                return redirect('tests', 'KNECGradeExams', test_uuid)
-
-
-            except Exception as e:
-                # Handle no subject found
-                messages.error(request, 'There was an error starting this test. Please contact @support')
-                error_message = str(e)  # Get the error message as a string
-                error_type = type(e).__name__
-
-                logger.critical(
-                    error_message,
-                    exc_info=True,  # Include exception info in the log message
-                    extra={
-                        'app_name': __name__,
-                        'url': self.request.get_full_path(),
-                        'school': settings.SCHOOL_ID,
-                        'error_type': error_type,
-                        'user': self.request.user,
-                        'level': 'Critical',
-                        'model': 'StudentKNECExams',
-
-                    }
-                )
-
-        return redirect(request.get_full_path())  # Redirect to the appropriate page on error
-        
