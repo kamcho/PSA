@@ -64,6 +64,7 @@ class TermInfo(TemplateView):
         term_id = self.kwargs['term']
         term = Terms.objects.get(id=term_id)
         context['term'] = term
+        test_exam()
 
         return context 
     
@@ -72,6 +73,7 @@ class TermInfo(TemplateView):
             year = request.POST.get('year')
             term_ins = request.POST.get('term')
             starts_at = request.POST.get('start')
+            
             ends_at = request.POST.get('end')
             term_id = self.kwargs['term']
             term = Terms.objects.get(id=term_id)
@@ -99,7 +101,7 @@ class TermInfo(TemplateView):
 
 
 def test_exam():
-    users = AcademicProfile.objects.filter(current_class__grade=6)
+    users = AcademicProfile.objects.filter(current_class__grade=4)
     # user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     # subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # term = models.ForeignKey(Terms, on_delete=models.CASCADE)
@@ -111,6 +113,6 @@ def test_exam():
     for user in users:
         for subject in subjects:
             score = random.randint(43,100)
-            exam = Exam.objects.create(user=user,subject=subject, term=term, score=score, Comments='Good Job')
+            exam = Exam.objects.create(user=user.user,subject=subject, term=term.term, score=score, comments='Good Job')
 
     return None

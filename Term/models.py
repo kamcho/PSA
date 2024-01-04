@@ -43,6 +43,12 @@ class Exam(models.Model):
     def __str__(self):
         return str(self.user)
 
+
+class Grade(models.Model):
+    grade = models.PositiveIntegerField()
+
+    def __str__(self):
+            return str(self.grade)
 class ClassTermRanking(models.Model):
     term = models.ForeignKey(Terms, on_delete=models.CASCADE)
     class_id = models.ForeignKey(SchoolClass, on_delete=models.CASCADE)
