@@ -30,11 +30,11 @@
             <br>
             {% if media == 'text' %}
                 <div class="study-content">
-                    <embed src="{{ subject.file1.url }}" type="application/pdf" width="95%" height="800px">
+                    <embed src="{{subject.file1.url}}" type="application/pdf" width="95%" height="800px">
                 </div>
             {% else %}
                 <div class="study-content">
-                    <video src="{{ subject.file2.url }}" width="95%" preload="auto" controls>
+                    <video src="{{subject.file2.url}}" width="95%" preload="auto" controls>
                     </video>
                 </div>
             {% endif %}
@@ -42,13 +42,13 @@
     <br>
     {% if media == 'text' %}
         <div class="study-content">
-            <embed src="{{ subject.file1.url }}" type="application/pdf" width="95%" height="800px">
+            <embed src="{{subject.file1.url}}" type="application/pdf" width="95%" height="800px">
         </div>
 
     {% else %}
 
         <div class="study-content">
-            <video src="{{ subject.file2.url }}" width="95%" preload="auto" controls>
+            <video src="{{subject.file2.url}}" width="95%" preload="auto" controls>
               
             </video>
         </div>
