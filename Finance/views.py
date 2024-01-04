@@ -3,12 +3,10 @@ import logging
 from django.db import transaction
 
 import string
-from typing import Any
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Sum
 
-from msilib.schema import ListView
 import random
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
