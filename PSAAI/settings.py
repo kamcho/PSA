@@ -107,22 +107,22 @@ WSGI_APPLICATION = 'PSAAI.wsgi.application'
 # }
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "mydatabase.sqlite3",
-    }
-}
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'psaai',         # The name of your PostgreSQL database
-#         'USER': 'postgres',     # The PostgreSQL superuser
-#         'PASSWORD': '141778215aA',  # The password you set during PostgreSQL installation
-#         'HOST': 'localhost',    # The database server (in this case, it's your local machine)
-#         'PORT': '5432',             # Leave empty to use the default PostgreSQL port (5432)
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / "mydatabase.sqlite3",
 #     }
 # }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'psaai',         # The name of your PostgreSQL database
+        'USER': 'postgres',     # The PostgreSQL superuser
+        'PASSWORD': '141778215aA',  # The password you set during PostgreSQL installation
+        'HOST': 'localhost',    # The database server (in this case, it's your local machine)
+        'PORT': '5432',             # Leave empty to use the default PostgreSQL port (5432)
+    }
+}
 
 LOGGING = {
     'version': 1,
