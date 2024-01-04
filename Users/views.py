@@ -26,6 +26,8 @@ from rest_framework.views import APIView
 from .models import MyUser, AcademicProfile, PersonalProfile
 from .serializers import MyUserSerializer, AcademicProfileSerializer, PersonalProfileSerializer
 
+from django.contrib.auth.hashers import make_password
+
 class CreateUserView(APIView):
     def post(self, request, *args, **kwargs):
         user_data_list = request.data  # Assuming request.data is a list
@@ -34,6 +36,8 @@ class CreateUserView(APIView):
         for user_data in user_data_list:
             user_serializer = MyUserSerializer(data=user_data.get('user', {}))
             if user_serializer.is_valid():
+                user_data['user']['password'] = make_password(user_data['user']['password'])  # Hash the password
+                
                 user = user_serializer.save()
 
                 academic_profile_data = user_data.get('academic_profile', {})
@@ -64,6 +68,7 @@ class CreateUserView(APIView):
             return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'message': 'Users created successfully'})
+
     
 
 
