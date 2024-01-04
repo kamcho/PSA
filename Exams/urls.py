@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import Exams, ExamTopicView, KNECExamView, ExamSubjectDetail, TestDetail,\
-    StudentTestLobby, Tests, Finish, SetTest, KNECExamList, StartKnec, GeneralTestLobby
+from .views import Exams, ExamTopicView,  ExamSubjectDetail, TestDetail,\
+    StudentTestLobby, Tests, Finish, SetTest, GeneralTestLobby
 
 urlpatterns = [
 
@@ -13,8 +13,7 @@ urlpatterns = [
     path('<str:instance>/<str:uuid>/Quiz/', Tests.as_view(), name='tests'),
     path('<str:instance>/<str:uuid>/Finish/', Finish.as_view(), name='finish'),
     path('<str:mail>/<str:subject>/set-test/', SetTest.as_view(), name='set-test'),
-    path('KNEC/<str:grade>/', KNECExamView.as_view(), name='knec-exams'),
-    path('KNEC/<str:subject>/<str:grade>/', KNECExamList.as_view(), name='knec-exams-list'),
-    path('Knec/<str:grade>/<str:uuid>/Exam-lobby/', StartKnec.as_view(), name='knec-start')
+   
+   
 
 ]
