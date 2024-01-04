@@ -101,8 +101,8 @@ class TermInfo(TemplateView):
 
 
 def test_exam():
-    grade = Grade.objects.all().first()
-    users = AcademicProfile.objects.filter(current_class__grade=grade)
+
+    users = AcademicProfile.objects.filter(current_class__grade=6)
     # user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     # subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # term = models.ForeignKey(Terms, on_delete=models.CASCADE)

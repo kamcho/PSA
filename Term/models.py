@@ -48,6 +48,7 @@ class Grade(models.Model):
     grade = models.PositiveIntegerField()
 
     def __str__(self):
+        
         return str(self.grade)
     
 
