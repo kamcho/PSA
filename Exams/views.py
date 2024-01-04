@@ -96,7 +96,7 @@ class Exams(LoginRequiredMixin, IsStudent, TemplateView):
 
         except Exception as e:
             # Handle DatabaseError if needed
-            messages.error(self.request, 'An error occurred. We are fixing it!')
+            messages.error(self.request, f'{str(e)}')
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
