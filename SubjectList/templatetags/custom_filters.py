@@ -1,5 +1,6 @@
 import logging
 import math
+from django.db import DatabaseError
 from django.db.models import Count, F
 
 from django import template
@@ -116,8 +117,7 @@ def test_is_done(user, test_uuid):
     try:
         class_test = ClassTestStudentTest.objects.filter(user=user, test=test_uuid)
         student_test = StudentTest.objects.filter(user=user, uuid=test_uuid)
-        knec_test = StudentKNECExams.objects.filter(user=user, test=test_uuid)
-        if student_test or class_test or knec_test:
+        if student_test or class_test :
 
             return True
         else:
