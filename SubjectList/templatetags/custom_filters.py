@@ -247,15 +247,13 @@ def get_test_count(user, subject):
     if user is int:
         topical_tests = StudentTest.objects.filter(user=user, subject=subject).count()
         class_test = ClassTestStudentTest.objects.filter(user=user, test__subject=subject).count()
-        knec_test = StudentKNECExams.objects.filter(user=user, test__subject=subject).count()
         general_test = GeneralTest.objects.filter(user=user, subject=subject).count()
     else:
         topical_tests = StudentTest.objects.filter(user__email=user, subject=subject).count()
         class_test = ClassTestStudentTest.objects.filter(user__email=user, test__subject=subject).count()
-        knec_test = StudentKNECExams.objects.filter(user__email=user, test__subject=subject).count()
         general_test = GeneralTest.objects.filter(user__email=user, subject=subject).count()
 
-    return topical_tests + class_test + knec_test + general_test
+    return topical_tests + class_test  + general_test
 
 
 @register.filter
