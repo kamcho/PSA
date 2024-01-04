@@ -102,18 +102,24 @@ class TermInfo(TemplateView):
 
 def test_exam():
 
-    users = AcademicProfile.objects.filter(current_class__grade=6)
+    users = AcademicProfile.objects.filter(current_class__grade=5)
     # user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     # subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # term = models.ForeignKey(Terms, on_delete=models.CASCADE)
     # score = models.PositiveIntegerField()
     # comments = models.TextField(max_length=100)
-    subjects = Subject.objects.all()
+    subjects = Subject.objects.filter(grade=5)
     
-    term = CurrentTerm.objects.all().first()
+    # term = CurrentTerm.objects.all().first()
+    terms = Terms.objects.filter(year=2022)
+    # for user in users:
+    #     exams = Exam.objects.filter(user=user.user).delete()
+    #     print('ty')
+
     for user in users:
-        for subject in subjects:
-            score = random.randint(43,100)
-            exam = Exam.objects.create(user=user.user,subject=subject, term=term.term, score=score, comments='Good Job')
+        for term in terms:
+            for subject in subjects:
+                score = random.randint(43,100)
+                exam = Exam.objects.create(user=user.user,subject=subject, term=term, score=score, comments='Good Job')
 
     return None

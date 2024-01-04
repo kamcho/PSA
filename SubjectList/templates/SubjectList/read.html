@@ -30,9 +30,7 @@
             <br>
             {% if media == 'text' %}
                 <div class="study-content">
-                    <object data="{{ subject.file1.url }}" width="95%" height="800">
-                        Unsupported format
-                    </object>
+                    <embed src="{{ subject.file1.url }}" type="application/pdf" width="95%" height="800px">
                 </div>
             {% else %}
                 <div class="study-content">
@@ -43,11 +41,9 @@
     {% else %}
     <br>
     {% if media == 'text' %}
-    <div class="study-content">
-        <object data="{{ subject.file1.url }}" width="95%" height="800">
-            Unsupported format
-        </object>
-    </div>
+        <div class="study-content">
+            <embed src="{{ subject.file1.url }}" type="application/pdf" width="95%" height="800px">
+        </div>
 
     {% else %}
 
