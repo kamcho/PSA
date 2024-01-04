@@ -1,5 +1,4 @@
 from pyexpat import model
-from turtle import mode
 from django.db import models
 from SubjectList.models import Subject
 
