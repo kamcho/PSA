@@ -1,9 +1,7 @@
 import datetime
-import email
+
 from itertools import groupby
-from re import L
-from tkinter import N
-from typing import Any
+
 from urllib import request
 from django import contrib
 from django.db.models import F, IntegerField, Count, Sum

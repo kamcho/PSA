@@ -1,8 +1,5 @@
 import logging
-from pydoc_data import topics
-from re import sub
 from sqlite3 import IntegrityError
-from typing import Any
 import uuid
 from ElasticEmail.model.email_content import EmailContent
 from ElasticEmail.model.body_part import BodyPart
@@ -18,7 +15,6 @@ from django.db import DatabaseError
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.utils import timezone
-from numpy import delete
 from Exams.models import ClassTest, ClassTestStudentTest, StudentTest
 from SubjectList.models import Subject, Subtopic, Progress, TopicExamNotifications, Topic, TopicalExamResults, Course, \
      AccountInquiries
