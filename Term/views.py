@@ -1,3 +1,5 @@
+import random
+from tokenize import Comment
 from typing import Any
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
@@ -94,3 +96,21 @@ class TermInfo(TemplateView):
 
                 return redirect(request.get_full_path())
 
+
+
+def test_exam():
+    users = AcademicProfile.objects.filter(current_class__grade=6)
+    # user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    # subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    # term = models.ForeignKey(Terms, on_delete=models.CASCADE)
+    # score = models.PositiveIntegerField()
+    # comments = models.TextField(max_length=100)
+    subjects = Subject.objects.all()
+    
+    term = CurrentTerm.objects.all().first()
+    for user in users:
+        for subject in subjects:
+            score = random.randint(43,100)
+            exam = Exam.objects.create(user=user,subject=subject, term=term, score=score, Comments='Good Job')
+
+    return None

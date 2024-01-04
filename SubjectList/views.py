@@ -236,7 +236,6 @@ class Tests(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         excluded1= StudentTest.objects.filter(user=user).values('uuid')
-        print(excluded1)
         test1 = TopicExamNotifications.objects.filter(user=user).exclude(uuid__in=excluded1)
         academic_profile = AcademicProfile.objects.get(user=user)
         current_class = academic_profile.current_class
@@ -249,6 +248,8 @@ class Tests(LoginRequiredMixin, TemplateView):
         else:
             messages.error(self.request, 'You have not set your grade. Contact @support')
             assignments = []
+        if not test1 or assignments:
+            messages.info(self.request, 'You do not have any undone tests.')
 
         context['tests'] = list(test1) + list(assignments)
 
