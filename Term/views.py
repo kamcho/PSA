@@ -106,7 +106,7 @@ def test_exam():
 
 
     for user in users:
-        ran = random.randint(300, 60000)
+        ran = random.randint(-69300, 60000)
         prof = StudentsFeeAccount.objects.create(user=user, balance=ran)
 
 

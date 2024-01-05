@@ -1,3 +1,5 @@
 */migrations/
 *.sqlite3
+*.mp4
+*.pdf
 mydatabase.sqlite3
