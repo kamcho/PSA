@@ -1,8 +1,10 @@
 import datetime
+import email
 
 from itertools import groupby
-
 from urllib import request
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
 from django import contrib
 from django.db.models import F, IntegerField, Count, Sum
 from django.core.exceptions import ObjectDoesNotExist
@@ -230,7 +232,7 @@ class TeachersFinancials(TemplateView):
         return context
 
 
-class StudentProfile(TemplateView):
+class StudentProfile(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/students_profile.html'
 
     def get_context_data(self, **kwargs):
@@ -238,9 +240,17 @@ class StudentProfile(TemplateView):
         email = self.kwargs['email']
         user  = MyUser.objects.get(email=email)
         subjects = Subject.objects.filter(grade=4)
-        
         context['subjects'] = subjects
         context['user'] = user
+        if self.request.user.role == 'Student':
+            # get the current logged in user(learner) current grade and associated Subjects
+            context['base_html'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
         return context
     
 
@@ -882,3 +892,28 @@ class SchoolTaskSelect(TemplateView):
             messages.error(self.request, 'An error occurred were fixing it')
 
         return context
+
+
+class ManageClassTeacher(TemplateView):
+    template_name = 'Supervisor/class_teacher.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        classes = SchoolClass.objects.all()
+        teachers = MyUser.objects.filter(role='Teacher')
+        context['classes'] = classes
+        context['teachers'] = teachers
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            class_id = self.request.POST.get('class')
+            teacher = self.request.POST.get('user')
+            teacher = MyUser.objects.get(email=teacher)
+            class_instance = SchoolClass.objects.get(class_id=class_id)
+            class_instance.class_teacher = teacher
+            class_instance.save()
+            messages.success(self.request, f'{teacher} is now class teacher of {class_instance.class_name}')
+
+            return redirect(self.request.get_full_path())

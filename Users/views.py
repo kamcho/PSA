@@ -1,3 +1,4 @@
+from typing import Any
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.conf import settings
@@ -5,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.db.models import Count
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import TemplateView
 from SubjectList.models import Progress, Topic
 
@@ -37,7 +38,7 @@ class CreateUserView(APIView):
             user_serializer = MyUserSerializer(data=user_data.get('user', {}))
             if user_serializer.is_valid():
                 user_data['user']['password'] = make_password(user_data['user']['password'])  # Hash the password
-                
+
                 user = user_serializer.save()
 
                 academic_profile_data = user_data.get('academic_profile', {})
@@ -351,6 +352,26 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     """
     template_name = 'Users/edit_profile.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            if self.request.user.role == 'Student':
+                # get the current logged in user(learner) current grade and associated Subjects
+                context['base_html'] = 'Users/base.html'
+            elif self.request.user.role == 'Guardian':
+                context['base_html'] = 'Guardian/baseg.html'
+            elif self.request.user.role == 'Teacher':
+                context['base_html'] = 'Teacher/teachers_base.html'
+            elif self.request.user.role == 'Supervisor':
+                context['base_html'] = 'Supervisor/base.html'
+
+        except:
+            context['base_html'] = 'Users/base.html'
+            messages.error(self.request, 'Not logged in')
+
+
+        return context
+
     def post(self, request, **kwargs):
         if request.method == 'POST':
             f_name = request.POST.get('f_name').lower()
@@ -361,6 +382,9 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
             try:
                 # Get user's profile for editing
+                if self.request.user.role == 'Admin':
+                    messages.error(self.request, 'You can only use the admin interface')
+                    return redirect('logout')
                 if f_name and l_name and surname:
                     finish_profile_setup(user=user, f_name=f_name, l_name=l_name, surname=surname, phone=phone)
 
@@ -421,6 +445,21 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return profile.user == user  # Check if the profile belongs to the logged-in user
 
 
+def rout(request):
+    try:
+        role = request.user.role
+        if role == 'Guardian':
+            return redirect('guardian-home')
+        elif role == 'Teacher':
+            return redirect('teacher-home')
+        elif role == 'Partner':
+            return redirect('partner-home')
+    except:
+        redirect('logout')
+
+    return redirect('login') # red
+
+
 class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     """
     Home view for the Student's dashboard.
@@ -435,6 +474,7 @@ class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         try:
             # Retrieve the user's last viewed subject from progress model
+            rolee = self.request.user.role
             user = self.request.user
             academic_profile = AcademicProfile.objects.get(user=user)
             progress_queryset = Progress.objects.filter(user=user)
@@ -534,11 +574,14 @@ class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         """
         Check if the user has the required role for accessing this view.
         """
-        role = self.request.user.role
-        if role == 'Guardian':
-            return redirect('guardian-home')
-        elif role == 'Teacher':
-            return redirect('teacher-home')
-        elif role == 'Partner':
-            return redirect('partner-home')
+        try:
+            role = self.request.user.role
+            if role == 'Guardian':
+                return redirect('guardian-home')
+            elif role == 'Teacher':
+                return redirect('teacher-home')
+            elif role == 'Partner':
+                return redirect('partner-home')
+        except:
+            redirect('login')
         

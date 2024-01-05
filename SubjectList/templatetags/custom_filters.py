@@ -394,7 +394,7 @@ def is_class_teacher(user):
 
         return str(classes)
     else:
-        return None
+        return " "
     
 
 
@@ -412,4 +412,10 @@ def get_subject_score(user, grade, subject, term):
     else:
         return 'Not Found'
     
+@register.filter
+def get_student_latest_score(user, subject):
+    exam = Exam.objects.filter(subject__id=subject).last()
+    score = exam.score
 
+
+    return score

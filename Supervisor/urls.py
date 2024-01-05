@@ -24,6 +24,7 @@ urlpatterns = [
     path('Classes/<str:class_id>/Ranking/', ClassStudentsRanking.as_view(), name='class-students-ranking'),
     path('tests/', TestTaskView.as_view(), name='test-type'),
     path('Knec-config/', KNECExamConfig.as_view(), name='knec-config'),
+    path('ManageClassTeacher/', ManageClassTeacher.as_view(), name='class-teacher'),
     path('<str:subject>/<str:uuid>/Add-Quiz/', KNECAddQuiz.as_view(), name='knec-add-quiz'),
     path('<str:subject>/<str:uuid>/Add-Selection/', KNECAddSelection.as_view(), name='knec-add-selection'),
     path('<str:subject>/<str:uuid>/Save-Question/', SaveQuiz.as_view(), name='save-knec-quiz'),

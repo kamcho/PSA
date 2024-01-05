@@ -1,0 +1,44 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br><br>
+
+<form method="post">
+    {% csrf_token %}
+<div class="container" >
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <select class="form-select" id="classInput" name="user" aria-label="Default select example" required>
+                {% for user in teachers %}
+                    <option value="{{ user.email }}">{{ user }}</option>
+                {% endfor %}
+              
+            </select>
+        </div>
+        <div class="col-md-6">
+            <select class="form-select" id="classInput" name="class" aria-label="Default select example" required>
+                {% for class in classes %}
+                    <option value="{{ class.class_id }}">{{ class }}</option>
+                {% endfor %}
+              
+            </select>
+        </div>
+    </div>
+
+    <br>
+   
+    <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+
+
+
+
+</div>
+
+
+{% endblock %}

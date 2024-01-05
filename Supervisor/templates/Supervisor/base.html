@@ -67,6 +67,11 @@
                     <i class="bi bi-clipboard-check" > </i>Course
                   </a>
                 </li>
+                <li>
+                  <a class="nav-link" href="{% url 'class-teacher' %}">
+                    <i class="bi bi-clipboard-check" > </i>Manage Class Teachers
+                  </a>
+                </li>
                 
             {% elif user.role == 'Finance' %}
               <li>
@@ -94,7 +99,7 @@
                   </a>
                 </li>
                 <li>
-                  <a class="nav-link" href="{% url 'profile' %}">
+                  <a class="nav-link" href="{% url 'update-profile' %}">
                     <i class="bi bi-person-circle" ></i>Profile
                   </a>
                 </li>
