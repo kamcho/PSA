@@ -6,7 +6,7 @@ from django.views.generic import TemplateView
 from SubjectList.models import Subject
 from Term.models import CurrentTerm, Exam, Grade, Terms
 from django.contrib.messages import success,error
-from Users.models import AcademicProfile, MyUser
+from Users.models import AcademicProfile, MyUser, StudentsFeeAccount
 # Create your views here.
 
 
@@ -64,7 +64,7 @@ class TermInfo(TemplateView):
         term_id = self.kwargs['term']
         term = Terms.objects.get(id=term_id)
         context['term'] = term
-        test_exam()
+        # test_exam()
 
         return context 
     
@@ -102,24 +102,12 @@ class TermInfo(TemplateView):
 
 def test_exam():
 
-    users = AcademicProfile.objects.filter(current_class__grade=5)
-    # user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    # subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    # term = models.ForeignKey(Terms, on_delete=models.CASCADE)
-    # score = models.PositiveIntegerField()
-    # comments = models.TextField(max_length=100)
-    subjects = Subject.objects.filter(grade=5)
-    
-    # term = CurrentTerm.objects.all().first()
-    terms = Terms.objects.filter(year=2022)
-    # for user in users:
-    #     exams = Exam.objects.filter(user=user.user).delete()
-    #     print('ty')
+    users = MyUser.objects.all()
+
 
     for user in users:
-        for term in terms:
-            for subject in subjects:
-                score = random.randint(43,100)
-                exam = Exam.objects.create(user=user.user,subject=subject, term=term, score=score, comments='Good Job')
+        ran = random.randint(300, 60000)
+        prof = StudentsFeeAccount.objects.create(user=user, balance=ran)
+
 
     return None

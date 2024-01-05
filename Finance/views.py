@@ -1185,7 +1185,7 @@ class SchoolFeesBalance(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
         try:
-            profiles = StudentsFeeAccount.objects.filter(balance__lt=0)
+            profiles = StudentsFeeAccount.objects.filter(balance__lt=50000)
             balances = profiles.aggregate(balances=Sum('balance'))['balances']
             
             context['balance'] = balances

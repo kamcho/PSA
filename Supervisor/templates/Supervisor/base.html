@@ -54,17 +54,17 @@
               {% if user.role == 'Supervisor' %}
                 <li>
                   <a class="nav-link" href="{% url 'supervisor-home' %}">
-                    <i class="bi bi-house" style="color:white;"></i>Home
+                    <i class="bi bi-house" style=""> </i>Home
                   </a>
                 </li>
                 <li>
                   <a class="nav-link" href="{% url 'admin-dashboard' %}">
-                    <i class="bi bi-clipboard-check" style="color:white;"> </i>Admin
+                    <i class="bi bi-speedometer2" style=""> </i>Admin
                   </a>
                 </li>
                 <li>
                   <a class="nav-link" href="{% url 'create-course' %}">
-                    <i class="bi bi-clipboard-check" > </i>Course
+                    <i class="bi bi-layout-sidebar-inset" > </i>Course
                   </a>
                 </li>
                 <li>
@@ -82,25 +82,25 @@
 
               <li>
                 <a class="nav-link" href="{% url 'salary-payment' %}">
-                  <i class="bi bi-cash" > </i>Salaries
+                  <i class="bi bi-wallet2" > </i>Salaries
                 </a>
               </li>
 
               <li>
                 <a class="nav-link" href="{% url 'create-invoice' %}">
-                  <i class="bi bi-cash" > </i>Create Invoice
+                  <i class="bi bi-plus" > </i>Create Invoice
                 </a>
               </li>
 
             {% endif %}
                 <li>
                   <a class="nav-link" href="{% url 'school-fees-balances' %}">
-                    <i class="bi bi-person-circle" > </i>Balances
+                    <i class="bi bi-wallet2" > </i>Balances
                   </a>
                 </li>
                 <li>
                   <a class="nav-link" href="{% url 'update-profile' %}">
-                    <i class="bi bi-person-circle" ></i>Profile
+                    <i class="bi bi-person-circle" > </i>Profile
                   </a>
                 </li>
 
@@ -108,7 +108,8 @@
 
 
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}"><i class="bi bi-box-arrow-left" style="color:white;">
+              <a class="nav-link" href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-left" >
                 </i>Sign out</a>
             </li>
 
@@ -121,11 +122,13 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'register' %}">Sign Up</a>
             </li>
-            {% endif %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'password-reset' %}"><i class="bi bi-x-octagon" style="color:white;">
+              <a class="nav-link" href="{% url 'password-reset' %}">
+                <i class="bi bi-x-octagon" style="">
                 </i>Reset</a>
             </li>
+            {% endif %}
+            
           </ul>
 
         </div>

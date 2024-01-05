@@ -18,6 +18,7 @@
         <h5 >{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h5>
         {% if user.role == 'Student' %}
             <a class="btn btn-info" href="{% url 'update-profile' %}">Edit Profile</a>
+        {% else %}
         {% endif %}
     </div>
     

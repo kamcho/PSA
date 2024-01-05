@@ -247,5 +247,7 @@ AWS_S3_ADDRESSING_STYLE = "virtual"
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_EXPIRY = 60 * 60 * 24 * 7
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+# settings.py
+DATA_UPLOAD_MAX_MEMORY_SIZE = 105 * 1024 * 1024  # 25 MB (adjust as needed)
 
 # MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, 'media')

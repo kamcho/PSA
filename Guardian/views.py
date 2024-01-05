@@ -63,7 +63,7 @@ class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
 
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
-            return redirect('profile')
+            return redirect('update-profile')
 
 
 
@@ -236,10 +236,7 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             my_class_tests = class_subject_counts.order_by('test__subject__id')
 
             # Retrieve KNEC test data
-            knec_tests = StudentKNECExams.objects.filter(user=user)
-            knec_subject_counts = knec_tests.values('test__subject__id')
-            my_knec_tests = knec_subject_counts.order_by('test__subject__id')
-
+            
             # Retrieve general test data
             general_tests = GeneralTest.objects.filter(user=user)
             general_subject_counts = general_tests.values('subject__id')
@@ -258,26 +255,21 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 for subject_id in my_class_tests:
                     subject_ids.append(subject_id['test__subject__id'])
 
-            if my_knec_tests:
-                for subject_id in my_knec_tests:
-                    subject_ids.append(subject_id['test__subject__id'])
+            
             # Convert the list of subject IDs to a set to remove duplicates
             subject_ids_set = set(subject_ids)
 
             # Count the total number of tests
             total_tests_count = (
                     topical_subject_counts.count() +
-                    knec_subject_counts.count() +
+                   
                     class_subject_counts.count() +
                     general_subject_counts.count()
             )
 
             # Retrieve the Subject objects with the common subject IDs
             subjects = Subject.objects.filter(id__in=subject_ids_set)
-            if self.request.user.role == 'Guardian':
-                context['base_html'] = 'Guardian/baseg.html'
-            elif self.request.user.role == 'Teacher':
-                context['base_html'] = 'Teacher/teachers_base.html'
+            
 
             context['test_count'] = total_tests_count
             context['subjects'] = subjects
@@ -304,6 +296,11 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
                 }
             )
+
+        if self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
 
         return context
 
