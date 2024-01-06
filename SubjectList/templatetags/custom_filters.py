@@ -23,8 +23,21 @@ logger = logging.getLogger('django')
 def divide(value, arg):
     try:
         value = int(value)
+        arg = int(arg)
         return round((value / arg) * 100)
     except (ValueError, ZeroDivisionError):
+        return 0
+    
+@register.filter
+def progress(subject_id, count):
+    try:
+        subtopics = Subtopic.objects.filter(subject__id=subject_id).count()
+        print(subtopics, count)
+        progress = (count / subtopics) * 100
+        progress = round(progress, 0)
+        return progress
+    except Exception as e:
+        print(str(e))
         return 0
 
 
@@ -34,8 +47,9 @@ def get_user_progress_topic(user, subject):
     progress = Progress.objects.filter(user=user, subject=subject).last()
     if progress:
         try:
-            current_subtopic = Subtopic.objects.get(name=progress.subtopic)
-            return current_subtopic
+            current_subtopic = progress.subtopic.last()  # Get the latest subtopic
+            if current_subtopic:
+                return current_subtopic
 
         except Subtopic.DoesNotExist:
             try:

@@ -104,6 +104,9 @@
             <h6>Subject</h6>
           </th>
           <th>
+            <h6>Grade</h6>
+          </th>
+          <th>
             <h6>Topics</h6>
           </th>
           <th>
@@ -118,13 +121,20 @@
         {% for subject in subjects %}
         <tr>
           <td>{{ subject.subject__name }}</td>
-          <td>{{ subject.topic_count }} / {{ subject.subject__topics }}</td>
+          <td>{{ subject.subject__grade }}</td>
+          <td>{{ subject.subtopic_count }} / {{ subject.subject__topics }}</td>
           <td>
             <div class="progress">
               <div class="progress-bar" role="progressbar"
-                style="width: {{ subject.topic_count|divide:subject.subject__topics }}%;background-color: purple;"
-                aria-valuenow="63" aria-valuemin="0" aria-valuemax="100">
-                {{ subject.topic_count|divide:subject.subject__topics }}%
+              {% with subject.subject__id|progress:subject.subtopic_count as progressive  %}
+                {% if progressive < 50 %}
+                  style="width: {{ progressive }}%;background-color:crimson "
+                {% else %}
+                  style="width: {{ progressive }}%;background-color: aqua;  color:black;"
+                {% endif %}
+                  aria-valuenow="63" aria-valuemin="0" aria-valuemax="100">
+                  {{ progressive }}%
+              {% endwith %}
               </div>
             </div>
           </td>

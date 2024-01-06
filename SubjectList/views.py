@@ -1,5 +1,4 @@
 import logging
-from sqlite3 import IntegrityError
 import uuid
 from ElasticEmail.model.email_content import EmailContent
 from ElasticEmail.model.body_part import BodyPart
@@ -11,7 +10,7 @@ from ElasticEmail.model.email_recipient import EmailRecipient
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.db import DatabaseError
+from django.db import DatabaseError, IntegrityError
 from django.db.models import Count
 from django.shortcuts import redirect
 from django.utils import timezone
@@ -24,7 +23,7 @@ from django.views.generic import TemplateView
 
 logger = logging.getLogger('django')
 
-class CreateCourse(TemplateView):
+class CreateCourse(LoginRequiredMixin, TemplateView):
     template_name = 'SubjectList/create_course.html'
 
     def get_context_data(self, **kwargs) :
@@ -40,11 +39,11 @@ class CreateCourse(TemplateView):
             try:
                 course = Course.objects.create(name=name, discipline=discipline)
             except IntegrityError:
-                messages.error(self.request, 'Subject Already Exists !!')
+                messages.error(self.request, 'Course Already Exists !!')
 
             return redirect(self.request.get_full_path())
         
-class ManageCourse(TemplateView):
+class ManageCourse(LoginRequiredMixin, TemplateView):
     template_name = 'SubjectList/manage_course.html'
 
     def get_context_data(self, **kwargs) :
@@ -75,7 +74,7 @@ class ManageCourse(TemplateView):
 
                 return redirect(self.request.get_full_path())
             
-class ManageSubject(TemplateView):
+class ManageSubject(LoginRequiredMixin, TemplateView):
     template_name = 'SubjectList/manage_subject.html'
 
     def get_context_data(self, **kwargs) :
@@ -108,7 +107,7 @@ class ManageSubject(TemplateView):
 
                 return redirect(self.request.get_full_path())
 
-class ManageTopic(TemplateView):
+class ManageTopic(LoginRequiredMixin, TemplateView):
     template_name = 'SubjectList/manage_topic.html'
 
     def get_context_data(self, **kwargs) :
@@ -140,7 +139,7 @@ class ManageTopic(TemplateView):
 
                 return redirect(self.request.get_full_path())
 
-class ManageSubTopic(TemplateView):
+class ManageSubTopic(LoginRequiredMixin, TemplateView):
     template_name = 'SubjectList/manage_subtopic.html'
 
     def get_context_data(self, **kwargs) :
@@ -229,7 +228,7 @@ def send_mail(user, subject, body):
 
 
 
-class Tests(LoginRequiredMixin, TemplateView):
+class Tests(LoginRequiredMixin, IsStudent, TemplateView):
     template_name = 'SubjectList/tests.html'
 
     def get_context_data(self, **kwargs):
@@ -256,6 +255,8 @@ class Tests(LoginRequiredMixin, TemplateView):
 
         # Fetch assignments for the current class
         return context
+    
+
 class Learning(LoginRequiredMixin, IsStudent, TemplateView):
     """
     View to display subjects by grade for learning.
@@ -426,7 +427,7 @@ class Read(LoginRequiredMixin, TemplateView):
         return context
 
 
-class MediaSelect(TemplateView):
+class MediaSelect(LoginRequiredMixin, TemplateView):
     template_name = 'SubjectList/media.html'
 
     def get_context_data(self, **kwargs):
@@ -457,7 +458,7 @@ class MediaSelect(TemplateView):
         return context
 
 
-class Finish(IsStudent, LoginRequiredMixin, TemplateView):
+class Finish(LoginRequiredMixin, IsStudent, TemplateView):
     """
     Save user's learning progress.
     """
@@ -782,7 +783,7 @@ class Syllabus(LoginRequiredMixin, TemplateView):
         return context
 
 
-class Assignment(IsStudent, LoginRequiredMixin, TemplateView):
+class Assignment(LoginRequiredMixin, IsStudent, TemplateView):
     """
     View for viewing assignments based on the current class of the user.
     """

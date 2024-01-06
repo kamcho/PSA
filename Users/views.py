@@ -448,19 +448,20 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 def rout(request):
     try:
         role = request.user.role
+
         if role == 'Guardian':
             return redirect('guardian-home')
         elif role == 'Teacher':
             return redirect('teacher-home')
         elif role == 'Partner':
             return redirect('partner-home')
+        elif role in ['Finance', 'Supervisor']:
+            return redirect('supervisor-home')
     except:
         redirect('logout')
 
-    return redirect('login') # red
 
-
-class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+class StudentsHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     """
     Home view for the Student's dashboard.
     Displays the user's progress and related information.
@@ -474,7 +475,6 @@ class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         try:
             # Retrieve the user's last viewed subject from progress model
-            rolee = self.request.user.role
             user = self.request.user
             academic_profile = AcademicProfile.objects.get(user=user)
             progress_queryset = Progress.objects.filter(user=user)
@@ -491,7 +491,7 @@ class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
                 # Retrieve subjects and related information for the user
                 subject = progress_queryset.filter(subject__isnull=False) \
-                    .values('subject__name', 'subject__topics').annotate(topic_count=Count('topic', distinct=True))
+                    .values('subject__name', 'subject__id','subject__grade','subject__topics', 'subject__topics').annotate(subtopic_count=Count('subtopic', distinct=True))
 
                 # Populate the context with data
                 context['next'] = next_topic
@@ -541,7 +541,7 @@ class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         except Exception as e:
             context['grade'] = 4
 
-            messages.error(self.request, 'An error occurred. Please contact @support')
+            messages.error(self.request, f' {str(e)} An error occurred. Please contact @support')
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
@@ -566,22 +566,11 @@ class Home(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return context
     
     def test_func(self):
-        role = self.request.user.role
-
-        return role == 'Student'
-
-    def handle_no_permission(self):
-        """
-        Check if the user has the required role for accessing this view.
-        """
         try:
             role = self.request.user.role
-            if role == 'Guardian':
-                return redirect('guardian-home')
-            elif role == 'Teacher':
-                return redirect('teacher-home')
-            elif role == 'Partner':
-                return redirect('partner-home')
+            return role == 'Student'        
         except:
-            redirect('login')
+            return False
+
+    
         

@@ -4,9 +4,9 @@
 
 <br><br><br><br>
 <div class="container">
-    {% if profiles %}
-    Add negative sign (-) to query students with fee balances.
-    <br><br>
+  Add negative sign (-) to query students with fee balances.
+
+  <br><br>
     <form  method="post">
         {% csrf_token %}
        <div class="input-group mb-3">
@@ -22,13 +22,15 @@
        </div>
         </form>
         <br>
+    {% if profiles %}
+    
 <table class="table">
   <caption>
     Fee Total Balances {{ balance }}
     <br>
     Query Total Balance {{ query_balance }}
   </caption>
-    <thead>
+    <thead >
       <tr>
         <th><h6><input type="checkbox"></h6></th>
         <th><h6>Id</h6></th>
@@ -68,7 +70,6 @@
     </tbody>
  </table>
 {% else %}
-No profiles
 {% endif %}
 </div>
  {% endblock %}

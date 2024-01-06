@@ -249,7 +249,7 @@ class StudentProfile(LoginRequiredMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
-        elif self.request.user.role == 'Supervisor':
+        elif self.request.user.role in ['Supervisor', 'Finance']:
             context['base_html'] = 'Supervisor/base.html'
         return context
     

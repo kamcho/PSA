@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from .views import CreateUserView, RegisterView, MyProfile, Home, LoginRedirect, FinishSetup, Login, StaticViewSitemap
+from .views import CreateUserView, RegisterView, MyProfile, StudentsHome, LoginRedirect, FinishSetup, Login, StaticViewSitemap
 from django.contrib.sitemaps.views import sitemap
 
 from Users import views
@@ -14,7 +14,7 @@ urlpatterns = [
     path('create_user/', CreateUserView.as_view(), name='create_user'),
     path('Profile/', MyProfile.as_view(), name='update-profile'),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('Student/', Home.as_view(), name='student-home'),
+    path('Student/', StudentsHome.as_view(), name='student-home'),
     path('', views.rout, name='rout'),
     path('login-Redirect/', LoginRedirect.as_view(), name='redirect'),
     path('Profile-Set-Up/', FinishSetup.as_view(), name='edit-profile'),
