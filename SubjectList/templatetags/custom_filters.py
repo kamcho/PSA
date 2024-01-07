@@ -433,3 +433,8 @@ def get_student_latest_score(user, subject):
 
 
     return score
+
+
+@register.filter
+def subject_analytics(subject_id):
+    pass

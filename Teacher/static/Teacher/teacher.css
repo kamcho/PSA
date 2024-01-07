@@ -3,6 +3,15 @@
     grid-template-columns: 20% 30% 8%;
     padding-top:10px;
 }
+.analytic-card{
+    width: 93%;
+    height: 200px;
+    border-radius: 5px;
+    padding:15px;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.2);
+    /* background-color:rgba(29, 25, 46, .9) !important; */
+
+}
 .teacher-home-view{
     display:grid;
     grid-template-columns: repeat(3, .5fr);

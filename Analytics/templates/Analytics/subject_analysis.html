@@ -1,0 +1,100 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filters %}
+
+{% block content %}
+<br><br><br><br>
+<div class="container">
+
+    <div>
+        <h5>{{ subject.name }} {{ subject.grade }}</h5>
+    </div>
+    <br><br><br><br>
+
+    <div class="class-subject-view">
+        <a>
+            <div class="analytic-card">
+                <div class="analytic-title">
+                    Subject Average
+                    <br>
+                    <h6>Mean {{ mean }}%</h6>
+                    
+    
+                </div>
+    
+            </div>
+        </a>
+
+        <a>
+            <div class="analytic-card">
+                <div class="analytic-title">
+                    Most Failed
+
+                    <h6>{{ most_failed.topic_name }}</h6>
+                    <h6>Average {{ most_failed.failed_questions_count }}</h6>
+    
+                </div>
+    
+            </div>
+        </a>
+
+        <a>
+            <div class="analytic-card">
+                <div class="analytic-title">
+                    Most Passed
+
+                    <h6>Living Things</h6>
+                    <h6>Average 46 %</h6>
+    
+                </div>
+    
+            </div>
+        </a>
+
+        <a>
+            <div class="analytic-card">
+                <div class="analytic-title">
+                    Most Passed
+    
+                </div>
+    
+            </div>
+        </a>
+
+ 
+
+    {% for topic in topics %}
+
+        <a>
+            <div class="analytic-card">
+                <div class="analytic-title">
+                    {{ topic.name }}
+
+                    <div>
+                        Mean - 76 %
+                    </div>
+
+                </div>
+
+            </div>
+        </a>
+
+
+
+
+    {% endfor %}
+</div>
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+{% endblock %}

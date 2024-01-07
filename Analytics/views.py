@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from django.conf import settings
 from django.contrib import messages
@@ -153,3 +154,54 @@ class SubjectAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
 
 
         return context
+
+
+class SubjectView(LoginRequiredMixin, TemplateView):
+    template_name = 'Analytics/subject_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        grade = self.kwargs['grade']
+        subjects = Subject.objects.filter(grade=grade)
+        context['subjects'] = subjects
+
+        return  context
+    
+class SubjectAnalysis(LoginRequiredMixin, TemplateView):
+    template_name = 'Analytics/subject_analysis.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id = self.kwargs['id']
+        subject = Subject.objects.get(id=id)
+        context['subject'] = subject
+        topics = Topic.objects.filter(subject__id=id)
+        context['topics'] = topics
+
+        correct = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=True)
+        failed = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=False)
+        if failed:
+            max_failures_topic = max(failed, key=lambda x: x['failures_count'])
+            topic_id_with_highest_failures = max_failures_topic['quiz__topic']
+            
+            # Retrieve the Topic object
+            topic_with_highest_failures = Topic.objects.get(id=topic_id_with_highest_failures)
+
+            # Create a dictionary with topic name and number of failed questions
+            result_dict = {
+                'topic_name': topic_with_highest_failures.name,
+                'failed_questions_count': max_failures_topic['failures_count']
+            }
+
+            context['most_failed'] = result_dict
+        else:
+            context['most_failed'] = {'topic_name':'Not Available', 'failed_questions_count':'Not Available'}
+        
+        if failed.count() != 0:
+            mean = (correct.count() / failed.count()) * 100
+            mean = round(mean, 2)
+            context['mean'] = mean
+        else:
+            context['mean'] = 0
+
+        return  context
