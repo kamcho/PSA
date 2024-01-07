@@ -181,27 +181,54 @@ class SubjectAnalysis(LoginRequiredMixin, TemplateView):
         correct = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=True)
         failed = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=False)
         if failed:
-            max_failures_topic = max(failed, key=lambda x: x['failures_count'])
-            topic_id_with_highest_failures = max_failures_topic['quiz__topic']
-            
-            # Retrieve the Topic object
-            topic_with_highest_failures = Topic.objects.get(id=topic_id_with_highest_failures)
-
-            # Create a dictionary with topic name and number of failed questions
-            result_dict = {
-                'topic_name': topic_with_highest_failures.name,
-                'failed_questions_count': max_failures_topic['failures_count']
-            }
-
-            context['most_failed'] = result_dict
-        else:
-            context['most_failed'] = {'topic_name':'Not Available', 'failed_questions_count':'Not Available'}
+            most_failed = get_most_failed(failed)
+            context['most_failed'] = most_failed
         
+        if correct:
+            most_passed = get_most_passed(correct)
+            context['most_passed'] = most_passed
+            
         if failed.count() != 0:
-            mean = (correct.count() / failed.count()) * 100
+            mean = (correct.count() / (failed.count() + correct.count())) * 100
             mean = round(mean, 2)
             context['mean'] = mean
         else:
             context['mean'] = 0
 
         return  context
+    
+
+
+def get_most_failed(failed):
+    fail = failed.values('quiz__topic').annotate(failures_count=Count('id'))
+    max_failures_topic = max(fail, key=lambda x: x['failures_count'])
+    topic_id_with_highest_failures = max_failures_topic['quiz__topic']
+    
+    # Retrieve the Topic object
+    topic_with_highest_failures = Topic.objects.get(id=topic_id_with_highest_failures) # Adjust as per your actual model structure
+
+    # Create a dictionary with topic name and number of failed questions
+    result_dict = {
+        'topic_name': topic_with_highest_failures.name,
+        'failed_questions_count': max_failures_topic['failures_count']
+    }
+
+
+    return result_dict
+
+def get_most_passed(passed):
+    fail = passed.values('quiz__topic').annotate(pass_count=Count('id'))
+    max_failures_topic = max(fail, key=lambda x: x['pass_count'])
+    topic_id_with_highest_failures = max_failures_topic['quiz__topic']
+    
+    # Retrieve the Topic object
+    topic_with_highest_failures = Topic.objects.get(id=topic_id_with_highest_failures) # Adjust as per your actual model structure
+
+    # Create a dictionary with topic name and number of failed questions
+    result_dict = {
+        'topic_name': topic_with_highest_failures.name,
+        'pass_questions_count': max_failures_topic['pass_count']
+    }
+
+
+    return result_dict

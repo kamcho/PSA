@@ -15,9 +15,22 @@
         <a>
             <div class="analytic-card">
                 <div class="analytic-title">
-                    Subject Average
-                    <br>
-                    <h6>Mean {{ mean }}%</h6>
+                    <div class="text-center">Subject Average</div>
+                    
+                 
+                    <div class="text-center" >
+                        <div style="margin: 0 auto !important;">
+                            <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgb(29, 25, 46) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ mean }}%, rgb(29, 25, 46) 0);">
+                                <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                                    
+                                </div>
+                            </div>
+                            
+                          </div>
+                        
+                        <small class="text-muted">Mean {{ mean }}%</small>
+                    </div>
+                    
                     
     
                 </div>
@@ -43,8 +56,8 @@
                 <div class="analytic-title">
                     Most Passed
 
-                    <h6>Living Things</h6>
-                    <h6>Average 46 %</h6>
+                    <h6>{{ most_passed.topic_name }}</h6>
+                    <h6>Average {{ most_passed.pass_questions_count }}</h6>
     
                 </div>
     
@@ -84,9 +97,6 @@
 
     {% endfor %}
 </div>
-
-
-
 
 
 
