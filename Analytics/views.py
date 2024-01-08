@@ -180,6 +180,9 @@ class SubjectAnalysis(LoginRequiredMixin, TemplateView):
 
         correct = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=True)
         failed = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=False)
+        context['total'] = correct.count() + failed.count()
+        context['correct'] = correct.count()
+        context['failed'] = failed.count()
         if failed:
             most_failed = get_most_failed(failed)
             context['most_failed'] = most_failed
@@ -210,6 +213,7 @@ def get_most_failed(failed):
     # Create a dictionary with topic name and number of failed questions
     result_dict = {
         'topic_name': topic_with_highest_failures.name,
+        'topic_id': topic_with_highest_failures.id,
         'failed_questions_count': max_failures_topic['failures_count']
     }
 
@@ -227,6 +231,7 @@ def get_most_passed(passed):
     # Create a dictionary with topic name and number of failed questions
     result_dict = {
         'topic_name': topic_with_highest_failures.name,
+        'topic_id': topic_with_highest_failures.id,
         'pass_questions_count': max_failures_topic['pass_count']
     }
 

@@ -8,10 +8,26 @@
 
     <div>
         <h5>{{ subject.name }} {{ subject.grade }}</h5>
+        <a class="btn btn-dark" style="color: white;" href="{% url 'questions' subject.id %}">View Questions</a>
     </div>
     <br><br><br><br>
 
     <div class="class-subject-view">
+        <a>
+            <div class="analytic-card">
+                <div class="analytic-title text-center">
+                    Most Passed
+
+                    <h6>Total Questions {{ total }}</h6>
+                    <h6>Passed Total {{ correct }}</h6>
+                    <h6>Failed Total {{ failed }}</h6>
+
+                   
+    
+                </div>
+    
+            </div>
+        </a>
         <a>
             <div class="analytic-card">
                 <div class="analytic-title">
@@ -19,8 +35,9 @@
                     
                  
                     <div class="text-center" >
+                        <br>
                         <div style="margin: 0 auto !important;">
-                            <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgb(29, 25, 46) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ mean }}%, rgb(29, 25, 46) 0);">
+                            <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ mean }}%, rgb(29, 25, 46) 0);">
                                 <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
                                     
                                 </div>
@@ -40,11 +57,23 @@
 
         <a>
             <div class="analytic-card">
-                <div class="analytic-title">
+                <div class="analytic-title text-center">
                     Most Failed
 
                     <h6>{{ most_failed.topic_name }}</h6>
-                    <h6>Average {{ most_failed.failed_questions_count }}</h6>
+                    <div style="margin: 0 auto !important;">
+                        <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ most_failed.topic_id|average_percentile:most_failed.failed_questions_count }}%, rgb(29, 25, 46) 0);">
+                            <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="text-center">
+                        <small class="text-muted">Average Fail {{ most_failed.topic_id|average_percentile:most_failed.failed_questions_count }}</small>
+                    </div>
+                    
     
                 </div>
     
@@ -53,26 +82,29 @@
 
         <a>
             <div class="analytic-card">
-                <div class="analytic-title">
+                <div class="analytic-title text-center">
                     Most Passed
 
                     <h6>{{ most_passed.topic_name }}</h6>
-                    <h6>Average {{ most_passed.pass_questions_count }}</h6>
+
+                    <div style="margin: 0 auto !important;">
+                        <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ most_passed.topic_id|average_percentile:most_passed.pass_questions_count }}%, rgb(29, 25, 46) 0);">
+                            <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="text-center">
+                        <small class="text-muted">Average {{ most_passed.topic_id|average_percentile:most_passed.pass_questions_count }}</small>
+                    </div>
     
                 </div>
     
             </div>
         </a>
 
-        <a>
-            <div class="analytic-card">
-                <div class="analytic-title">
-                    Most Passed
-    
-                </div>
-    
-            </div>
-        </a>
+        
 
  
 
@@ -80,11 +112,21 @@
 
         <a>
             <div class="analytic-card">
-                <div class="analytic-title">
+                <div class="analytic-title text-center">
                     {{ topic.name }}
+                    <br><br>
 
-                    <div>
-                        Mean - 76 %
+                    <div style="margin: 0 auto !important;">
+                        <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {% topic_percentile topic.id %}%, rgb(29, 25, 46) 0);">
+                            <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+
+                    <div class="text-muted">
+                        Mean - {% topic_percentile topic.id %} %
                     </div>
 
                 </div>

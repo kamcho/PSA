@@ -436,5 +436,20 @@ def get_student_latest_score(user, subject):
 
 
 @register.filter
-def subject_analytics(subject_id):
-    pass
+def average_percentile(topic, count):
+    answers = StudentsAnswers.objects.filter(quiz__topic__id=topic).count()
+    percentage = (count / answers) * 100
+    percentage = round(percentage, 2)
+    
+    return percentage
+
+@register.simple_tag
+def topic_percentile(topic):
+    answers = StudentsAnswers.objects.filter(quiz__topic__id=topic)
+    if answers.count() != 0:
+        passed = answers.filter(is_correct=True).count()
+        percentage = (passed / answers.count()) * 100
+        percentage = round(percentage, 2)
+        return percentage
+    else:
+        return 0

@@ -1,0 +1,35 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+    <br><br><br><br>
+
+
+
+    {% for quiz in questions %}
+
+
+        <p>{{ quiz.quiz }}</p>
+        <div class="text-muted" style="padding: 20px;">
+            <small>{{ quiz.topic }}</small> - <small>{{ quiz.subtopic }}</small>
+        </div>
+        
+
+
+    {% endfor %}
+    <br><br>
+
+
+
+
+
+
+
+
+
+
+</div>
+
+
+{% endblock %}

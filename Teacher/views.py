@@ -1273,3 +1273,14 @@ class AmClassTeacher(TemplateView):
 
 class Subscriptions(TemplateView):
     template_name = 'Teacher/subscriptions.html'
+
+class SubjectQuestionView(LoginRequiredMixin, TemplateView):
+    template_name = 'Teacher/questions_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        subject_id = self.kwargs['subject']
+        questions = TopicalQuizes.objects.filter(subject__id=subject_id)
+        context['questions'] = questions
+
+        return context
