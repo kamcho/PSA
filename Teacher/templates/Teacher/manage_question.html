@@ -1,0 +1,50 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+<div class="container">
+    <br><br><br><br>
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="quiz" name="quiz" id="floatingTextarea">{{ quiz.quiz }}</textarea>
+            <label for="floatingTextarea">Question</label>
+          </div>
+          <br>
+
+          {% for choice in choices %}
+            {% if choice.is_correct %}
+            <div class="form-floating">
+                <input class="form-control" placeholder="quiz" name="choice" value="{{ choice.choice }}">
+                <label for="floatingTextarea">Correct</label>
+            </div>
+            <br>
+            {% else %}
+            <div class="form-floating">
+                <input class="form-control" placeholder="quiz" name="choice" value="{{ choice.choice }}">
+                <label for="floatingTextarea">False</label>
+            </div>
+            <br>
+            {% endif %}
+
+      
+        {% endfor %}
+
+        <button class="btn btn-info" name="delete">Update</button> <button class="btn btn-danger" name="delete">Delete</button>
+
+
+
+
+
+
+
+
+
+
+
+    </form>
+</div>
+
+{% endblock %}

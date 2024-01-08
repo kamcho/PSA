@@ -448,9 +448,12 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 def rout(request):
     try:
         role = request.user.role
+        print(role)
 
         if role == 'Guardian':
             return redirect('guardian-home')
+        elif role == 'Student':
+            return redirect('student-home')
         elif role == 'Teacher':
             return redirect('teacher-home')
         elif role == 'Partner':
@@ -458,7 +461,7 @@ def rout(request):
         elif role in ['Finance', 'Supervisor']:
             return redirect('supervisor-home')
     except:
-        redirect('logout')
+        return redirect('logout')
 
 
 class StudentsHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):

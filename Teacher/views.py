@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Count
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from Exams.models import TopicalQuizes, TopicalQuizAnswers, StudentsAnswers, ClassTestStudentTest
 from SubjectList.models import Topic, Subtopic
@@ -1281,6 +1281,52 @@ class SubjectQuestionView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         subject_id = self.kwargs['subject']
         questions = TopicalQuizes.objects.filter(subject__id=subject_id)
+        topics = Topic.objects.filter(subject__id=subject_id)
+        subtopics = Subtopic.objects.filter(subject__id=subject_id)
+        context['topics'] = topics
+        context['subtopics'] = subtopics
         context['questions'] = questions
 
         return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            topic = self.request.POST.get('topic')
+            subtopic = self.request.POST.get('subtopic')
+            if subtopic:
+                
+
+                questions = TopicalQuizes.objects.filter(subtopic__id=subtopic)
+            else:
+                questions = TopicalQuizes.objects.filter(topic__id=topic)
+            context = {
+                'questions':questions,
+                'subtopics':self.get_context_data().get('subtopics'),
+                'topics':self.get_context_data().get('topics'),
+            }
+
+
+            return render(self.request, self.template_name, context)
+
+class ManageQuestion(LoginRequiredMixin, TemplateView):
+    template_name = 'Teacher/manage_question.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        question_id = self.kwargs['question']
+        question = TopicalQuizes.objects.get(id=question_id)
+        context['quiz'] = question
+        choices = TopicalQuizAnswers.objects.filter(quiz__id=question_id).distinct()
+        context['choices'] = choices
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            if 'delete' in self.request.POST:
+                dlete = self.get_context_data().get('quiz')
+                dlete.delete()
+                messages.success(self.request, 'SUCCESS!')
+
+
+        return redirect('questions',dlete.subject.id)

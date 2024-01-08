@@ -4,13 +4,38 @@
 
 <div class="container">
     <br><br><br><br>
-
+    <form method="post">
+        {% csrf_token %}
+    <div class="input-group mb-3">
+        <span class="input-group-text">Topic</span>
+        <select class="form-select" aria-label="Default select example" name="topic">
+            {% for topic in topics %}
+                <option value="{{ topic.id }}">{{ topic }}</option>
+            {% endfor %}
+          </select>
+    
+    
+            <span class="input-group-text">Subtopic</span>
+            <select class="form-select" aria-label="Default select example" name="subtopic">
+                <option value="" >Default</option>
+                {% for subtopic in subtopics %}
+                    <option value="{{ subtopic.id }}">{{ subtopic }}</option>
+                {% endfor %}
+              </select>
+            <button class="btn btn-warning" >Filter</button>
+       </div>
+        </form>
+        <br>
 
 
     {% for quiz in questions %}
+        
 
 
-        <p>{{ quiz.quiz }}</p>
+    <a href="{% url 'manage-questions' quiz.id %}">
+        <p>{{ forloop.counter }}). {{ quiz.quiz }}</p>
+    </a>    
+    
         <div class="text-muted" style="padding: 20px;">
             <small>{{ quiz.topic }}</small> - <small>{{ quiz.subtopic }}</small>
         </div>

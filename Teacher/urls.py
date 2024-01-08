@@ -30,5 +30,6 @@ urlpatterns = [
     path('Subscriptions/', Subscriptions.as_view(), name='subscriptions'),
     path('AMClassTeacher/', AmClassTeacher.as_view(), name='am-class-teacher'),
     path('<str:subject>/Questions/', SubjectQuestionView.as_view(), name='questions'),
+    path('<str:question>/Question/', ManageQuestion.as_view(), name='manage-questions'),
 
 ]
