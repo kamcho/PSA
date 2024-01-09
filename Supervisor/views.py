@@ -1,11 +1,9 @@
 import datetime
-import email
+from django.contrib.auth.hashers import make_password
 
 from itertools import groupby
-from urllib import request
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from django import contrib
 from django.db.models import F, IntegerField, Count, Sum
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -72,7 +70,7 @@ class CreateUser(TemplateView):
                 print(role,f_name)
                 if role == 'Student':
                     class_id = request.POST.get('class')
-                    user = MyUser.objects.create(email=email, role=role, password='defaultpwd')
+                    user = MyUser.objects.create(email=email, role=role, password=make_password('defaultpwd'))
                     profile = PersonalProfile.objects.get(user=user)
                     print(profile, '\n\n\n\n\n\n')
                     class_id = SchoolClass.objects.get(class_name=class_id)

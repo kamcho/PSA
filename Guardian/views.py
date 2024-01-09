@@ -110,7 +110,7 @@ class MyKidsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         return context
 
     def test_func(self):
-        return self.request.user.role in ['Guardian', 'Teacher']
+        return self.request.user.role in ['Guardian', 'Teacher', 'Supervisor']
 
 
 class TaskSelection(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
@@ -181,6 +181,8 @@ class TaskSelection(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
 
         return context
 
@@ -202,8 +204,9 @@ class TaskSelection(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
+        
 
         return False
 
@@ -217,6 +220,7 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(KidTests, self).get_context_data(**kwargs)
         user = self.kwargs['email']
+        grade = self.kwargs['grade']
         context['child'] = user
         user = MyUser.objects.get(email=user)
 
@@ -225,20 +229,19 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             subject_ids = []
 
             # Retrieve student test data
-            student_tests = StudentTest.objects.filter(user=user)
+            student_tests = StudentTest.objects.filter(user=user, subject__grade=grade)
             topical_subject_counts = student_tests.values('subject__id')
             topical_tests = topical_subject_counts.order_by('subject__id')
             print(student_tests)
 
             # Retrieve class test data
-            class_tests = ClassTestStudentTest.objects.filter(user=user)
+            class_tests = ClassTestStudentTest.objects.filter(user=user, test__subject__grade=grade)
             class_subject_counts = class_tests.values('test__subject__id')
             my_class_tests = class_subject_counts.order_by('test__subject__id')
 
-            # Retrieve KNEC test data
             
             # Retrieve general test data
-            general_tests = GeneralTest.objects.filter(user=user)
+            general_tests = GeneralTest.objects.filter(user=user, subject__grade=grade)
             general_subject_counts = general_tests.values('subject__id')
             my_general_tests = general_subject_counts.order_by('subject__id')
 
@@ -266,6 +269,8 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                     class_subject_counts.count() +
                     general_subject_counts.count()
             )
+            if not total_tests_count:
+                messages.warning(self.request, 'This user has no tests for this grade')
 
             # Retrieve the Subject objects with the common subject IDs
             subjects = Subject.objects.filter(id__in=subject_ids_set)
@@ -301,6 +306,8 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
 
         return context
 
@@ -321,7 +328,7 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
 
         return False
@@ -333,17 +340,16 @@ class KidExamTopicView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(KidExamTopicView, self).get_context_data(**kwargs)
         user = self.kwargs['email']
+        subject_id = self.kwargs['subject']
 
         try:
-            subject = StudentTest.objects.filter(user__email=user, subject__name=self.kwargs['subject']) \
+            subject = StudentTest.objects.filter(user__email=user, subject__id=subject_id) \
                 .values('topic__name', 'subject__grade').order_by('topic').distinct()
             context['subject'] = subject
-            knec_test = StudentKNECExams.objects.filter(user__email=user)
-            context['tests'] = knec_test
-            class_test = ClassTestStudentTest.objects.filter(user__email=user).exclude(
+            class_test = ClassTestStudentTest.objects.filter(user__email=user, test__subject__id=subject_id).exclude(
                 uuid='c2f49d23-41eb-457a-a147-8e132751774c')
             context['class_tests'] = class_test
-            context['subject_name'] = self.kwargs['subject']
+            context['subject_name'] = subject_id
 
 
         except Exception as e:
@@ -369,6 +375,8 @@ class KidExamTopicView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
         context['email'] = MyUser.objects.filter(email=user).first()
 
         return context
@@ -390,7 +398,7 @@ class KidExamTopicView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
 
         return False
@@ -433,6 +441,8 @@ class KidExamSubjectDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
         context['email'] = user
 
         return context
@@ -454,7 +464,7 @@ class KidExamSubjectDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
 
         return False
@@ -495,6 +505,8 @@ class KidTestDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
 
         return context
 
@@ -515,7 +527,7 @@ class KidTestDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
 
         return False
@@ -535,15 +547,13 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             if instance == 'Topical':
                 answers = StudentsAnswers.objects.filter(user=user, test_object_id=test)
                 test = StudentTest.objects.get(user=user, uuid=test)
-            elif instance == 'KNECExams':
-                test = StudentKNECExams.objects.filter(user=user, test=test).last()
-                answers = StudentsKnecAnswers.objects.filter(user=user, test=test)
+            
             elif instance == 'ClassTests':
                 answers = StudentsAnswers.objects.filter(user=user, test_object_id=test)
                 test = ClassTestStudentTest.objects.filter(user=user, test=test).last()
 
             else:
-                pass
+                answers = None
 
 
 
@@ -575,6 +585,8 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
         else:
             context['base_html'] = 'Users/base.html'
         return context
@@ -596,7 +608,7 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
 
         return False
@@ -648,6 +660,8 @@ class LearnerProgress(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
         return context
 
     def test_func(self):
@@ -667,7 +681,7 @@ class LearnerProgress(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
 
         return False
@@ -696,7 +710,7 @@ class LearnerSyllabus(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Ensure the student is associated with the logged-in user
             if student.ref_id == user.uuid:
                 return True
-        elif user.role == 'Teacher':
+        elif user.role in ['Teacher', 'Supervisor']:
             return True
 
         return False
@@ -715,6 +729,8 @@ class LearnerSyllabus(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 context['base_html'] = 'Guardian/baseg.html'
             elif self.request.user.role == 'Teacher':
                 context['base_html'] = 'Teacher/teachers_base.html'
+            elif self.request.user.role == 'Supervisor':
+                context['base_html'] = 'Supervisor/base.html'
 
         except Exception as e:
             messages.error(self.request, 'An error occurred when processing your request. Please try again later')

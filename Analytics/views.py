@@ -186,10 +186,14 @@ class SubjectAnalysis(LoginRequiredMixin, TemplateView):
         if failed:
             most_failed = get_most_failed(failed)
             context['most_failed'] = most_failed
+        else:
+            most_failed = None
         
         if correct:
             most_passed = get_most_passed(correct)
             context['most_passed'] = most_passed
+        else:
+            most_passed = None
             
         if failed.count() != 0:
             mean = (correct.count() / (failed.count() + correct.count())) * 100
@@ -197,6 +201,9 @@ class SubjectAnalysis(LoginRequiredMixin, TemplateView):
             context['mean'] = mean
         else:
             context['mean'] = 0
+
+        if not most_failed and not most_passed:
+            messages.warning(self.request, 'There is no enough information to Analyse!')
 
         return  context
     

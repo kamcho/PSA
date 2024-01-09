@@ -53,8 +53,8 @@ def get_user_progress_topic(user, subject):
 
         except Subtopic.DoesNotExist:
             try:
-                introduction = Topic.objects.get(subject=subject, order=1)
-                introduction = Subtopic.objects.get(topic=introduction, order=1)
+                introduction = Topic.objects.filter(subject=subject).last()
+                introduction = Subtopic.objects.filter(topic=introduction).last()
                 return introduction
             except Topic.DoesNotExist:
                 return None
@@ -62,8 +62,8 @@ def get_user_progress_topic(user, subject):
                 return None
     else:
         try:
-            introduction = Topic.objects.get(subject=subject, order=1)
-            introduction = Subtopic.objects.get(topic=introduction, order=1)
+            introduction = Topic.objects.filter(subject=subject).last()
+            introduction = Subtopic.objects.filter(topic=introduction).last()
             return introduction
         except Topic.DoesNotExist:
             return None

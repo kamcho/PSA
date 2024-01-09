@@ -4,24 +4,33 @@
 {% block content %}
 
 <div class="subject-select-content-container">
-
-{% if not subjects %}
     <br>
-    <br>
-    <br>
-<div style="margin:0 auto;width:90%;" class="">
-
-            <h6 class="text-center alert alert-light">This student has no test history</h6>
-
-    </div>
-
-    {% else %}
-<br>
 <br>
       <br>
+      <form>
+        <div class="dropdown" style="padding-left:25px;">
+            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Grade {{ grade }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="{% url 'kid-test' email 4  %}">4</a></li>
+                <li><a class="dropdown-item" href="{% url 'kid-test' email 5  %}">5</a></li>
+                <li><a class="dropdown-item" href="{% url 'kid-test' email 6  %}">6</a></li>
+                <li><a class="dropdown-item" href="{% url 'kid-test' email 7  %}">7</a></li>
+            </ul>
+        </div>
+    </form>
+    <br>
+
+{% if not subjects %}
+ 
+
+    {% else %}
+
       <div class="subjects-select-view">
         {% for subject in subjects %}
-            <a href="{% url 'kid-exam-topic-id' child subject %}">
+            <a href="{% url 'kid-exam-topic-id' child subject.id %}">
                 <div class="subject-select-card">
                     <div class="">
                         <h6><i class="bi bi-bookmark-plus"></i> {{ subject }}.</h6>

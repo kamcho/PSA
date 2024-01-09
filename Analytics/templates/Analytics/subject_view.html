@@ -7,7 +7,6 @@
 
 
 
-{% if not subjects %}
 <div class="subject-select-content-container">
 <div class="container">
         <br>
@@ -27,27 +26,12 @@
     </form>
 
 </div>
-</div>
-{% else %}
-<div class="subject-select-content-container">
-<div class="container">
-        <br>
-    <form>
-        <div class="dropdown" style="padding-left:25px;">
-            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Grade {{ grade }}
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><a class="dropdown-item" href="{% url 'learn' 4 %}">4</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 5 %}">5</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 6 %}">6</a></li>
-                <li><a class="dropdown-item" href="{% url 'learn' 7 %}">7</a></li>
-            </ul>
-        </div>
-    </form>
 
-</div>
+{% if not subjects %}
+
+{% else %}
+
+
     <div>
         <div class="subjects-select-view">
 

@@ -54,8 +54,9 @@
     
             </div>
         </a>
-
+        {% if most_failed %}
         <a>
+            
             <div class="analytic-card">
                 <div class="analytic-title text-center">
                     Most Failed
@@ -78,8 +79,10 @@
                 </div>
     
             </div>
+            
         </a>
-
+        {% endif %}
+        {% if most_passed %}
         <a>
             <div class="analytic-card">
                 <div class="analytic-title text-center">
@@ -103,6 +106,7 @@
     
             </div>
         </a>
+        {% endif %}
 
         
 
