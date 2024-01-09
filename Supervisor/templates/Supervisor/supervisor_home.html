@@ -1,6 +1,6 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
-
+{% load static %}
 {% block content %}
 
 
@@ -9,39 +9,125 @@
 <br>
 <br>
 
+
 <!--<h6>{{ user.role }}</h6>-->
 
- <div class="subject-select-content-container">
+ <div class="subject-select-content-contaier">
+
+    <div class="users-view">
+        <div class="user-card">
+            All Users<br>
+            <h4 style="font-size: 50px;">{{ users }}</h4>
+
+        </div>
+
+        <div class="user-card">
+            Students<br>
+            <h4 style="font-size: 50px;">{{ students }}</h4>
+            <div>
+                <a class="btn btn-danger bottom-left" >Manage</a>
+            </div>
+        </div>
+
+        <div class="user-card">
+            Teachers<br>
+            <h4 style="font-size: 50px;">{{ teachers }}</h4>
+            <a class="btn btn-info bottom-left" >Manage</a>
+
+        </div>
+
+        <div class="user-card">
+            Guardians<br>
+            <h4 style="font-size: 50px;">{{ parents }}</h4>
+            <a class="btn btn-warning bottom-left" >Manage</a>
+
+        </div>
+
+    </div>
+
+
 <br><br><br><br>
+<div class="admin-2">
+
+
+    <div class="new-users">
+        <table class="table">
+            <thead>
+              <tr>
+                <th><h6>Names</h6></th>
+                 <th><h6>Role</h6></th>
+                <th><h6>Class</h6></th>
+              </tr>
+            </thead>
+            <tbody>
+              
+                {% for user in student_lst %}
+                <tr>
+                  <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+                  <td>Student</td>
+                
+                  <td>{{ user.academicprofile.current_class }} </td>
+                </tr>
+                {% endfor %}
+             
+            </tbody>
+         </table>
+    </div>
+
+    <div class="new-users">
+        <table class="table">
+            <thead>
+              <tr>
+                <th><h6>Names</h6></th>
+                 <th><h6>Role</h6></th>
+                <th><h6>Class</h6></th>
+              </tr>
+            </thead>
+            <tbody>
+              
+                {% for user in student_lst %}
+                <tr>
+                  <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+                  <td>Student</td>
+                
+                  <td>{{ user.academicprofile.current_class }} </td>
+                </tr>
+                {% endfor %}
+             
+            </tbody>
+         </table>
+    </div>
+
+</div>
+
+<br><br>
+<div style="width: 70%;margin: 0 auto;">
+    MOST RECENT PERFOMANCE
+    <canvas id="myChart"></canvas>
+  </div>
+
+  
+  
+
+
+
 <div class="subjects-select-view">
-    <a href="{% url 'students-view' %}">
+    <a href="{% url 'subject-view' 4 %}">
 
     <div class="subject-select-card">
-        <h6>Students</h6>
-        <p>View all Students and all student related information.</p>
-        <ul>
-            <li>Profiles</li>
-            <li>Progress</li>
-            <li>Tests</li>
-            <li>Assignments</li>
-        </ul>
+        <h6>Analyticss</h6>
+        <img src="{% static 'Supervisor\GOLD-6487-CareerGuide-Batch04-Images-GraphCharts-01-Line.jpg' %}" style="zoom: .45;">
     </div>
         </a>
     <a href="{% url 'classes' %}">
         <div class="subject-select-card">
-        <h6>Class and Tests</h6>
-        <p>View all School tests and school`s classes perfomance information.</p>
-        <ul>
-            <li>Exams</li>
-            <li>Grades</li>
-            <li>Averages</li>
-            <li>Analytics</li>
-        </ul>
+        <h6>Classes</h6>
+        <img src="{% static 'Supervisor\funny-alphabet-with-kids-abcd-vector-1303233.webp' %}" style="zoom:.24; background-repeat: no-repeat; background-position: center center;">
     </div>
     </a>
     <a href="{% url 'teachers-view' %}">
         <div class="subject-select-card">
-        <h6>Teachers</h6>
+        <h6>Assignments</h6>
         <p>View teachers profiles and their class assignments results analytics.</p>
         <ul>
             <li>Teachers Profile</li>
@@ -56,31 +142,42 @@
 
 </div>
 
+<script>
+    var labels = {{ chart_data.labels|safe }};
+    var datasets = {{ chart_data.datasets|safe }};
 
-<!-- <div class="container">
-    <br><br><br>
+    var config = {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets,
+        },
+        options: {
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Number Of Students'
+                    }
+                },
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Total Marks Distribution'
+                    }
+                }
+            }
+        }
+    };
 
-    <h6>Recent Actions By You</h6>
-    <table class="table">
-        <thead>
-          <tr>
-            <th><h6>Date</h6></th>
-             <th><h6>Action</h6></th>
-            <th><h6>Description</h6></th>
-            <th><h6>Revert</h6></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-              <td><a href=""><h6>4/10/23</h6></a></td>
-              <td>Delete</td>
-              <td>Deleted Students Test</td>
-              <td><i class="bi bi-check-all" style="font-size: 20px;">Reversible</i> </td>
-          </tr>
-        </tbody>
-     </table>
-</div> -->
-
+    // Get the canvas element and render the chart
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, config);
+</script>
+  
 
 </div>
 {% endblock %}

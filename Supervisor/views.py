@@ -1,10 +1,11 @@
 import datetime
+import json
 from django.contrib.auth.hashers import make_password
 
 from itertools import groupby
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from django.db.models import F, IntegerField, Count, Sum
+from django.db.models import F, IntegerField, Count, Sum, Max
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib import messages
@@ -15,6 +16,7 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from django.utils import timezone
 from django.views.generic import TemplateView
+from numpy import roll
 from Finance.models import MpesaPayouts
 from Teacher.models import StudentList, TeacherProfile
 from Term.models import ClassTermRanking, CurrentTerm, Exam
@@ -22,12 +24,71 @@ from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, 
 from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes, TopicalQuizAnswers
 from SubjectList.models import Subject, Topic, Subtopic, Course
 
+def get_marks_distribution_data(grade):
+    # Replace 'YourGradeModelField' with the actual field name representing the grade in your SchoolClass model
+    grade_results = Exam.objects.filter(term__term='Term 2',term__year=2022, user__academicprofile__current_class__grade=grade).values('user__id').annotate(
+        total_marks=Sum('score')
+    ).order_by('total_marks')
 
+    # Define the range size
+    range_size = 20
+
+    # Create a histogram of total marks in specified ranges
+    marks_histogram = {}
+    for result in grade_results:
+        total_marks = result['total_marks']
+        marks_range = (total_marks // range_size) * range_size
+        marks_histogram[marks_range] = marks_histogram.get(marks_range, 0) + 1
+
+    return marks_histogram
 class SupervisorHomeView(TemplateView):
     template_name = 'Supervisor/supervisor_home.html'
 
     def get_context_data(self, **kwargs):
         context = super(SupervisorHomeView, self).get_context_data(**kwargs)
+        users = MyUser.objects.all()
+        context['users'] = users.count()
+        context['students'] = users.filter(role='Student').count()
+        context['teachers'] = users.filter(role='Teacher').count()
+        context['parents'] = users.filter(role='Guardian').count()
+        context['student_lst'] = users.filter(role='Student')[:10]
+        
+        grade_4_data = get_marks_distribution_data(4)
+        grade_5_data = get_marks_distribution_data(5)
+        grade_6_data = get_marks_distribution_data(6)
+
+# Preparing data for the bar chart
+        labels = list(grade_6_data.keys())
+        datasets = [
+            {
+                'label': 'Grade 4',
+                'data': [grade_4_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(0, 0, 0, 0.5)',
+                'borderColor': 'rgba(0, 0, 0, 0.5)',
+                'borderWidth': 4,
+            },
+            {
+                'label': 'Grade 5',
+                'data': [grade_5_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(0, 255, 0, 0.8)',
+                'borderColor': 'rgba(0, 255, 0, 1)',
+                'borderWidth': 4,
+            },
+            {
+                'label': 'Grade 6',
+                'data': [grade_6_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                'borderColor': 'rgba(255, 2, 2, 1)',
+                'borderWidth': 4,
+            }
+        ]
+
+        # Convert data to JSON for passing to the template
+        chart_data = {
+            'labels': labels,
+            'datasets': datasets,
+        }
+        context['chart_data'] = chart_data
         return context
 
 
@@ -86,7 +147,7 @@ class CreateUser(TemplateView):
                     return redirect('students-profile', email)
             
                 elif role in ['Teacher', 'Supervisor']:
-                    user = MyUser.objects.create(email=email, role=role, password='defaultpwd')
+                    user = MyUser.objects.create(email=email, role=role, password=make_password('defaultpwd'))
                     profile = PersonalProfile.objects.get(user=user)
                     profile.f_name = f_name
                     profile.l_name = l_name

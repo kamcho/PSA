@@ -3,10 +3,48 @@
     grid-template-columns:repeat(3, .7fr);
 
 }
+.users-view{
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    margin: 0 auto;
+}
+.user-card{
+    width:80%;
+    height:150px;
+    margin: 0 auto;
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+    background-color:rgba(29, 25, 46, .8) !important;
+    color: white;
+    padding:20px;
+    border-radius: 10px !important;
+    position: relative;
+}
+.bottom-left{
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    zoom: .8;
+}
+.admin-2{
+    display: grid;
+    grid-template-columns: 60% 40%;
+    margin: 0 auto;
+    width: 98%;
+}
+.new-users{
+    width:80%;
+    height:350px;
+    margin: 0 auto;
+    box-shadow: 2px 0px 6px 2px rgba(0, 0, 0, 0.06);
+    overflow-y: scroll;
+    zoom: .8;
+}
+
+
 .task-card{
     width:90%;
     height:250px;
-    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+    box-shadow: 2px 4px 20px 5px rgba(37, 36, 36, 0.09);
     padding:20px;
 
 
