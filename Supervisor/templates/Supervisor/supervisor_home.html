@@ -23,16 +23,16 @@
 
         <div class="user-card">
             Students<br>
-            <h4 style="font-size: 50px;">{{ students }}</h4>
+            <h4 style="font-size: 50px;" >{{ students }}</h4>
             <div>
-                <a class="btn btn-danger bottom-left" >Manage</a>
+                <a class="btn btn-danger bottom-left" href="{% url 'students-view' %}">Manage</a>
             </div>
         </div>
 
         <div class="user-card">
             Teachers<br>
             <h4 style="font-size: 50px;">{{ teachers }}</h4>
-            <a class="btn btn-info bottom-left" >Manage</a>
+            <a class="btn btn-info bottom-left" href="{% url 'teachers-view' %}">Manage</a>
 
         </div>
 
@@ -51,7 +51,9 @@
 
 
     <div class="new-users">
+
         <table class="table">
+            <title>Recently Added</title>
             <thead>
               <tr>
                 <th><h6>Names</h6></th>
@@ -102,7 +104,9 @@
 
 <br><br>
 <div style="width: 70%;margin: 0 auto;">
-    MOST RECENT PERFOMANCE
+    <div class="text-center">Perfomance Insight</div>
+
+    <button class="btn btn-info">Year</button> <button class="btn btn-danger">Term</button>
     <canvas id="myChart"></canvas>
   </div>
 

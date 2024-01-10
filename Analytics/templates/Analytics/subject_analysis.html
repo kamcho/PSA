@@ -4,6 +4,10 @@
 
 {% block content %}
 <br><br><br><br>
+
+
+
+    
 <div class="container">
 
     <div>
@@ -36,14 +40,10 @@
                  
                     <div class="text-center" >
                         <br>
-                        <div style="margin: 0 auto !important;">
-                            <div class="progress-bar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto;background: radial-gradient(closest-side, rgba(29, 25, 46,.99) 79%, transparent 80% 100%),   conic-gradient(hotpink {{ mean }}%, rgb(29, 25, 46) 0);">
-                                <div id="progress-value" style="display: flex; align-items: center; justify-content: center; height: 100%;">
-                                    
-                                </div>
-                            </div>
-                            
-                          </div>
+                        <div style="width: 150px;height: 150px;margin: 0 auto;">
+                            <canvas id="donutChart" width="50" height="50" ></canvas>
+                        </div>
+                        
                         
                         <small class="text-muted">Mean {{ mean }}%</small>
                     </div>
@@ -146,6 +146,47 @@
 
 
 
+
+
+
+
+
+
+
+
+
+<script>
+    var mean = '{{ mean }}'
+    pss = 100 - mean
+    pst = mean - pss
+    var data = {
+        labels: ['pass', 'fail'],
+        datasets: [{
+            data: [pss, pst], // Adjust the values as needed
+            backgroundColor: ['rgba(255, 99, 132, 0.7)', 'rgba(54, 162, 235, 0.7)'], // Adjust the colors as needed
+            hoverBackgroundColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)'], // Hover colors
+            borderWidth: 1,
+        }]
+    };
+    
+
+    var config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+            cutout: '80%', // Adjust the cutout percentage as needed
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom', // Adjust the legend position as needed
+                }
+            }
+        }
+    };
+
+    var ctx = document.getElementById('donutChart').getContext('2d');
+    var myChart = new Chart(ctx, config);
+</script>
 
 
 

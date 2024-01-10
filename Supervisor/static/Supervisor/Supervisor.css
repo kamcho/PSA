@@ -28,13 +28,15 @@
 .admin-2{
     display: grid;
     grid-template-columns: 60% 40%;
-    margin: 0 auto;
-    width: 98%;
+    margin: 20px auto;
+    width: 100;
+    background-color: rgba(173, 19, 153, 0.06);
+    height: 400px;
 }
 .new-users{
     width:80%;
     height:350px;
-    margin: 0 auto;
+    margin: auto auto;
     box-shadow: 2px 0px 6px 2px rgba(0, 0, 0, 0.06);
     overflow-y: scroll;
     zoom: .8;
