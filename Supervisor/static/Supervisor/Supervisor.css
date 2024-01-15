@@ -3,10 +3,46 @@
     grid-template-columns:repeat(3, .7fr);
 
 }
+.panel{
+    display: grid;
+    grid-template-columns: repeat(4, .4fr);
+    margin: 0 auto;
+    width: 85%;
+}
+.panel-card{
+    background-color:rgba(10, 111, 129, 0.8) !important;
+    /* box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09); */
+    width: 80%;
+    height: 190px;
+    color: white;
+    padding: 20px;
+    margin: auto auto;
+    border-radius: 5px;
+    position: relative;
+
+}
+.bottom{
+    position: absolute;
+    bottom: 5px;
+    padding: 5px;
+}
+.data{
+    box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09);
+    background-color:rgba(29, 25, 46, .8) !important;
+    display: grid;
+    grid-template-columns: repeat(3, .4fr);
+    text-align: center;
+    width: 85%;
+    height: 400px;
+    margin: auto auto;
+    padding: 40px;
+    color: white;
+}
 .users-view{
     display: grid;
     grid-template-columns: auto auto auto auto;
     margin: 0 auto;
+    width: 90%;
 }
 .user-card{
     width:80%;
@@ -26,12 +62,10 @@
     zoom: .8;
 }
 .admin-2{
-    display: grid;
-    grid-template-columns: 60% 40%;
     margin: 20px auto;
-    width: 100;
-    background-color: rgba(173, 19, 153, 0.06);
-    height: 400px;
+    width: 85%;
+    height: 500px;
+    background-color:rgba(255, 255, 255, 1) !important;
 }
 .new-users{
     width:80%;
@@ -41,7 +75,27 @@
     overflow-y: scroll;
     zoom: .8;
 }
+.new-users::-webkit-scrollbar {
+    width: 12px; /* Adjust the scrollbar width as needed */
+    color: purple;
+}
 
+.new-users::-webkit-scrollbar-button {
+    background-color: #4CAF50; /* Button background color */
+    height: 12px; /* Button height */
+    width: 12px; /* Button width */
+    color: purple;
+}
+.insight{
+    width: 85%;
+    margin: 0 auto;
+    box-shadow: 2px 4px 20px 5px rgba(41, 39, 39, 0.09);
+    background-color:rgba(29, 25, 46, .8) !important;
+    border-width: 4px;
+    height: 680px;
+    
+    
+}
 
 .task-card{
     width:90%;

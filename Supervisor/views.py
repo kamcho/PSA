@@ -24,9 +24,9 @@ from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, 
 from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes, TopicalQuizAnswers
 from SubjectList.models import Subject, Topic, Subtopic, Course
 
-def get_marks_distribution_data(grade):
+def get_marks_distribution_data(grade, term, year):
     # Replace 'YourGradeModelField' with the actual field name representing the grade in your SchoolClass model
-    grade_results = Exam.objects.filter(term__term='Term 2',term__year=2022, user__academicprofile__current_class__grade=grade).values('user__id').annotate(
+    grade_results = Exam.objects.filter(term__term=term,term__year=year, user__academicprofile__current_class__grade=grade).values('user__id').annotate(
         total_marks=Sum('score')
     ).order_by('total_marks')
 
@@ -53,9 +53,9 @@ class SupervisorHomeView(TemplateView):
         context['parents'] = users.filter(role='Guardian').count()
         context['student_lst'] = users.filter(role='Student')[:10]
         
-        grade_4_data = get_marks_distribution_data(4)
-        grade_5_data = get_marks_distribution_data(5)
-        grade_6_data = get_marks_distribution_data(6)
+        grade_4_data = get_marks_distribution_data(4, 'Term 1', '2022')
+        grade_5_data = get_marks_distribution_data(5, 'Term 1', '2022')
+        grade_6_data = get_marks_distribution_data(6, 'Term 1', '2022')
 
 # Preparing data for the bar chart
         labels = list(grade_6_data.keys())
@@ -88,8 +88,68 @@ class SupervisorHomeView(TemplateView):
             'labels': labels,
             'datasets': datasets,
         }
+        current_term = CurrentTerm.objects.filter().last()
+        print('term89', current_term)
+        context['current_term'] = current_term
         context['chart_data'] = chart_data
         return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            term = self.request.POST.get('term')
+            year = self.request.POST.get('year')
+
+            grade_4_data = get_marks_distribution_data(4, term, year)
+            grade_5_data = get_marks_distribution_data(5, term, year)
+            grade_6_data = get_marks_distribution_data(6, term, year)
+
+    # Preparing data for the bar chart
+            labels = list(grade_6_data.keys())
+            datasets = [
+                {
+                    'label': 'Grade 4',
+                    'data': [grade_4_data.get(label, 0) for label in labels],
+                    'backgroundColor': 'rgba(0, 0, 0, 0.5)',
+                    'borderColor': 'rgba(0, 0, 0, 0.5)',
+                    'borderWidth': 4,
+                    
+                },
+                {
+                    'label': 'Grade 5',
+                    'data': [grade_5_data.get(label, 0) for label in labels],
+                    'backgroundColor': 'rgba(0, 255, 0, 0.8)',
+                    'borderColor': 'rgba(0, 255, 0, 1)',
+                    'borderWidth': 4,
+                },
+                {
+                    'label': 'Grade 6',
+                    'data': [grade_6_data.get(label, 0) for label in labels],
+                    'backgroundColor': 'rgba(255, 2, 2, 0.8)',
+                    'borderColor': 'rgba(255, 2, 2, 1)',
+                    'borderWidth': 4,
+                }
+            ]
+
+            # Convert data to JSON for passing to the template
+            chart_data = {
+                'labels': labels,
+                'datasets': datasets,
+            }
+            
+            context = {
+                'chart_data':chart_data,
+                'users': self.get_context_data().get('users'),
+                'students': self.get_context_data().get('students'),
+                'teachers': self.get_context_data().get('teachers'),
+                'parents': self.get_context_data().get('parents'),
+                'student_lst': self.get_context_data().get('student_lst'),
+                'term':term,
+                'year':year,
+                'current_term':self.get_context_data().get('current_term')
+
+            }
+
+            return render(self.request, self.template_name, context)
 
 
 

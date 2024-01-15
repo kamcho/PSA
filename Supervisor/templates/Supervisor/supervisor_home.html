@@ -47,67 +47,112 @@
 
 
 <br><br><br><br>
-<div class="admin-2">
 
+<div class="data">
+    <div class="fee-card">
+        <h5>Fees</h5>
+        <br>
+        <div style="width: 250px;height: 250px;margin: auto auto;">
+            <a href="{% url 'school-fees-balances' %}">
+                <canvas id="feeClearanceChart" ></canvas>
+            </a>
 
-    <div class="new-users">
+        </div>
 
-        <table class="table">
-            <title>Recently Added</title>
-            <thead>
-              <tr>
-                <th><h6>Names</h6></th>
-                 <th><h6>Role</h6></th>
-                <th><h6>Class</h6></th>
-              </tr>
-            </thead>
-            <tbody>
-              
-                {% for user in student_lst %}
-                <tr>
-                  <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
-                  <td>Student</td>
-                
-                  <td>{{ user.academicprofile.current_class }} </td>
-                </tr>
-                {% endfor %}
-             
-            </tbody>
-         </table>
+        
+        
     </div>
 
-    <div class="new-users">
-        <table class="table">
-            <thead>
-              <tr>
-                <th><h6>Names</h6></th>
-                 <th><h6>Role</h6></th>
-                <th><h6>Class</h6></th>
-              </tr>
-            </thead>
-            <tbody>
-              
-                {% for user in student_lst %}
-                <tr>
-                  <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
-                  <td>Student</td>
-                
-                  <td>{{ user.academicprofile.current_class }} </td>
-                </tr>
-                {% endfor %}
-             
-            </tbody>
-         </table>
+    <div class="fee-card">
+        <h5>Invoices</h5>
+        <br>
+        <div style="width: 250px;height: 250px;margin: auto auto;">
+            <canvas id="feeClearanceChart2" ></canvas>
+
+        </div>
     </div>
+
+    <div class="fee-card">
+        <h5>Deviation</h5>
+        <br>
+        <div style="width: 250px;height: 250px;margin: auto auto;">
+            <canvas id="feeClearanceChart3" ></canvas>
+
+        </div>
+    </div>
+
 
 </div>
 
 <br><br>
-<div style="width: 70%;margin: 0 auto;">
-    <div class="text-center">Perfomance Insight</div>
 
-    <button class="btn btn-info">Year</button> <button class="btn btn-danger">Term</button>
-    <canvas id="myChart"></canvas>
+<div >
+
+
+    <div class="panel">
+        <a href="{% url 'create-term' %}">
+            <div class="panel-card">
+    
+
+                <h5>{{ current_term }}</h5>
+                <small>{{ current_term.term.year }}</small>
+                <br>
+    
+                <small class="bottom">set and manage terms</small>
+            </div>
+        </a>
+        
+        <a href="{% url 'school-fees-balances' %}">
+            <div class="panel-card">
+                <h5>Fee Management</h5>
+            </div>
+        </a>
+
+        <a href="{% url 'create-course' %}">
+            <div class="panel-card">
+                <h5>Course Management</h5>
+            </div>
+        </a>
+        
+
+        <div class="panel-card">
+            <h5>Biometrics Admin</h5>
+        </div>
+
+
+    </div>
+
+<br><br>
+<div  class="insight">
+    
+    <br><br>
+    <form method="post" style="width: 60%;margin: auto auto;">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <input type="number" class="form-control" placeholder="{{ year }}" name="year" required>
+
+            <select class="form-select" aria-label="Default select example" name="term" required>
+                <option value="{{ term }}" selected>{{ term }}</option>
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+                
+        
+        
+              </select>
+            <button class="btn btn-dark" type="submit">SET</button>
+        </div>
+    </form>
+    <br>
+    <div class="admin-2">
+        <div style="width: 85%;margin: auto auto;">
+            <canvas id="myChart" ></canvas>
+        </div>
+
+       
+
+    </div>
+    
   </div>
 
   
@@ -182,6 +227,45 @@
     var myChart = new Chart(ctx, config);
 </script>
   
+
+<script>
+    // Example data for different categories
+    var data = {
+        labels: ['Paid', 'Not Paid'],
+        datasets: [{
+            data: [60, 40], // Adjust the values as needed
+            backgroundColor: ['#4CAF50', '#FFC107'], // Adjust the colors as needed
+            hoverBackgroundColor: ['#45A049', '#FFA000'], // Hover colors
+            borderWidth: 1,
+        }]
+    };
+
+    var config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+            cutout: '80%', // Adjust the cutout percentage as needed
+            fontColor:'white',
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom', // Adjust the legend position as needed
+                    labels: {
+                    fontColor: 'white', // Set the font color of the legend labels
+                },
+                }
+            }
+        }
+    };
+
+    var ctx = document.getElementById('feeClearanceChart').getContext('2d');
+    var myChart = new Chart(ctx, config);
+    var ctx = document.getElementById('feeClearanceChart2').getContext('2d');
+    var myChart = new Chart(ctx, config);
+    var ctx = document.getElementById('feeClearanceChart3').getContext('2d');
+    var myChart = new Chart(ctx, config);
+</script>
+
 
 </div>
 {% endblock %}
