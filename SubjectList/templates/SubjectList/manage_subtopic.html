@@ -5,19 +5,18 @@
 
 
 
-
+<div class="bg-gradient">
 <div class="container">
     <br><br><br><br>
-    <form method="post">
-        {% csrf_token %}
-        <button class="btn btn-danger" style="color: white;" name="delete">DELETE</button>
-    </form>
+    
+    <button class="btn btn-danger" style="color: white;position: absolute;top: 60px;right: 12%;" onclick="toggleDeletePopUp()">Delete</button>  
+    
 
-    <div class="text-center">
+    <div class="text-center course-container">
         
            <h3><i class="bi bi-bookmark-plus"></i> {{ subtopic.subject.name }} Grade {{ subtopic.subject.grade }}</h3>
-           <h5>{{ subtopic.topic.order }}. {{ subtopic.topic }}</h5>
-            <small >{{ subtopic.order }}. {{ subtopic }}</small>
+           <h5><small>topic.</small><strong style="color: coral;">{{ subtopic.topic.order }} {{ subtopic.topic }}</strong></h5>
+            <small >subtopic.</small><strong style="color: coral; font-size: 21px;">{{ subtopic.order }}. {{ subtopic }}</strong></small>
 
         
     </div>
@@ -25,29 +24,29 @@
 
     
     <br><br><hr class="text-center"><br><br>
+    <div class="form-view">
     <h5 class="text-center" style="font-size: 30px;"> <i class="bi bi-plus-square-fill" ></i> Manage Subtopic</h5>
     <br>
     
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+ 
         
         <br>
         <div class="text-center">
             
-            <label for="inputField1" class="form-label" >Order</label>
-            <input type="number" class="form-control"  name="order" placeholder="1" required>
+            <label for="inputField1" class="form-label" >Order*<strong style="color: crimson;">(required)</strong></label>
+            <input type="number" class="form-control"  name="order" placeholder="1" required style="border: 3px solid cornflowerblue;">
         </div>
         <br>
         <div class="row mb-3">
             <div class="col-md-6">
             
                 <label for="inputField1" class="form-label">PDF File <small>{{ subtopic.file1 }}</small></label>
-                <input type="file" class="form-control"  name="pdf" placeholder="Addition" required>
+                <input type="file" class="form-control"  name="pdf" placeholder="Addition" style="border: 3px solid cornflowerblue;" required>
             </div>
            
             <div class="col-md-6">
                 <label for="inputField2" class="form-label">MP4 File <small>{{ subtopic.file2 }}</small></label>
-                <input type="file" class="form-control"  name="video" placeholder="4" required>
+                <input type="file" class="form-control"  name="video" style="border: 3px solid cornflowerblue;" placeholder="4" required>
                
            
             </div>
@@ -55,12 +54,117 @@
         <br>
         
 
-        <button class="btn btn-info" style="color: white;">Save</button>
-    </form>
+        <button class="btn btn-info" style="color: white;" onclick="togglePopUp()">Save</button>
     
-
+    <br>
+    </div>
+    <br><br>
+</div>
 </div>
 
+
+<form method="post">
+    {% csrf_token %}
+    <div class="pop-up">
+        <br>
+        <h5 style="font-family: cursive;" class="text-center">Manage Subtopic </h5>
+        <br>
+        <div class="center-input">
+            <div class="text-center">
+            
+                <label for="inputField1" class="form-label" >Order</label>
+                <input type="number" class="form-control"  name="set_order" placeholder="1" readonly>
+            </div>
+            <br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                
+                    <label for="inputField1" class="form-label">PDF File <small>{{ subtopic.file1 }}</small></label>
+                    <input type="file" class="form-control"  name="set_pdf" placeholder="Addition" readonly>
+                </div>
+               
+                <div class="col-md-6">
+                    <label for="inputField2" class="form-label">MP4 File <small>{{ subtopic.file2 }}</small></label>
+                    <input type="file" class="form-control"  name="set_video" placeholder="4" readonly>
+                   
+               
+                </div>
+            </div>
+            <button class="btn btn-primary" >Save</button>
+        </div>
+        
+        
+    </div>
+</form>
+<script>
+    function togglePopUp() {
+    var popUpDiv = document.querySelector('.pop-up');
+    var containerDiv = document.querySelector('.container');
+
+    // Get values from pop-up inputs
+    var pdfInput = document.querySelector('.container [name="pdf"]');
+    var orderInput = document.querySelector('.container [name="order"]');
+    var videoInput = document.querySelector('.container [name="video"]');
+
+
+    // Set values in the main form
+    
+
+    // Toggle the display of the pop-up
+    popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+    document.querySelector('[name="set_order"]').value = orderInput.value;
+    document.querySelector('[name="set_pdf"]').value = pdfInput.value;
+    document.querySelector('[name="set_video"]').value = videoInput.value;
+    // Toggle the opacity of the container
+    containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '1' : '0.23';
+}
+
+</script>
+
+
+
+
+
+
+
+
+
+
+<form method="post">
+    {% csrf_token %}
+    <div class="delete-pop-up">
+        <br>
+        <h5 style="font-family: cursive; color: coral;" class="text-center">Delete {{ subtopic }} from system </h5>
+        <br>
+        
+        <div class="center-input">
+            <p style="color: crimson;">You are trying to delete this object from the system. Please not that this cannot be undone</p>
+        <p>Type <strong style="color: red;">delete</strong> to confirm</p>
+            <div class="col-md-6">
+                <input type="text" class="form-control"  name="option" placeholder="" >
+            </div>
+            <br>
+           
+            <br><br><br>
+            <button class="btn btn-danger" name="delete">DELETE</button>
+        </div>
+        
+        
+    </div>
+</form>
+<script>
+    function toggleDeletePopUp() {
+        var popUpDiv = document.querySelector('.delete-pop-up');
+        var containerDiv = document.querySelector('.container');
+
+        // Toggle the display of the pop-up
+        popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+
+
+        // Toggle the opacity of the container
+        containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '.2' : '0.23';
+    }
+</script>
 
 
 {% endblock %}

@@ -59,48 +59,48 @@
         </div>
     </div>
 </div>
+<br><br>
 
-<div class="subjects-select-view">
-<div>
+<div class="users-view" style=" ">
 
-        <div class="subject-select-card">
+    <a   href="{% url 'students-exam-profile' user %}">
+        <div class="user-card" style="height: 200px !important;">
+            <h5>Exams</h5>
             
             <h6 >I AM Learning</h6>
             <br>
             <p>To view a students online learning progress and exams click here
                 
             </p>
-            <a class="btn btn-info" href="{% url 'task-view-select' user %}">E-Learning</a>
 
+        </div>
+    </a>
+        <a href="{% url 'task-view-select' user %}">
+        <div class="user-card" style="height: 200px !important;">
+            <h5>E-Learning</h5>
+            <h6 >I AM Learning</h6>
+            <br>
 
-            <p>To view students school graded exams, click here
-                
+            <p>To view students school graded exams, click here                
             </p>
-            <a  class="btn btn-warning" href="{% url 'students-exam-profile' user %}">Exams</a>
-            
-            
   
         </div>
+    </a>
 
 
-    
-</div>
+
     <a href="{% url 'students-discipline' user %}">
-        <div class="subject-select-card">
+        <div class="user-card" style="height: 200px !important;">
             <h6>Extra Curricular</h6>
             <br>
             <p>View students discipline, conduct and Extra Curricular activities</p>
-            <pre>
-                Games
-                clubs
-                competitions
-            </pre>
+            
         </div>
     </a>
     
 
     <a href="{% url 'student-fee-profile' user %}">
-        <div class="subject-select-card">
+        <div class="user-card" style="height: 200px !important;">
             Fees
     
             <p>View and Manage School Fees Payments</p>
@@ -109,7 +109,7 @@
     
 
 </div>
-
+<br><br>
 
 
 

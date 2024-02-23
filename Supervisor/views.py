@@ -18,6 +18,7 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.generic import TemplateView
 from numpy import roll
+from Analytics.views import check_role
 from Finance.models import MpesaPayouts
 from Teacher.models import StudentList, TeacherProfile
 from Term.models import ClassTermRanking, CurrentTerm, Exam
@@ -49,6 +50,13 @@ class SupervisorHomeView(TemplateView):
         context = super(SupervisorHomeView, self).get_context_data(**kwargs)
         users = MyUser.objects.all()
         context['users'] = users.count()
+        context['males'] = users.filter(role='Student', personalprofile__gender='Male').count()
+        context['females'] = users.filter(role='Student', personalprofile__gender='Female').count()
+
+        context['t_males'] = users.filter(role='Teacher', personalprofile__gender='Male').count()
+        context['t_females'] = users.filter(role='Teacher', personalprofile__gender='Female').count()
+        context['g_males'] = users.filter(role='Guardian', personalprofile__gender='Male').count()
+        context['g_females'] = users.filter(role='Guardian', personalprofile__gender='Female').count()
         context['students'] = users.filter(role='Student').count()
         context['teachers'] = users.filter(role='Teacher').count()
         context['parents'] = users.filter(role='Guardian').count()
@@ -359,7 +367,7 @@ class StudentProfile(LoginRequiredMixin, TemplateView):
         context = super(StudentProfile, self).get_context_data(**kwargs)
         email = self.kwargs['email']
         user  = MyUser.objects.get(email=email)
-        subjects = Subject.objects.filter(grade=4)
+        subjects = Subject.objects.all()
         context['subjects'] = subjects
         context['user'] = user
         if self.request.user.role == 'Student':
@@ -450,6 +458,8 @@ class StudentExamProfile(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(StudentExamProfile, self).get_context_data(**kwargs)
+        context['base_html'] = check_role(self.request.user)
+        print(check_role(self.request.user))
         email = self.kwargs['email']
         user  = MyUser.objects.get(email=email)
         grade = self.request.session.get('grade', 4)
@@ -460,6 +470,7 @@ class StudentExamProfile(TemplateView):
         context['term1'] = term1
         context['term2'] = term2
         context['term3'] = term3
+        
 
         context['scores'] = scores
         context['grade'] = grade

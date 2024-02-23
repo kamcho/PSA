@@ -1,127 +1,203 @@
-{% extends 'Supervisor/base.html' %}
+{% extends base_html %}
 {% load custom_filters %}
 {% block content %}
 
 <br><br><br><br>
+<div class="bg-gradient">
 <div class="container">
-
-    <form method="post">
+  <br>
+    <form method="post" style="color: white;">
         {% csrf_token %}
-        <div class="dropdown" style="padding-left:25px;">
+        <div class="dropdown" >
             <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 Grade {{ grade }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                <li><button value="4" name="select"   class="dropdown-item" >4</button</li>
+                <li><button value="4" name="select" class="dropdown-item">4</button></li>
                 <li><button value="5" name="select" class="dropdown-item">5</button></li>
-                <li><button value="6" name="select" class="dropdown-item" >6</button></li>
-                <li><button value="7" name="select" class="dropdown-item" >7</button></li>
+                <li><button value="6" name="select" class="dropdown-item">6</button></li>
+                <li><button value="7" name="select" class="dropdown-item">7</button></li>
             </ul>
         </div>
     </form>
 
 </div>
 
-
-
-<div class="container">
+<div class="container" style="color: white;">
     <br>
     <h6>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name|title }}. {{ user.personalprofile.surname|title }}</h6>
     <p>Grade {{ user.academicprofile.current_class|title }}</p>
-
 </div>
 
-<div class="container">
+<div class="container form-view">
     <br>
-    <h6>Term 1</h6>
+    <h5>Grade {{ grade }} Term 1</h5>
     {% if term1 %}
-    <h6>Term Average {% get_user_term_average user grade 'Term 1' %}</h6>
-    <table class="table">
-        <thead>
-          <tr>
-            <th><h6>Subject</h6></th>
-             <th><h6>Score</h6></th>
-            <th><h6>Grade</h6></th>
-            <th><h6>Comments</h6></th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for score in term1 %}
-              <tr>
-                  <td><a href=""><h6>{{ score.subject }}</h6></a></td>
-                  <td>{{ score.score }}</td>
-                  <td>A</td>
-                  <td><i class="bi bi-check-all" style="font-size: 17px;">{{ score.comments }}</i> </td>
-              </tr>
-          {% endfor %}
-        </tbody>
-     </table>
-     {% else %}
-      <h6>Grade {{ grade }} Term 1 results are not available.</h6>
-     {% endif %}
+    <div class="accordion" id="accordionTerm1">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTerm1"
+                    aria-expanded="true" aria-controls="collapseTerm1">
+                    Term Average {% get_user_term_average user grade 'Term 1' %}
+                </button>
+            </h2>
+            <div id="collapseTerm1" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+                    <table class="table">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th><h6>Subject</h6></th>
+                            <th><h6>Score</h6></th>
+                            <th><h6>Grade</h6></th>
+                            <th><h6>Comments</h6></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for score in term1 %}
+                            <tr>
+                              <td><a href=""><h6>{{ score.subject }}</h6></a></td>
+                              <td>{{ score.score }}</td>
+                              <td>A</td>
+                              <td><i class="bi bi-check-all" style="font-size: 17px;">{{ score.comments }}</i> </td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                    </table>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="accordion" id="accordionTerm1Unavailable">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseTerm1Unavailable" aria-expanded="false"
+                    aria-controls="collapseTerm1Unavailable">
+                    Grade {{ grade }} Term 1 results are not available.
+                </button>
+            </h2>
+            <div id="collapseTerm1Unavailable" class="accordion-collapse collapse">
+                <div class="accordion-body">
+                    <strong>We could not find marks for {{ grade }} Term 1</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
-<br>
-<div class="container">
+<br><br>
 
-  <h6>Term 2</h6>
-  {% if term2 %}
-  <h6>Term Average {% get_user_term_average user grade 'Term 2' %}</h6>
-
-  <table class="table">
-      <thead>
-        <tr>
-          <th><h6>Subject</h6></th>
-           <th><h6>Score</h6></th>
-          <th><h6>Grade</h6></th>
-          <th><h6>Comments</h6></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for score in term2 %}
-            <tr>
-                <td><a href=""><h6>{{ score.subject }}</h6></a></td>
-                <td>{{ score.score }}</td>
-                <td>A</td>
-                <td><i class="bi bi-check-all" style="font-size: 20px;">Perfect Score</i> </td>
-            </tr>
-        {% endfor %}
-      </tbody>
-   </table>
-   {% else %}
-      <h6>Grade {{ grade }} Term 2 results are not available.</h6>
-     {% endif %}
-</div>
-<div class="container">
+<div class="container course-container" style="width: 100% !important;">
+  <h5 style="text-align: left !important;">Grade {{ grade }} Term 2</h5>
   <br>
+  {% if term2 %}
+  <div class="accordion" id="accordionTerm2" style="width: 99% !important;">
+      <div class="accordion-item">
+          <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseTerm2" aria-expanded="false" aria-controls="collapseTerm2">
+                  Term 2 Average {% get_user_term_average user grade 'Term 2' %}
+              </button>
+          </h2>
+          <div id="collapseTerm2" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                
+                    <table class="table" style="width: 80% !important;">
+                      <thead>
+                        <tr>
+                          <th><h6>Subject</h6></th>
+                          <th><h6>Score</h6></th>
+                          <th><h6>Grade</h6></th>
+                          <th><h6>Comments</h6></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for score in term2 %}
+                          <tr>
+                            <td><a href=""><h6>{{ score.subject }}</h6></a></td>
+                            <td>{{ score.score }}</td>
+                            <td>A</td>
+                            <td><i class="bi bi-check-all" style="font-size: 17px;">{{ score.comments }}</i> </td>
+                          </tr>
+                        {% endfor %}
+                      </tbody>
+            
+                  </table>
+              </div>
+          </div>
+      </div>
+  </div>
+  {% else %}
+  <div class="accordion" id="accordionTerm2Unavailable">
+      <div class="accordion-item">
+          <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseTerm2Unavailable" aria-expanded="false"
+                  aria-controls="collapseTerm2Unavailable">
+                  Grade {{ grade }} Term 2 results are not available.
+              </button>
+          </h2>
+          <div id="collapseTerm2Unavailable" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                  <strong>We could not find marks for {{ grade }} Term 2</strong>
+              </div>
+          </div>
+      </div>
+  </div>
+  {% endif %}
+</div>
+<br><br>
 
-  <h6>Term 3</h6>
+<div class="container form-view">
+  <h5>Grade {{ grade }} Term 3</h5>
+  <br>
   {% if term3 %}
   <h6>Term Average {% get_user_term_average user grade 'Term 3' %}</h6>
-
   <table class="table">
+    <table class="table">
       <thead>
         <tr>
           <th><h6>Subject</h6></th>
-           <th><h6>Score</h6></th>
+          <th><h6>Score</h6></th>
           <th><h6>Grade</h6></th>
           <th><h6>Comments</h6></th>
         </tr>
       </thead>
       <tbody>
         {% for score in term3 %}
-            <tr>
-                <td><a href=""><h6>{{ score.subject }}</h6></a></td>
-                <td>{{ score.score }}</td>
-                <td>A</td>
-                <td><i class="bi bi-check-all" style="font-size: 20px;">Perfect Score</i> </td>
-            </tr>
+          <tr>
+            <td><a href=""><h6>{{ score.subject }}</h6></a></td>
+            <td>{{ score.score }}</td>
+            <td>A</td>
+            <td><i class="bi bi-check-all" style="font-size: 17px;">{{ score.comments }}</i> </td>
+          </tr>
         {% endfor %}
       </tbody>
-   </table>
-   {% else %}
-      <h6>Grade {{ grade }} Term 3 results are not available.</h6>
-     {% endif %}
+  </table>
+  </table>
+  {% else %}
+  <div class="accordion" id="accordionTerm3Unavailable">
+      <div class="accordion-item">
+          <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseTerm3Unavailable" aria-expanded="false"
+                  aria-controls="collapseTerm3Unavailable">
+                  Grade {{ grade }} Term 3 results are not available.
+              </button>
+          </h2>
+          <div id="collapseTerm3Unavailable" class="accordion-collapse collapse">
+              <div class="accordion-body">
+                  <strong>We could not find marks for {{ grade }} Term 3</strong>
+              </div>
+          </div>
+      </div>
+  </div>
+  {% endif %}
+</div>
 </div>
 
 

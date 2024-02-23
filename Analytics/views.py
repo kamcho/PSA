@@ -163,7 +163,7 @@ def check_role(user):
         return 'Guardian/baseg.html'
     elif user.role == 'Teacher':
         return 'Teacher/teachers_base.html'
-    elif user.role in ['Supervisor', 'Finance']:
+    elif user.role  == 'Supervisor':
         return 'Supervisor/base.html'
 class SubjectView(LoginRequiredMixin, TemplateView):
     template_name = 'Analytics/subject_view.html'

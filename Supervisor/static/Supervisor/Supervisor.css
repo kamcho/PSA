@@ -1,3 +1,14 @@
+
+::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(29, 25, 46, .8);
+    height: 10px;
+    border-radius: 10px;
+  }
+
 .supervisor-home-view{
     display:grid;
     grid-template-columns:repeat(3, .7fr);
@@ -7,19 +18,23 @@
     display: grid;
     grid-template-columns: repeat(4, .4fr);
     margin: 0 auto;
-    width: 85%;
+    width: 90%;
 }
 .panel-card{
     background-color:rgba(10, 111, 129, 0.8) !important;
     /* box-shadow: 2px 4px 20px 5px rgba(0, 0, 0, 0.09); */
+    /* background: #EF665B; */
+
     width: 80%;
     height: 190px;
     color: white;
     padding: 20px;
     margin: auto auto;
-    border-radius: 5px;
+    border-radius: 10px;
     position: relative;
-    border: 5px solid cornflowerblue;
+    box-shadow: 0px 0px 5px -3px #111;
+
+    /* border: 5px solid cornflowerblue; */
 
 }
 .bottom{
@@ -34,26 +49,28 @@
     grid-template-columns: repeat(3, .4fr);
     text-align: center;
     width: 85%;
-    height: 400px;
     margin: auto auto;
     padding: 40px;
     color: white;
+    /* border: 5px solid cornflowerblue; */
+    border-radius: 20px;
 }
 .data div{
     margin: auto auto;
 }
 .progress-canvas{
-    width: 200px;
-    margin: o auto;
+    width: 250px;
+    height: 250px;
 }
 .users-view{
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: repeat(4, .5fr);
     margin: 0 auto;
+    row-gap: 20px;
     width: 90%;
 }
 .user-card{
-    width:80%;
+    width:90%;
     height:150px;
     margin: 0 auto;
     font-family: cursive;
@@ -73,7 +90,7 @@
 .admin-2{
     margin: 20px auto;
     width: 85%;
-    height: 500px;
+    height: max-content;
     background-color:rgba(255, 255, 255, 1) !important;
 }
 .new-users{
@@ -130,7 +147,7 @@
     position: relative;
     text-align: left;
     display: grid;
-    grid-template-columns: 70% 30%;
+    grid-template-columns: 65% 35%;
 
     height: 400px;
     padding:20px;
@@ -144,6 +161,7 @@
   
 }
 
+
 .test-progress{
     display: grid;
     width: 60%;
@@ -151,6 +169,31 @@
     margin-left: 40px;
     max-width: 500px;
     grid-template-columns: auto auto auto auto auto auto ;
+}
+.profile-panel-view{
+    display: grid;
+    grid-template-columns: repeat(4, 200px);
+    width: 95%;
+    
+    background-color:rgba(29, 25, 46, .8);
+
+    display: flex;
+    align-items: center;
+    height: 300px; /* Set a fixed height or adjust as needed */
+    border: 1px solid #ccc
+}
+.profile-panel-card{
+    overflow: hidden;
+    margin:50px auto;
+    height: 200px;
+    border-radius: 30px;
+    padding:20px;
+    border-radius: 0.5rem;
+    border: 2px solid linear-gradient(to right,rgb(142, 110, 255),rgb(208, 195, 255));
+    width: 95%;
+    background-color: #fff;
+    color: #000;
+    box-shadow: 0px 90px 41360px 310px rgba(123, 64, 160, 0.08);
 }
 .class-subject-view{
     display: grid;
@@ -210,10 +253,31 @@
     /* margin: 0 auto; */
     
 }
+.course-container{
+    height: max-content;
+    padding: 30px;
+    background-color: white !important;
+    border-radius: 10px;
+    color: cornflowerblue !important;
+    border: 5px solid cornflowerblue;
+    font-family: cursive;
+    text-align: center;
+}
 .course-view{
-    grid-template-columns: auto auto auto;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 280px));
     display: grid;
+    gap: 30px;
 
+
+}
+.form-view{
+    background-color:rgba(29, 25, 46, .8);
+    min-height: 300px;
+    height: max-content;
+    border-radius: 10px;
+    border: 5px solid cornflowerblue;
+    color: cornflowerblue;
+    padding: 30px;
 }
 .subject-course-view{
     grid-template-columns: auto auto ;
@@ -257,3 +321,79 @@
     flex-direction: column;
     align-items: center;
 }
+
+
+@media (max-width: 1200px) {
+    .users-view{
+        grid-template-columns: repeat(3,.7fr);
+        width: 93%;
+    }
+    .panel{
+        grid-template-columns: repeat(3,.7fr);
+        width: 95%;
+    }
+    .panel-card{
+        width: 95%;
+        height: 120px;
+    }
+    .profile-panel-card{
+        margin: 20px auto;
+    }
+}
+
+@media (max-width: 1150px) {
+    .progress-canvas{
+        width: 230px;
+        height: 230px;
+    }
+
+}
+
+@media (max-width: 900px) {
+    .users-view{
+        grid-template-columns: repeat(2,.7fr);
+        width: 98%;
+    }
+    .data{
+        grid-template-columns: repeat(2, .7fr);
+        width: 95%;
+    }
+    .panel{
+        grid-template-columns: repeat(2,.7fr);
+        row-gap: 20px;
+        width: 98%;
+    }
+    .insight{
+        width: 95%;
+        height: 400px;
+    }
+    
+    }
+
+    @media (max-width: 700px) {
+        .profile-card{
+            display: inline-block !important;
+            margin: 0 auto;
+            /* top: 50%; */
+            left: 50%;
+            transform: translate(-50%);
+            padding: 10px;
+            overflow-y: scroll;
+        }
+        .user-info{
+            padding: 30px;
+        }
+
+
+    }
+    @media (max-width: 600px) {
+
+        .data{
+            display: inline;
+            border: none;
+            background-color: #132743 !important;
+        }
+
+
+    }
+    

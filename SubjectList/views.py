@@ -105,7 +105,7 @@ class ManageSubject(LoginRequiredMixin, TemplateView):
             time = self.request.POST.get('set_time')
             if 'delete' in self.request.POST:
                 command = self.request.POST.get('option')
-                if command:
+                if command == 'delete':
                     delete = subject.delete()
 
                     messages.success(self.request, f'Successfully deleted {subject.name} grade {subject.grade} from system')
@@ -139,16 +139,21 @@ class ManageTopic(LoginRequiredMixin, TemplateView):
     def post(self, args, **kwargs):
         if self.request.method == 'POST':
             if 'delete' in self.request.POST:
+                command = self.request.POST.get('option')
+                if command == 'delete':
 
-                topic = self.kwargs['id']
-                topic = self.get_context_data().get('topic')
-                delete = topic.delete()
-                messages.success(self.request, f'You have successfully deleted { topic } from the system')
+                    topic = self.kwargs['id']
+                    topic = self.get_context_data().get('topic')
+                    delete = topic.delete()
+                    messages.success(self.request, f'You have successfully deleted { topic } from the system')
 
-                return redirect('create-course')
+                    return redirect('create-course')
+                else:
+                    messages.error(self.request, 'Invalid command! Object was not deleted')
+                    return redirect(self.request.get_full_path())
             else:
-                name = self.request.POST.get('name')
-                order = self.request.POST.get('order')
+                name = self.request.POST.get('set_name')
+                order = self.request.POST.get('set_order')
                 topic_id = self.get_context_data().get('topic')
                 subject = topic_id.subject
                 subtopic = Subtopic.objects.create(name=name, order=order, subject=subject, topic=topic_id)
@@ -172,17 +177,19 @@ class ManageSubTopic(LoginRequiredMixin, TemplateView):
         if self.request.method == 'POST':
             subtopic = self.get_context_data().get('subtopic')
             if 'delete' in self.request.POST:
-
-                
-                delete = subtopic.delete()
-                messages.success(self.request, f'Successfuly deleted { subtopic.name } from system')
-
-                return redirect('create-course')
+                command = self.request.POST.get('option')
+                if command == 'delete':
+                    delete = subtopic.delete()
+                    messages.success(self.request, f'Successfuly deleted { subtopic.name } from system')
+                    return redirect('create-course')
+                else:
+                    messages.error(self.request, 'Invalid command The object was not deleted !')
+                    return redirect(self.request.get_full_path())
             
             else:
-                pdf = self.request.FILES.get('pdf')
-                video = self.request.FILES.get('video')
-                order = self.request.POST.get('order')
+                pdf = self.request.FILES.get('set_pdf')
+                video = self.request.FILES.get('set_video')
+                order = self.request.POST.get('set_order')
                 subtopic.file1 = pdf
                 subtopic.file2 = video
                 subtopic.order = order

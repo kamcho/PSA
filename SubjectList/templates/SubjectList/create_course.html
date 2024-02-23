@@ -5,31 +5,33 @@
 
 
 
-
-<div class="container">
+<div class="bg-gradient">
+<div class="container for">
     <br><br><br><br>
-
-    <div class="course-view">
-        {% for course in courses %}
-            <a href="{% url 'manage-course' course.id %}"><h6><i class="bi bi-bookmark-plus"></i> {{ course }}</h6></a>
-        {% endfor %}
+    <div class="course-container">
+        <div class="course-view">
+            {% for course in courses %}
+                <a href="{% url 'manage-course' course.id %}"><h6><i class="bi bi-bookmark-plus"></i> {{ course }}</h6></a>
+            {% endfor %}
+        </div>
     </div>
     
-    <br><br><hr class="text-center"><br><br><br>
+    <br><br><hr class="text-center"><br>
+    <div class="form-view">
 
-    <h3 class="text-center"><i class="bi bi-plus-square-fill"> </i>Add Course </h3>
+    <h3 class="text-center" ><i class="bi bi-plus-square-fill"> </i>Add Course </h3>
     <br><br>
     
     
         <div class="row mb-3">
             <div class="col-md-6">
             
-                <label for="inputField1" class="form-label">Name</label>
+                <label for="inputField1" class="form-label">Name*<strong style="color: crimson;">(required)</strong></label>
                 <input type="text" class="form-control"  name="name" placeholder="Mathematics" required>
             </div>
            
             <div class="col-md-6">
-                <label for="inputField2" class="form-label">Discipline</label>
+                <label for="inputField2" class="form-label">Discipline*<strong style="color: crimson;">(required)</strong></label>
                 <input type="text" class="form-control"  name="discipline" placeholder="Science" required>
             </div>
         </div>
@@ -37,9 +39,11 @@
         
     
     <button class="btn btn-info" style="color: white;" onclick="togglePopUp()">Save</button>
-
+</div>
+<br><br>
     
 
+</div>
 </div>
 <form method="post">
     {% csrf_token %}

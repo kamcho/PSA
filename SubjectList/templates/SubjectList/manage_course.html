@@ -4,29 +4,34 @@
 {% block content %}
 
 
-
+<div class="bg-gradient">
 
 <div class="container">
     <br><br><br><br>
     
-    <button class="btn btn-danger" style="color: white;" onclick="toggleDeletePopUp()">Delete</button>    
+      
 
-    <div class="text-center">
-        
+    <div class="text-center course-container" >
+        <button class="btn btn-danger" style="color: white;position: absolute;top: 60px;right: 12%;" onclick="toggleDeletePopUp()">Delete</button>  
            <h3><i class="bi bi-bookmark-plus"></i> {{ course }}</h3>
-            <small >{{ course.discipline }}</small>
+            <small >discipline.<strong style="font-size: 20px;color: coral;">{{ course.discipline }}</strong></small>
+            <br><br>
+
+            <h6>Subjects.</h6>
+            <div class="text-center course-view">
+    
+                {% for subject in subjects %}
+                    <a href="{% url 'manage-subject' subject.id %}" class="text-center"><h6><i class="bi bi-bookmark-plus"></i> {{ subject.name }} grade {{ subject.grade }}</h6></a>
+                {% endfor %}
+        
+            </div>
         
     </div>
 
-    <div class="text-center subject-course-view">
     
-        {% for subject in subjects %}
-            <a href="{% url 'manage-subject' subject.id %}"><h6><i class="bi bi-bookmark-plus"></i> {{ subject.name }} grade {{ subject.grade }}</h6></a>
-        {% endfor %}
-
-    </div>
     
     <br><br><hr class="text-center"><br><br>
+    <div class="form-view">
     <h5 style="font-size: 30px;"><i class="bi bi-plus-square-fill"> </i>Create Subject</h5>
     <br>
     
@@ -34,12 +39,12 @@
         <div class="row mb-3">
             <div class="col-md-6">
             
-                <label for="inputField1" class="form-label">Name</label>
+                <label for="inputField1" class="form-label">Name*<strong style="color: crimson;">(required)</strong></label>
                 <input type="text" class="form-control"  name="subject" placeholder="Mathematics" required>
             </div>
            
             <div class="col-md-6">
-                <label for="inputField2" class="form-label">Grade</label>
+                <label for="inputField2" class="form-label">Grade*<strong style="color: crimson;">(required)</strong></label>
                 <select class="form-select"  aria-label="Default select example" name="grade" required>
                    <option value="1">Grade 1</option>
                    <option value="2">Grade 2</option>
@@ -56,7 +61,7 @@
         <div class="row mb-3">
             <div class="col-md-6">
             
-                <label for="inputField1" class="form-label">Number Of Topics</label>
+                <label for="inputField1" class="form-label">Number Of Topics*<strong style="color: crimson;">(required)</strong></label>
                 <input type="number" class="form-control"  name="count" placeholder="4" required>
             </div>
            
@@ -73,6 +78,9 @@
         <button class="btn btn-primary" style="color: white;" onclick="togglePopUp()">Save</button>
         
 <br><br>
+</div>
+<br><br>
+</div>
 </div>
 <form method="post">
     {% csrf_token %}

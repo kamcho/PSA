@@ -52,7 +52,7 @@
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
 
             {% if user.is_authenticated %}
-              {% if user.role == 'Supervisor' %}
+              {% if request.user.role == 'Supervisor' %}
                 <li>
                   <a class="nav-link" href="{% url 'supervisor-home' %}">
                     <i class="bi bi-house" style=""> </i>Home
