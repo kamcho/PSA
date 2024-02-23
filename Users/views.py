@@ -482,6 +482,7 @@ class StudentsHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             academic_profile = AcademicProfile.objects.get(user=user)
             progress_queryset = Progress.objects.filter(user=user)
             last_subject = progress_queryset.last()
+            context['progress'] = progress_queryset
 
             # Check if a user has any saved progress
             if last_subject:
@@ -568,6 +569,24 @@ class StudentsHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
         return context
     
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            grade = self.request.POST.get('grade')
+            print('my grade', grade)
+            progress_queryset = Progress.objects.filter(user=self.request.user, subject__grade=grade)
+            subject = progress_queryset.filter(subject__isnull=False) \
+                    .values('subject__name', 'subject__id','subject__grade','subject__topics', 'subject__topics').annotate(subtopic_count=Count('subtopic', distinct=True))
+            context = {
+                'grade':self.get_context_data().get('grade'),
+                'filter':grade,
+                'progress':self.get_context_data().get('progress'),
+                'last_subject':self.get_context_data().get('last_subject'),
+                'next':self.get_context_data().get('next'),
+                'subjects':subject
+            }
+
+            return render(self.request, self.template_name, context)
+
     def test_func(self):
         try:
             role = self.request.user.role

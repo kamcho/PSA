@@ -155,7 +155,16 @@ class SubjectAnalytics(LoginRequiredMixin, IsStudent, TemplateView):
 
         return context
 
-
+def check_role(user):
+    if user.role == 'Student':
+            # get the current logged in user(learner) current grade and associated Subjects
+        return 'Users/base.html'
+    elif user.role == 'Guardian':
+        return 'Guardian/baseg.html'
+    elif user.role == 'Teacher':
+        return 'Teacher/teachers_base.html'
+    elif user.role in ['Supervisor', 'Finance']:
+        return 'Supervisor/base.html'
 class SubjectView(LoginRequiredMixin, TemplateView):
     template_name = 'Analytics/subject_view.html'
 
@@ -164,6 +173,7 @@ class SubjectView(LoginRequiredMixin, TemplateView):
         grade = self.kwargs['grade']
         subjects = Subject.objects.filter(grade=grade)
         context['subjects'] = subjects
+        context['base_html'] = check_role(self.request.user)
 
         return  context
     
@@ -177,6 +187,7 @@ class SubjectAnalysis(LoginRequiredMixin, TemplateView):
         context['subject'] = subject
         topics = Topic.objects.filter(subject__id=id)
         context['topics'] = topics
+        context['base_html'] = check_role(self.request.user)
 
         correct = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=True)
         failed = StudentsAnswers.objects.filter(quiz__subject__id=id, is_correct=False)

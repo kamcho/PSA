@@ -8,6 +8,10 @@
         {% if not students %}
         <p>There are currently no students in this class. If you did not edit the url contact @support</p>
         {% else %}
+
+        <h5>{{ students.0.current_class.grade }} {{ students.0.current_class.class_name }}</h5>
+
+        <br><br>
         {% for student in students %}
 
             <p><i class="bi bi-person-circle"> </i>

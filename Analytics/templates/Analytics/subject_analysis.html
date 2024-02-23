@@ -1,4 +1,4 @@
-{% extends 'Teacher/teachers_base.html' %}
+{% extends base_html %}
 {% load crispy_forms_tags %}
 {% load custom_filters %}
 
@@ -6,11 +6,12 @@
 <br><br><br><br>
 
 
-
+<div class="bg-gradient">
     
 <div class="container">
+    <br><br>
 
-    <div>
+    <div style="color: white;">
         <h5>{{ subject.name }} {{ subject.grade }}</h5>
         <a class="btn btn-dark" style="color: white;" href="{% url 'questions' subject.id %}">View Questions</a>
     </div>
@@ -191,6 +192,7 @@
 
 
 
+</div>
 </div>
 
 

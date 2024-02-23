@@ -5,8 +5,8 @@ from .views import *
 urlpatterns = [
 
     path('Class/<str:class_id>/<str:subject>/Add-Scores/', AddSubjectScore.as_view(), name='add-score'),
-    path('Terms/', TermListView.as_view(), name='terms'),
-    path('Terms/<str:term>/', TermInfo.as_view(), name='term-info')
+    path('', TermListView.as_view(), name='terms'),
+    path('<str:term>/', TermInfo.as_view(), name='term-info')
 
 
 ]

@@ -4,7 +4,7 @@
 {% block content %}
 
 
-  <div class="content-container">
+  <div class="bg-gradient">
     <div class="event-view">
       <a href="{% url 'learn' grade %}" class="no-style">
         <div class="event-card">
@@ -77,17 +77,25 @@
   <div class='table-container'>
 
 
-    <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-      aria-expanded="false">Grade</button>
-    <ul class="dropdown-menu dropdown-menu-end">
-      <li><a class="dropdown-item" href="#">4</a></li>
-      <li><a class="dropdown-item" href="#">5</a></li>
-      <li><a class="dropdown-item" href="#">6</a></li>
-      <li>
-        <hr class="dropdown-divider">
-      </li>
-      <li><a class="dropdown-item" href="#">7</a></li>
-    </ul> -->
+    <form method="post">
+      {% csrf_token %}
+    
+      <div class="btn-group">
+        <button type="button" class="btn btn-secondary dropdown-toggle" name="grade" data-bs-toggle="dropdown" aria-expanded="false">
+          Grade {{ filter }}
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><button class="dropdown-item" href="#" name="grade" value="4">4</button></li>
+          <li><button class="dropdown-item" href="#" name="grade" value="5">5</button></li>
+          <li><button class="dropdown-item" href="#" name="grade" value="6">6</button></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><button class="dropdown-item" href="#" name="grade" value="7">7</button></li>
+        </ul>
+      </div>
+    </form>
+    
 
     <br>
     <br>

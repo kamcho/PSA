@@ -8,10 +8,8 @@
 
 <div class="container">
     <br><br><br><br>
-    <form method="post">
-        {% csrf_token %}
-        <button class="btn btn-danger" style="color: white;" name="delete">DELETE</button>
-    </form>
+    
+        <button class="btn btn-danger" style="color: white;" onclick="toggleDeletePopUp()">DELETE</button>
 
     <div class="text-center">
         
@@ -34,8 +32,7 @@
     <h5 class="text-center"> <i class="bi bi-plus" style="font-size: 30px;"></i> Add Topic</h5>
     <br>
     
-    <form method="post">
-        {% csrf_token %}
+ 
         <div class="text-center">
             
             <label for="inputField1" class="form-label" >Order</label>
@@ -70,11 +67,116 @@
             </div>
         </div>
 
-        <button class="btn btn-info" style="color: white;">Save</button>
-    </form>
+        <button class="btn btn-info" style="color: white;" onclick="togglePopUp()">Save</button>
     
 
 </div>
+<form method="post">
+    {% csrf_token %}
+    <div class="delete-pop-up">
+        <br>
+        <h5 style="font-family: cursive; color: coral;" class="text-center">Delete {{ course }} from system </h5>
+        <br>
+        
+        <div class="center-input">
+            <p style="color: crimson;">You are trying to delete this object from the system. Please not that this cannot be undone</p>
+        <p>Type <strong style="color: red;">delete</strong> to confirm</p>
+            <div class="col-md-6">
+                <input type="text" class="form-control"  name="option" placeholder="" >
+            </div>
+            <br>
+           
+            <br><br><br>
+            <button class="btn btn-danger" name="delete">DELETE</button>
+        </div>
+        
+        
+    </div>
+</form>
+<form method="post">
+    {% csrf_token %}
+    <div class="pop-up">
+        <br>
+        <h5 style="font-family: cursive;" class="text-center">Create Subject </h5>
+        <br>
+        <div class="center-input">
+            <div >
+            
+                <input type="number" class="form-control"  name="set_order" placeholder="1" readonly>
+            </div>
+            <br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                
+                    <label for="inputField1" class="form-label">Name</label>
+                    <input type="text" class="form-control"  name="set_name" placeholder="Addition" readonly>
+                </div>
+               
+                <div class="col-md-6">
+                    <input type="number" class="form-control"  name="set_subtopics" placeholder="4" readonly>
+                   
+               
+                </div>
+            </div>
+            <br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                
+                    <input type="number" class="form-control"  name="set_size" placeholder="10 Questions" readonly>
+                </div>
+               
+                <div class="col-md-6">
+                    <input type="number" class="form-control"  name="set_time" placeholder="30 Minutes" readonly>
+                </div>
+            </div>
+    
+            <button class="btn btn-info" style="color: white;">Save</button>
+        </div>
+        
+        
+    </div>
+</form>
+<script>
+    function togglePopUp() {
+    var popUpDiv = document.querySelector('.pop-up');
+    var containerDiv = document.querySelector('.container');
+
+    // Get values from pop-up inputs
+    var orderInput = document.querySelector('.container [name="order"]');
+    var nameInput = document.querySelector('.container [name="name"]');
+    var subtopicsInput = document.querySelector('.container [name="subtopics"]');
+    var sizeInput = document.querySelector('.container [name="size"]');
+    var timeInput = document.querySelector('.container [name="time"]');
+
+    // Set values in the main form
+    
+
+    // Toggle the display of the pop-up
+    popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+    document.querySelector('[name="set_order"]').value = orderInput.value;
+    document.querySelector('[name="set_name"]').value = nameInput.value;
+    document.querySelector('[name="set_subtopics"]').value = subtopicsInput.value;
+    document.querySelector('[name="set_size"]').value = sizeInput.value;
+    document.querySelector('[name="set_time"]').value = timeInput.value;
+
+    // Toggle the opacity of the container
+    containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '1' : '0.23';
+}
+
+</script>
+<script>
+    function toggleDeletePopUp() {
+        var popUpDiv = document.querySelector('.delete-pop-up');
+        var containerDiv = document.querySelector('.container');
+
+        // Toggle the display of the pop-up
+        popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+
+
+        // Toggle the opacity of the container
+        containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '.2' : '0.23';
+    }
+</script>
 
 
 

@@ -20,8 +20,7 @@
     <h3 class="text-center"><i class="bi bi-plus-square-fill"> </i>Add Course </h3>
     <br><br>
     
-    <form method="post">
-        {% csrf_token %}
+    
         <div class="row mb-3">
             <div class="col-md-6">
             
@@ -35,11 +34,55 @@
             </div>
         </div>
 
-        <button class="btn btn-info" style="color: white;">Save</button>
-    </form>
+        
+    
+    <button class="btn btn-info" style="color: white;" onclick="togglePopUp()">Save</button>
+
     
 
 </div>
+<form method="post">
+    {% csrf_token %}
+    <div class="pop-up">
+        <br>
+        <h5 style="font-family: cursive;" class="text-center">Create Course </h5>
+        <br>
+        <div class="center-input">
+            <div class="col-md-6">
+                <input type="text" class="form-control"  name="subject" placeholder="Science" readonly>
+            </div>
+            <br>
+            <div class="col-md-6">
+                <input type="text" class="form-control"  name="type" placeholder="Science" readonly>
+            </div>
+            <br><br><br>
+            <button class="btn btn-primary">Save</button>
+        </div>
+        
+        
+    </div>
+</form>
+
+<script>
+    function togglePopUp() {
+        var popUpDiv = document.querySelector('.pop-up');
+        var containerDiv = document.querySelector('.container');
+        var subjectInput = document.querySelector('.pop-up [name="subject"]');
+        var typeInput = document.querySelector('.pop-up [name="type"]');
+        var nameInput = document.querySelector('[name="name"]');
+        var disciplineInput = document.querySelector('[name="discipline"]');
+
+        // Toggle the display of the pop-up
+        popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+
+        // Set the values of subject and type inputs
+        subjectInput.value = nameInput.value;
+        typeInput.value = disciplineInput.value;
+
+        // Toggle the opacity of the container
+        containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '.2' : '0.23';
+    }
+</script>
 
 
 

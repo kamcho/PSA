@@ -617,7 +617,7 @@ class CreateTerm(TemplateView):
                     }
                 )
 
-        return redirect(request.get_full_path())
+        return redirect('term-info', term.id)
     
 
 class FeesListView(TemplateView):

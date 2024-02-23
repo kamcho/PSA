@@ -146,8 +146,8 @@ def test_is_done(user, test_uuid):
 @register.filter
 def class_test_progress(test_uuid):
     class_test = ClassTest.objects.filter(uuid=test_uuid).last()
-    class_id = class_test.class_id
-    student_count = SchoolClass.objects.filter(class_name=class_id).first()
+    class_id = class_test.class_id.class_id
+    student_count = SchoolClass.objects.get(class_id=class_id)
     test_count = ClassTestStudentTest.objects.filter(test=test_uuid).count()
 
     return f' {test_count} / {student_count.class_size} '

@@ -4,10 +4,13 @@
 
 
 {% block content %}
-<br><br><br><br>
-<div class="container">
 
+<div class="bg-gradient">
+    <br><br>
+<div class="container" style="background-color: white;">
 
+    <br><br>
+    <h5 style="font-family: cursive;">Create User</h5>
     <form method="post">
         {% csrf_token %}
         <div class="row mb-3">
@@ -54,12 +57,13 @@
         <br>
         <select class="form-select" id="classInput" name="class" aria-label="Default select example" required>
             {% for class in classes %}
-                <option value="{{ class }}">{{ class }}</option>
+                <option value="{{ class.class_id }}">{{ class }}</option>
             {% endfor %}
           
         </select>
         <br>
         <button type="submit" class="btn btn-primary">Submit</button>
+        <div>.</div>
     </form>
     
     <script>
@@ -81,6 +85,7 @@
    
 
 
+</div>
 </div>
 
 

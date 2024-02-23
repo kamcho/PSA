@@ -82,16 +82,16 @@ class TaskViewSelect(IsTeacher, LoginRequiredMixin, TemplateView):
         try:
             # Get class list
             term_info = CurrentTerm.objects.all().first()
-            my_class = StudentList.objects.get(user=self.request.user, subject=subject, class_id__class_name=class_id)
+            my_class = StudentList.objects.get(user=self.request.user, subject=subject, class_id__class_id=class_id)
             
 
             context['subject'] = my_class.subject
             # Get a few students in a class to display
-            students = AcademicProfile.objects.filter(current_class__class_name=class_id)[:3]
+            students = AcademicProfile.objects.filter(current_class__class_id=class_id)[:3]
             # Get a few tests to display
-            tests = ClassTest.objects.filter(teacher=user, class_id__class_name=class_id)[:3]
+            tests = ClassTest.objects.filter(teacher=user, class_id__class_id=class_id)[:3]
             context['tests'] = tests
-            context['class'] = class_id
+            context['class'] = SchoolClass.objects.get(class_id=class_id)
             context['students'] = students
             context['term'] = term_info
         except Exception as e:
@@ -130,7 +130,7 @@ class StudentsView(IsTeacher, LoginRequiredMixin, TemplateView):
         class_id = self.kwargs['class']
         try:
             # Get students in a given class
-            students = AcademicProfile.objects.filter(current_class__class_name=class_id)
+            students = AcademicProfile.objects.filter(current_class__class_id=class_id)
             context['students'] = students
 
         except Exception as e:
@@ -170,11 +170,12 @@ class TestsView(IsTeacher, LoginRequiredMixin, TemplateView):
         class_id = self.kwargs['class']  # get class name
         try:
             # Get class tests where author is the logged in user for specific class
-            tests = ClassTest.objects.filter(teacher=user, class_id__class_name=class_id)
+            tests = ClassTest.objects.filter(teacher=user, class_id__class_id=class_id)
 
             context['tests'] = tests
             context['class'] = class_id
             context['subject'] = subject
+            print(tests, class_id, subject)
         except Exception as e:
             messages.error(self.request, 'An error occurred when processing your request. Please try again later')
 

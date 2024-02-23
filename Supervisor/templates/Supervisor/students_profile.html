@@ -8,22 +8,26 @@
 <br>
 <br>
 <br>
-
-<div class="container">
-    {% if user.role == 'Supervisor' %}
+<div class="bg-gradient">
+    <br><br>
+<div  >
+    <div class="container">
+    {% if request.user.role == 'Supervisor' %}
     <a  href="{% url 'manage-user' user %}" class="btn btn-warning" style="color: white;">Manage Student</a>
     {% endif %}
+    <br>
     
     <div class="badge bg-dark">
         <h5 >{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h5>
-        {% if user.role == 'Student' %}
+        {% if request.user.role == 'Student' %}
             <a class="btn btn-info" href="{% url 'update-profile' %}">Edit Profile</a>
-        {% else %}
+      
         {% endif %}
     </div>
+</div>
     
     <br><br>
-    <div class="profile-card">
+    <div class="profile-card" style="margin: 0 auto;">
         <div class="test-progress">
         {% for subject in subjects %}
             
@@ -109,7 +113,7 @@
 
 
 
-
+</div>
 
 
 

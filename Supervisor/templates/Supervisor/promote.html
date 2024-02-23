@@ -1,0 +1,23 @@
+{% extends 'Teacher/teachers_base.html' %}
+{% block content %}
+
+
+
+    <br><br><br><br>
+    <div class="container">
+        <h5>{{ class }} - <small class="text-muted">{{ class.class_id }}</small></h5>
+        <h5>Grade {{ class.grade }}</h5>
+
+        <p>Class Size {{ class.class_size }}</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <button class="btn btn-warning" name="promote">Promote</button>
+            <button class="btn btn-danger" name="demote">De-mote</button>
+        </form>
+
+    </div>
+
+
+{% endblock %}

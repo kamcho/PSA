@@ -5,7 +5,7 @@
 <div class="container">
   <br><br><br>
     {% for class in classes %}
-        <a href="{% url 'class-balances' class.class_name %}">{{ class.class_name }}</p>
+        <a href="{% url 'promote' class.class_id %}">{{ class.grade }} {{ class.class_name }}</p>
     {% endfor %}
 
 

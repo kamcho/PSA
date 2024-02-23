@@ -8,10 +8,8 @@
 
 <div class="container">
     <br><br><br><br>
-    <form method="post">
-        {% csrf_token %}
-        <button class="btn btn-danger" style="color: white;" name="delete">DELETE</button>
-    </form>
+    
+    <button class="btn btn-danger" style="color: white;" onclick="toggleDeletePopUp()">Delete</button>    
 
     <div class="text-center">
         
@@ -32,13 +30,12 @@
     <h5 style="font-size: 30px;"><i class="bi bi-plus-square-fill"> </i>Create Subject</h5>
     <br>
     
-    <form method="post">
-        {% csrf_token %}
+    
         <div class="row mb-3">
             <div class="col-md-6">
             
                 <label for="inputField1" class="form-label">Name</label>
-                <input type="text" class="form-control"  name="name" placeholder="Mathematics" required>
+                <input type="text" class="form-control"  name="subject" placeholder="Mathematics" required>
             </div>
            
             <div class="col-md-6">
@@ -65,7 +62,7 @@
            
             <div class="col-md-6">
                 <label for="inputField2" class="form-label">Course</label>
-                <select class="form-select"  aria-label="Default select example" name="course" required disabled>
+                <select class="form-select"  aria-label="Default select example" name="course" required disabled >
                     <option value="{{ course }}">{{ course }}</option>
                     
                      
@@ -73,12 +70,110 @@
             </div>
         </div>
 
-        <button class="btn btn-info" style="color: white;">Save</button>
-    </form>
+        <button class="btn btn-primary" style="color: white;" onclick="togglePopUp()">Save</button>
+        
+<br><br>
+</div>
+<form method="post">
+    {% csrf_token %}
+    <div class="pop-up">
+        <br>
+        <h5 style="font-family: cursive;" class="text-center">Create Subject </h5>
+        <br>
+        <div class="center-input">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                
+                    <input type="text" class="form-control"  name="set_name"   readonly>
+                </div>
+               
+                <div class="col-md-6">
+                
+                    <input type="text" class="form-control"  name="set_grade"  readonly>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                
+                    <input type="number" class="form-control"  name="set_count"  readonly>
+                </div>
+               
+                <div class="col-md-6">
+                    <select class="form-select"  aria-label="Default select example" name="set_course" required disabled>
+                        <option value="{{ course }}">{{ course }}</option>
+                        
+                         
+                     </select>
+                </div>
+            </div>
+            <br><br><br>
+            <button class="btn btn-primary" >Save</button>
+        </div>
+        
+        
+    </div>
+</form>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="delete-pop-up">
+        <br>
+        <h5 style="font-family: cursive; color: coral;" class="text-center">Delete {{ course }} from system </h5>
+        <br>
+        
+        <div class="center-input">
+            <p style="color: crimson;">You are trying to delete this object from the system. Please not that this cannot be undone</p>
+        <p>Type <strong style="color: red;">delete</strong> to confirm</p>
+            <div class="col-md-6">
+                <input type="text" class="form-control"  name="option" placeholder="" >
+            </div>
+            <br>
+           
+            <br><br><br>
+            <button class="btn btn-danger" name="purge">DELETE</button>
+        </div>
+        
+        
+    </div>
+</form>
+<script>
+    function toggleDeletePopUp() {
+        var popUpDiv = document.querySelector('.delete-pop-up');
+        var containerDiv = document.querySelector('.container');
+
+        // Toggle the display of the pop-up
+        popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+
+
+        // Toggle the opacity of the container
+        containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '.2' : '0.23';
+    }
+</script>
+<script>
+    function togglePopUp() {
+    var popUpDiv = document.querySelector('.pop-up');
+    var containerDiv = document.querySelector('.container');
+
+    // Get values from pop-up inputs
+    var nameInput = document.querySelector('.container [name="subject"]');
+    var gradeInput = document.querySelector('.container [name="grade"]');
+    var courseInput = document.querySelector('.container [name="course"]');
+    var countInput = document.querySelector('.container [name="count"]');
+
+    // Set values in the main form
     
 
-</div>
+    // Toggle the display of the pop-up
+    popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+    document.querySelector('[name="set_name"]').value = nameInput.value;
+    document.querySelector('[name="set_grade"]').value = gradeInput.value;
+    document.querySelector('[name="set_course"]').value = courseInput.value;
+    document.querySelector('[name="set_count"]').value = countInput.value;
+    // Toggle the opacity of the container
+    containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '1' : '0.23';
+}
 
+</script>
 
 
 {% endblock %}

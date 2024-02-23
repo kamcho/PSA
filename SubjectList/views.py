@@ -34,8 +34,8 @@ class CreateCourse(LoginRequiredMixin, TemplateView):
     
     def post(self, args, **kwargs):
         if self.request.method == 'POST':
-            name = self.request.POST.get('name')
-            discipline = self.request.POST.get('discipline')
+            name = self.request.POST.get('subject')
+            discipline = self.request.POST.get('type')
             try:
                 course = Course.objects.create(name=name, discipline=discipline)
             except IntegrityError:
@@ -58,17 +58,25 @@ class ManageCourse(LoginRequiredMixin, TemplateView):
     def post(self, args, **kwargs):
         if self.request.method == 'POST':
             course = self.get_context_data().get('course')
-            if 'delete' in self.request.POST:
-                purge = course.delete()
-                messages.success(self.request, f'Successfully deleted {course} from system !!')
+            if 'purge' in self.request.POST:
+                option = self.request.POST.get('option')
+                if option == 'delete':
+                    purge = course.delete()
+                    messages.success(self.request, f'Successfully deleted {course} from system !!')
+                else:
+                    messages.warning(self.request, f'Wrong entry. {course} was not deleted!')
+                    return redirect(self.request.get_full_path)
 
                 return redirect('create-course')
             else:
-                name = self.request.POST.get('name')
-                grade = self.request.POST.get('grade')
+                name = self.request.POST.get('set_name')
+                grade = self.request.POST.get('set_grade')
                 
-                topics_count = self.request.POST.get('count')
-                subject = Subject.objects.create(name=name, topics=topics_count, grade=grade, course=course)
+                topics_count = self.request.POST.get('set_count')
+                try:
+                    subject = Subject.objects.create(name=name, topics=topics_count, grade=grade, course=course)
+                except:
+                    messages.error(self.request, 'Error when creating this object. Please complete the form!')
 
 
 
@@ -90,19 +98,27 @@ class ManageSubject(LoginRequiredMixin, TemplateView):
     def post(self, args, **kwargs):
         if self.request.method == 'POST':
             subject = self.get_context_data().get('subject')
-            name = self.request.POST.get('name')
-            order = self.request.POST.get('order')
-            subtopics = self.request.POST.get('subtopics')
-            test_size = self.request.POST.get('size')
-            time = self.request.POST.get('time')
+            name = self.request.POST.get('set_name')
+            order = self.request.POST.get('set_order')
+            subtopics = self.request.POST.get('set_subtopics')
+            test_size = self.request.POST.get('set_size')
+            time = self.request.POST.get('set_time')
             if 'delete' in self.request.POST:
-                delete = subject.delete()
-                messages.success(self.request, f'Successfully deleted {subject.name} grade {subject.grade} from system')
+                command = self.request.POST.get('option')
+                if command:
+                    delete = subject.delete()
+
+                    messages.success(self.request, f'Successfully deleted {subject.name} grade {subject.grade} from system')
+                else:
+                    messages.error(self.request, 'Wrong command. Try again !')
 
                 return redirect('create-course')
             else:
-                topic = Topic.objects.create(subject=subject, name=name, order=order, time=time,
+                try:
+                    topic = Topic.objects.create(subject=subject, name=name, order=order, time=time,
                                               topics_count=subtopics, test_size=test_size)
+                except:
+                    messages.error(self.request, 'Error while creating topic. Fill the form completely')
                 
 
                 return redirect(self.request.get_full_path())

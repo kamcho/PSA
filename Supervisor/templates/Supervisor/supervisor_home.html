@@ -1,5 +1,5 @@
 {% extends 'Supervisor/base.html' %}
-{% load custom_filters %}
+{% load supervisor_filters %}
 {% load static %}
 {% block content %}
 
@@ -11,8 +11,10 @@
 
 
 <!--<h6>{{ user.role }}</h6>-->
-
- <div class="subject-select-content-contaier">
+<div class="bg-gradient" >
+ <div class="subject-select-content-contaier" >
+    <br>
+    <br>
 
     <div class="users-view">
         <div class="user-card">
@@ -52,33 +54,70 @@
     <div class="fee-card">
         <h5>Fees</h5>
         <br>
-        <div style="width: 250px;height: 250px;margin: auto auto;">
-            <a href="{% url 'school-fees-balances' %}">
-                <canvas id="feeClearanceChart" ></canvas>
-            </a>
-
+        <div class="progress-canvas">
+            <canvas id="doughnutChart1" width="100" height="100" ></canvas>
         </div>
+        {% with get_fee_balances as progress %}
+        <script>
+            var ctx1 = document.getElementById('doughnutChart1').getContext('2d');
+            var doughnutChart1 = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                
+                    datasets: [{
+                        data: [{{ progress }}, {{ progress|add:"-100" }}],
 
-        
-        
+                        backgroundColor: ['#52A2EF', '#FF6344'],
+                    }]
+                },
+            });
+        </script>
+        {% endwith %}
     </div>
 
     <div class="fee-card">
         <h5>Invoices</h5>
         <br>
-        <div style="width: 250px;height: 250px;margin: auto auto;">
-            <canvas id="feeClearanceChart2" ></canvas>
-
+        <div class="progress-canvas">
+            <canvas id="doughnutChart2"  ></canvas>
         </div>
+        {% with get_invoice_balances as progress %}
+        <script>
+            var ctx2 = document.getElementById('doughnutChart2').getContext('2d');
+            var doughnutChart2 = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                
+                    datasets: [{
+                        data: [{{ progress }}, {{ progress|add:'-100' }}],
+                        backgroundColor: ['#36A2EB', '#FF6384'],
+                    }]
+                },
+            });
+        </script>
+        {% endwith %}
     </div>
 
     <div class="fee-card">
-        <h5>Deviation</h5>
+        <h5>Balances</h5>
         <br>
-        <div style="width: 250px;height: 250px;margin: auto auto;">
-            <canvas id="feeClearanceChart3" ></canvas>
-
+        <div class="progress-canvas">
+            <canvas id="doughnutChart3"  ></canvas>
         </div>
+        
+        <script>
+            var ctx3 = document.getElementById('doughnutChart3').getContext('2d');
+            var doughnutChart3 = new Chart(ctx3, {
+                type: 'doughnut',
+                data: {
+                
+                    datasets: [{
+                        data: [70, 30],
+                        backgroundColor: ['#36A2EB', '#FF6384'],
+                    }]
+                },
+            });
+        </script>
     </div>
 
 
@@ -266,6 +305,6 @@
     var myChart = new Chart(ctx, config);
 </script>
 
-
+</div>
 </div>
 {% endblock %}

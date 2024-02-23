@@ -16,7 +16,7 @@
     <div class="subjects-select-view">
     {% for class in classes %}
         <div class="subject-select-card">
-            <a href="{% url 'class-task-view-select' class.class_id class.subject.id  %}"><h6><i class="bi bi-bookmark"></i> {{ class.class_id }}</h6></a>
+            <a href="{% url 'class-task-view-select' class.class_id.class_id class.subject.id  %}"><h6><i class="bi bi-bookmark"></i> {{ class.class_id }}</h6></a>
             <small><i class="bi bi-gear"> </i> Grade <span class="badge bg-info text-light">{{ class.class_id.grade }}</span></small>
             <br>
 

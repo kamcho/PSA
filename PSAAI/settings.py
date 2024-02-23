@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-*1r4hwdyal=y_j%*m&+-_4!@j)33!9a(z*k_%71c($@&71fbue
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','crimsons-analytics.com','knowedge.online']
-# CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46",]
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ["http://16.170.243.46",'https://189c-41-81-190-96.ngrok-free.app']
 
 # Application definition
 
@@ -96,24 +96,24 @@ WSGI_APPLICATION = 'PSAAI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': 'psaai',
-       'USER': 'root',
-       'PASSWORD': '141778215aA',
-       'HOST': 'psaai.covjv7kf4u4o.eu-north-1.rds.amazonaws.com',
-       'PORT': '5432',
-   }
-}
-
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / "mydatabase.sqlite3",
-#     }
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'psaai',
+#        'USER': 'root',
+#        'PASSWORD': '141778215aA',
+#        'HOST': 'psaai.covjv7kf4u4o.eu-north-1.rds.amazonaws.com',
+#        'PORT': '5432',
+#    }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "mydatabase.sqlite3",
+    }
+}
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',

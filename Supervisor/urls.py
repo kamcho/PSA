@@ -32,5 +32,6 @@ urlpatterns = [
     path('Schools/<str:uuid>/Home', SchoolTaskSelect.as_view(), name='school'),
     path('<str:uuid>/Review/', TestReview.as_view(), name='knec-test-review'),
     path('Classes/<str:class_id>/<str:subject>/<str:term>/Results/', ClassSubjectDetail.as_view(), name='class-subject-detail'),
+    path('<str:class_id>/Promote/', Promote.as_view(), name='promote'),
 
 ]

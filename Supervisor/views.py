@@ -1,5 +1,6 @@
 import datetime
 import json
+from typing import Any
 from django.contrib.auth.hashers import make_password
 
 from itertools import groupby
@@ -193,8 +194,8 @@ class CreateUser(TemplateView):
                     class_id = request.POST.get('class')
                     user = MyUser.objects.create(email=email, role=role, password=make_password('defaultpwd'))
                     profile = PersonalProfile.objects.get(user=user)
-                    print(profile, '\n\n\n\n\n\n')
-                    class_id = SchoolClass.objects.get(class_name=class_id)
+                    print(class_id, '\n\n\n\n\n\n')
+                    class_id = SchoolClass.objects.get(class_id=class_id)
                     profile.f_name = f_name
                     profile.l_name = l_name
                     profile.surname = surname
@@ -217,8 +218,8 @@ class CreateUser(TemplateView):
                     return redirect(request.get_full_path())
             except IntegrityError:
                messages.error(self.request, 'A user with this email/adm_no already exists !') 
-            except Exception:
-                messages.error(self.request, 'We could not save the user. Contact @support')
+            except Exception as e:
+                messages.error(self.request, f'{str(e)}eWe could not save the user. Contact @support')
 
             return redirect(request.get_full_path())
 
@@ -585,7 +586,7 @@ class ClassesView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        classes = SchoolClass.objects.all()
+        classes = SchoolClass.objects.all().order_by('grade')
         context['classes'] = classes
         return context     
     
@@ -595,20 +596,16 @@ class ClassDetail(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         class_id = self.kwargs['class_id']
-        class_id = SchoolClass.objects.get(class_name=class_id)
+        class_id = SchoolClass.objects.get(class_id=class_id)
         context['class'] = class_id
-        year = self.request.session.get('year', None)
-        term = self.request.session.get('term', 'Term 1')
-        if year:
-            context['subjects'] = subjects = Subject.objects.filter(grade=year)
-            print(subjects)
-        else:
-            subjects = Subject.objects.filter(grade=class_id.grade)
-            context['subjects'] = subjects
-            year = class_id.grade
+        
+        
+        subjects = Subject.objects.filter(grade=class_id.grade)
+        context['subjects'] = subjects
+        year = class_id.grade
             # print(subjects)
-
-        context['term'] = term
+        term = CurrentTerm.objects.filter().first()
+        context['term'] = term.term
         context['grade'] = year
         
         
@@ -618,8 +615,13 @@ class ClassDetail(TemplateView):
         if request.method == 'POST':
             year = request.POST.get('year')
             term = request.POST.get('term')
-            request.session['year'] = year
-            request.session['term'] = term
+            subjects = Subject.objects.filter(grade=year)
+            context = {
+                'term':term,
+                'grade':year,
+                'subjects':subjects,
+                'class':self.get_context_data().get('class')
+            }
 
 
             return redirect(request.get_full_path())
@@ -1034,5 +1036,34 @@ class ManageClassTeacher(TemplateView):
             class_instance.class_teacher = teacher
             class_instance.save()
             messages.success(self.request, f'{teacher} is now class teacher of {class_instance.class_name}')
+
+            return redirect(self.request.get_full_path())
+
+
+
+class Promote(TemplateView):
+    template_name = 'Supervisor/promote.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        class_id = self.kwargs['class_id']
+        class_instance = SchoolClass.objects.get(class_id=class_id)
+        context['class'] = class_instance
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            class_instance = self.get_context_data().get('class')
+            if 'promote' in self.request.POST:
+                next_grade = class_instance.grade + 1
+                class_instance.grade = next_grade
+                class_instance.save()
+            elif 'demote' in self.request.POST:
+                next_grade = class_instance.grade - 1
+                class_instance.grade = next_grade
+                class_instance.save()
+
 
             return redirect(self.request.get_full_path())

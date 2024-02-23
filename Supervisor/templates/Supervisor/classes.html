@@ -13,7 +13,7 @@
 
         <div class="subjects-select-view">
             {% for class in classes %}
-            <a href="{% url 'class-profile' class %}">
+            <a href="{% url 'class-profile' class.class_id %}">
                 <div class="subject-select-card">
                     <h6>{{ class }}</h6>
                     <p>Grade {{ class.grade }}</p>

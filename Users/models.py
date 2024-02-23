@@ -166,10 +166,15 @@ class SchoolClass(models.Model):
     grade = models.PositiveIntegerField()
     class_name = models.CharField(max_length=100)
     class_size = models.PositiveIntegerField(default=30)
-    class_teacher = models.ForeignKey(MyUser, default='2', on_delete=models.CASCADE)
+    class_teacher = models.ForeignKey(MyUser, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.class_name)
+        return str(self.grade) + ' ' + str(self.class_name)
+    
+    class Meta:
+        unique_together = ('grade', 'class_name')
+    
+    
 
 class AcademicProfile(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
