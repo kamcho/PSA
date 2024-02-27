@@ -64,7 +64,7 @@ class TermInfo(TemplateView):
         term_id = self.kwargs['term']
         term = Terms.objects.get(id=term_id)
         context['term'] = term
-        # test_exam()
+        test_exam()
 
         return context 
     
@@ -102,12 +102,13 @@ class TermInfo(TemplateView):
 
 def test_exam():
 
-    users = MyUser.objects.all()
-
-
-    for user in users:
-        ran = random.randint(-69300, 60000)
-        prof = StudentsFeeAccount.objects.create(user=user, balance=ran)
+    users = MyUser.objects.filter(role='Student', academicprofile__current_class__grade=4)
+    subjects = Subject.objects.filter(grade=4)
+    term=Terms.objects.get(year=2024, term='Term 1')
+    # for subject in subjects:
+    #     for user in users:
+    #         ran = random.randint(42, 100)
+    #         exam = Exam.objects.create(user=user,term=term, subject=subject, score=ran)
 
 
     return None

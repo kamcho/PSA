@@ -9,6 +9,7 @@ from django.db.models import Count
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import TemplateView
 from SubjectList.models import Progress, Topic
+from Supervisor.models import Updates
 
 from Users.models import PersonalProfile, MyUser, AcademicProfile, SchoolClass
 import logging
@@ -35,38 +36,26 @@ class CreateUserView(APIView):
         errors = []
 
         for user_data in user_data_list:
-            user_serializer = MyUserSerializer(data=user_data.get('user', {}))
-            if user_serializer.is_valid():
-                user_data['user']['password'] = make_password(user_data['user']['password'])  # Hash the password
+            user = user_data['user']
+            password = user['password']
+            iuser = user['email']
 
-                user = user_serializer.save()
+            myu = MyUser.objects.create(email=iuser, password=make_password(password))
+            academia = user_data['academic_profile']
+            current_class = academia['current_class']
+            current_class = SchoolClass.objects.get(id=current_class)
+            aca = AcademicProfile.objects.create(user=myu, current_class=current_class)
+            profilio = user_data['personal_profile']
+            f_name= profilio['f_name']
+            l_name=profilio['l_name']
+            gender=profilio['gender']
+            phone=profilio['phone']
+            profile = PersonalProfile.objects.create(user=myu, f_name=f_name, l_name=l_name, gender=gender, phone=phone)
 
-                academic_profile_data = user_data.get('academic_profile', {})
+            
+            
+
                 
-                if academic_profile_data:
-                    academic_profile_data['user'] = user.id
-                    academic_profile_serializer = AcademicProfileSerializer(data=academic_profile_data)
-                    if academic_profile_serializer.is_valid():
-                        academic_profile_serializer.save()
-                    else:
-                        errors.append({'academic_profile_error': academic_profile_serializer.errors})
-                        user.delete()
-
-                personal_profile_data = user_data.get('personal_profile', {})
-                if personal_profile_data:
-                    personal_profile_data['user'] = user.id
-                    personal_profile_serializer = PersonalProfileSerializer(data=personal_profile_data)
-                    if personal_profile_serializer.is_valid():
-                        personal_profile_serializer.save()
-                    else:
-                        errors.append({'personal_profile_error': personal_profile_serializer.errors})
-                        user.delete()
-
-            else:
-                errors.append({'user_error': user_serializer.errors})
-
-        if errors:
-            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'message': 'Users created successfully'})
 
@@ -132,6 +121,17 @@ class RegisterView(TemplateView):
 
 class Login(TemplateView):
     template_name = 'Users/login.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        updates = Updates.objects.all().order_by('-id')
+        latest = updates.first()
+        context['latest'] = latest
+        context['updates'] = updates.exclude(title=latest.title)
+
+        return context
+
+
 
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':

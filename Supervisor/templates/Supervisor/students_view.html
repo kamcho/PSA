@@ -20,20 +20,30 @@
     <table class="table">
         <thead>
           <tr>
-            <th><h6>First Name</h6></th>
-             <th><h6>Last Name</h6></th>
-            <th><h6>Surname</h6></th>
+            <th><h6>User</h6></th>
+            
             <th><h6>Class</h6></th>
+            <th><h6>School</h6></th>
+            <th><h6>Status</h6></th>
           </tr>
         </thead>
         <tbody>
           
             {% for user in users %}
+            
             <tr>
-              <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }}</h6></a></td>
-              <td>{{ user.personalprofile.l_name }}</td>
-              <td>{{ user.personalprofile.surname }}</td>
+              {% if user.is_active %}
+              <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
               <td>{{ user.academicprofile.current_class }} </td>
+              <td>Excel Academy</td>
+              
+                <td style="color: cornflowerblue;">Active</td>
+              {% else %}
+              <td><a href="{% url 'students-profile' user %}" style="color: crimson;"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+              <td style="color: crimson;">{{ user.academicprofile.current_class }} </td>
+              <td style="color: crimson;">Excel Academy</td>
+                <td style="color: crimson;">Disabled</td>
+              {% endif %}
             </tr>
             {% endfor %}
          

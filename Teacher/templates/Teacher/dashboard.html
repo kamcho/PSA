@@ -66,7 +66,7 @@
   {% csrf_token %}
   <select class="form-select" id="class_id" name="class_id" aria-label="Default select example">
     {% for class in streams %}
-      <option value="{{ class }}" >(Grade {{ class.grade }}) - {{ class }}</option>
+      <option value="{{ class.class_id }}" >(Grade {{ class.grade }}) - {{ class }}</option>
     {% endfor %}
   </select>
   <br>

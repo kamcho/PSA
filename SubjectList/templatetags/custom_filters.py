@@ -307,7 +307,7 @@ def get_class_highest(class_id, subject, term):
 
         return highest['score']
     else:
-        return 'Not Found'
+        return None
     
 
 @register.simple_tag
@@ -318,7 +318,7 @@ def get_class_lowest(class_id, subject, term):
 
         return lowest['score']
     else:
-        return 'Not Found'
+        return None
     
 @register.simple_tag
 def get_class_average(class_id, subject, term):
@@ -333,7 +333,7 @@ def get_class_average(class_id, subject, term):
 
         return round(average,3)
     else:
-        return 'Not Found'
+        return None
 
 @register.simple_tag
 def get_class_overall_average(class_id, grade, term):

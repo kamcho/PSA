@@ -4,7 +4,7 @@
 {% block content %}
 
 
-<div class="">
+<div style="position: relative;height: 100vh; width: 100%;">
     <form class="form_container" method="post">
         {% csrf_token %}
         
@@ -21,6 +21,7 @@
           </svg>
           <input placeholder="name@mail.com" title="Inpit title" name="email" type="text" class="input_field" id="email_field" required>
         </div>
+        <br>
         <div class="input_container">
           <label class="input_label" for="password_field">Password</label>
           <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
@@ -30,9 +31,11 @@
           </svg>
           <input placeholder="Password" title="Inpit title" name="password" type="password" class="input_field" id="password_field" required>
         </div>
+        <br>
         <button title="Sign In" type="submit" class="sign-in_btn">
           <span>Sign In</span>
         </button>
+        <br><br>
       
         <div class="separator">
           <hr class="line">
@@ -42,5 +45,54 @@
         <a title="Sign In"  class="sign-in_ggl" href="{% url 'register' %}">Sig Up</a>
        
       </form>
+
+
+      <div class="updates">
+        <h5 style="color: cornflowerblue;text-align: center;font-family: cursive;">Excel Schools</h5>
+
+        <div class="updates-info">
+          
+          <div class="accordion" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Title {{ latest.title }}
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                  <strong>{{ latest.date }}.</strong> {{ latest.description }}
+                  <br><br>
+                  {% if latest.file %}
+                        <a href="{{ latest.file.url }}" download><i class="bi bi-cloud-arrow-down" style="font-size: 15px;color: cornflowerblue;"> Download File</i> </a>
+                        {% endif %}
+                </div>
+              </div>
+            </div>
+            {% for update in updates %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ update.id }}" aria-expanded="false" aria-controls="collapse{{ update.id }}">
+                        {{ update.title }}
+                    </button>
+                </h2>
+                <div id="collapse{{ update.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>{{ update.date }}.</strong> {{ update.description }}
+                        <br><br>
+                        {% if update.file %}
+                        <a href="{{ update.file.url }}" download><i class="bi bi-cloud-arrow-down" style="font-size: 15px;color: cornflowerblue;"> Download File</i> </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+          
+          </div>
+          
+        </div>
+      </div>
+      
 </div>
 {% endblock %}

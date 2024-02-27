@@ -242,37 +242,46 @@ def updateSubscription(beneficiaries, duration):
 
 
 
-def generate_token():
-    consumer_key = 'lLznf101l98HUQTtb4AmPNQyneUiZvhb'
-    consumer_secret = '6GaI08s5QvEHHfRV'
-    response = requests.get('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', auth=HTTPBasicAuth(consumer_key, consumer_secret))
-    return response.json().get('access_token', '')
+def generate_access_token():
+    access_token_url = 'https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    consumer_key = "aSG8gGG7GWSGapToKz8ySyALUx9zIdbBr1CHldVhyOLjJsCz"
+    consumer_secret = "o8qwdbzapgcvOd1lsBOkKGCL4JwMQyG9ZmKlKC7uaLIc4FsRJFbzfV10EAoL0P6u"
+
+    # make a get request using python requests liblary
+    response = requests.get(access_token_url, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+
+    # return access_token from response
+    if response.status_code == 200:
+        access_token = response.json()['access_token']        
+        return access_token
+    else:
+        return None
 
 # Function to initiate a B2C payment
 def initiate_b2c_payment():
-    token = generate_token()
+    token = generate_access_token()
     headers = {
-        'Authorization': f'Bearer {token}',
+        'Authorization': f'Bearer { token }',
         'Content-Type': 'application/json',
     }
 
     payload = {
         
         "OriginatorConversationID":'95f4cb57-ae30-40fb-836b-4f063d0e973t',
-        'InitiatorName': 'testapi',
-      "SecurityCredential": "ejH18bg10OGZ5iXTOXXU0X2GXBTKhVSva2IdPDCFc1i6J4scAYouGaQdLNxynsyS8bUlJaTKwcRcC5Fsad0WjIRZKx1WZ3omNis2S3uBmGN70kkHL5ulljoBeV5kDpfat7e9G+MxCS051qdoGn1w4uwq+ey9pOlWcVxBZP0yCnFBAoSkpByF4WFhbEnrXEzzZLAm/gY3FHZLHnPtQXBamVNDLwgnW/7HYT4JMd76qmADNgdm8nSOTl+/39CmuLpS3Ze4C07MyMSTg1EgcVWIO8XVbiGyiIGXqUDIUjzv3miTywNYa1j/aOgANg6SyBDUgMrIQuBVWtFYQWqG+LUJvQ==",
+        'InitiatorName': 'kevin gitundu',
+        "SecurityCredential": "141778215aA!",
         "CommandID": "SalaryPayment",
-         "Amount": 10,
-      "PartyA": 600584,
-      "PartyB": 254742134431,
+        "Amount": 1,
+        "PartyA": 4161900,
+        "PartyB": 254742134431,
         "Remarks": "Test remarks",
-      "QueueTimeOutURL": "https://mydomain.com/b2c/queue",
-      "ResultURL": "https://mydomain.com/b2c/result",
-      "occasion": "null" 
+        "QueueTimeOutURL": "https://mydomain.com/b2c/queue",
+        "ResultURL": "https://mydomain.com/b2c/result",
+        "occasion": "Invoice Payment" 
     
     }
+    print('initiate')
+    response = requests.post('https://api.safaricom.co.ke/mpesa/b2c/v3/paymentrequest', headers=headers, json=payload)
 
-    response = requests.post('https://sandbox.safaricom.co.ke/mpesa/b2c/v3/paymentrequest', headers=headers, json=payload)
-
-    print(response.text)
     return response.text
+# initiate_b2c_payment()

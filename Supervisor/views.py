@@ -1,5 +1,7 @@
 import datetime
 import json
+from re import search
+from turtle import up
 from typing import Any
 from django.contrib.auth.hashers import make_password
 
@@ -12,14 +14,16 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib import messages
 from django.db import IntegrityError, transaction
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.utils import timezone
 from django.views.generic import TemplateView
-from numpy import roll
+
 from Analytics.views import check_role
 from Finance.models import MpesaPayouts
+from Supervisor.models import Updates
 from Teacher.models import StudentList, TeacherProfile
 from Term.models import ClassTermRanking, CurrentTerm, Exam
 from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, StudentsFeeAccount, TeacherPaymentProfile
@@ -62,12 +66,13 @@ class SupervisorHomeView(TemplateView):
         context['parents'] = users.filter(role='Guardian').count()
         context['student_lst'] = users.filter(role='Student')[:10]
         
-        grade_4_data = get_marks_distribution_data(4, 'Term 1', '2022')
-        grade_5_data = get_marks_distribution_data(5, 'Term 1', '2022')
-        grade_6_data = get_marks_distribution_data(6, 'Term 1', '2022')
+        grade_4_data = get_marks_distribution_data(4, 'Term 1', '2024')
+        grade_5_data = get_marks_distribution_data(5, 'Term 1', '2024')
+        grade_6_data = get_marks_distribution_data(6, 'Term 1', '2024')
 
 # Preparing data for the bar chart
-        labels = list(grade_6_data.keys())
+        labels = list(grade_5_data.keys())
+        print('current\n\n', labels)
         datasets = [
             {
                 'label': 'Grade 4',
@@ -80,7 +85,7 @@ class SupervisorHomeView(TemplateView):
                 'label': 'Grade 5',
                 'data': [grade_5_data.get(label, 0) for label in labels],
                 'backgroundColor': 'rgba(0, 255, 0, 0.8)',
-                'borderColor': 'rgba(0, 255, 0, 1)',
+                'borderColor': 'rgba(132, 255, 33, 1)',
                 'borderWidth': 4,
             },
             {
@@ -114,6 +119,7 @@ class SupervisorHomeView(TemplateView):
 
     # Preparing data for the bar chart
             labels = list(grade_6_data.keys())
+            print('current\n\n', labels)
             datasets = [
                 {
                     'label': 'Grade 4',
@@ -160,6 +166,88 @@ class SupervisorHomeView(TemplateView):
 
             return render(self.request, self.template_name, context)
 
+
+class ClassTestAnalytics(TemplateView):
+    template_name = 'Supervisor/class_test_analytics.html'
+
+    def get_context_data(self, **kwargs) :
+        context = super().get_context_data(**kwargs)
+        class_id= self.kwargs['class_id']
+        class_ins = SchoolClass.objects.get(class_id=class_id)
+        context['class'] = class_ins
+
+        grade_data = get_marks_distribution_data(class_ins.grade, 'Term 1', '2024')
+        context['config'] = 'Year 2024 Term 1'
+
+# Preparing data for the bar chart
+        labels = list(grade_data.keys())
+        datasets = [
+            {
+                'label': f'Grade {class_ins.grade}',
+                'data': [grade_data.get(label, 0) for label in labels],
+                'backgroundColor': 'rgba(0, 0, 0, 0.5)',
+                'borderColor': 'rgba(0, 0, 0, 0.5)',
+                'borderWidth': 4,
+            }
+        ]
+
+        # Convert data to JSON for passing to the template
+        chart_data = {
+            'labels': labels,
+            'datasets': datasets,
+        }
+        current_term = CurrentTerm.objects.filter().last()
+        context['current_term'] = current_term
+        context['chart_data'] = chart_data
+
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            term = self.request.POST.get('term')
+            year = self.request.POST.get('year')
+            grade = self.get_context_data().get('class')
+
+
+            
+            grade_data = get_marks_distribution_data(grade.grade, term, year)
+
+    # Preparing data for the bar chart
+            labels = list(grade_data.keys())
+            datasets = [
+               
+                {
+                    'label': f'Grade {grade}',
+                    'data': [grade_data.get(label, 0) for label in labels],
+                    'backgroundColor': 'rgba(120, 25, 220, 0.8)',
+                    'borderColor': 'rgba(23, 25, 100, 1)',
+                    'borderWidth': 4,
+                }
+            ]
+
+            # Convert data to JSON for passing to the template
+            chart_data = {
+                'labels': labels,
+                'datasets': datasets,
+            }
+            
+            context = {
+                'chart_data':chart_data,
+                'config':f'Year {year} {term}',
+                'class':self.get_context_data().get('class'),
+                'users': self.get_context_data().get('users'),
+                'students': self.get_context_data().get('students'),
+                'teachers': self.get_context_data().get('teachers'),
+                'parents': self.get_context_data().get('parents'),
+                'student_lst': self.get_context_data().get('student_lst'),
+                'term':term,
+                'year':year,
+                'current_term':self.get_context_data().get('current_term')
+
+            }
+
+            return render(self.request, self.template_name, context)
 
 
 class SupervisorDashboard(TemplateView):
@@ -241,37 +329,31 @@ class StudentsView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(StudentsView, self).get_context_data(**kwargs)
-        try:
-            params = self.request.session.get('params', None)
-            if params:
-                users = PersonalProfile.objects.filter(Q(f_name__contains=params) | Q(l_name__contains=params)
-                                                    | Q(surname__contains=params) | Q(user__email__contains=params) ).values_list('user__email')
-                users = MyUser.objects.filter(email__in=users, role='Student')
-                if not users:
-                    messages.warning(self.request, 'We could not find any users matching your query')
-            else:
-                users  = MyUser.objects.filter(role='Student', is_active=True)
+        try:            
+            
+            users = MyUser.objects.filter(role='Student')
             context['users'] = users
+            if not users:
+                messages.error(self.request, 'We could not fetch students from the database')
+           
         except Exception:
-            messages.error(self.request, 'We could not fetch students from the database')
+            messages.error(self.request, 'An error occured. Contact @support')
+            
         return context
     
-    def post(self, request, *args, **kwargs):
-        if request.method == 'POST':
-            context = super(StudentsView, self).get_context_data(**kwargs)
-
-            params = request.POST.get('search')
+    def post(self,*args, **kwargs):
+        if self.request.method == 'POST':
+            params = self.request.POST.get('search')
+            
             if params:
-
-                
-                self.request.session['params'] = params
+                users = MyUser.objects.filter(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
+                                                    | Q(personalprofile__surname__contains=params) | Q(email__contains=params) )
+                context = {'users':users}
+                return render(self.request, self.template_name, context)
             else:
-                try:
-                    del self.request.session['params']
-                except KeyError:
-                    pass
                 
-            return redirect(request.get_full_path())
+                
+                return redirect(self.request.get_full_path())
         
 
 class TeachersView(TemplateView):
@@ -367,7 +449,7 @@ class StudentProfile(LoginRequiredMixin, TemplateView):
         context = super(StudentProfile, self).get_context_data(**kwargs)
         email = self.kwargs['email']
         user  = MyUser.objects.get(email=email)
-        subjects = Subject.objects.all()
+        subjects = Subject.objects.filter(grade=4)
         context['subjects'] = subjects
         context['user'] = user
         if self.request.user.role == 'Student':
@@ -635,7 +717,10 @@ class ClassDetail(TemplateView):
             }
 
 
-            return redirect(request.get_full_path())
+            return render(self.request, self.template_name, context)
+
+
+
 
 class ClassStudentsRanking(TemplateView):
     template_name='Supervisor/class_students_ranking.html'
@@ -1078,3 +1163,111 @@ class Promote(TemplateView):
 
 
             return redirect(self.request.get_full_path())
+        
+
+class CreateNotice(TemplateView):
+    template_name = 'Supervisor/create_notice.html'
+
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            
+            title = self.request.POST.get('title')
+            description = self.request.POST.get('description')
+            pdf = self.request.FILES.get('pdf')
+
+            update = Updates.objects.create(title=title, description=description, file=pdf)
+
+            return redirect('notice-id', update.id)
+        
+
+class NoticeID(TemplateView):
+    template_name = 'Supervisor/notice_id.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        notice_id = self.kwargs['notice_id']
+        context['notice'] = Updates.objects.get(id=notice_id)
+
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            if 'delete' in self.request.POST:
+                update = self.get_context_data().get('notice')
+                update.delete()
+                messages.error(self.request, 'You have succesfully deleted a notice update')
+
+                return redirect('create-notice')
+            else:
+
+            
+                title = self.request.POST.get('title')
+                description = self.request.POST.get('description')
+                pdf = self.request.FILES.get('pdf')
+
+                update = self.get_context_data().get('notice')
+                update.title = title
+                update.description = description
+                update.file = pdf
+                update.save()
+                messages.success(self.request, 'Update was succesfull.')
+
+                return redirect(self.request.get_full_path())
+            
+
+class AddActivity(TemplateView):
+    template_name = 'Supervisor/create_activity.html'
+
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            title = self.request.POST.get('title')
+            description = self.request.POST.get('description')
+            self.request.session['activity'] = {
+            'title': title,
+            'description': description,
+        }
+
+
+
+            return redirect('add-students')
+
+
+    
+
+class AddStudents(TemplateView):
+    template_name = 'Supervisor/add_students.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        context['users'] = MyUser.objects.filter(role='Student')
+        context['classes'] = StudentList.objects.filter(user=self.request.user)
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            class_id = self.request.POST.get('class')
+            search = self.request.POST.get('search')
+            if class_id:
+                users = MyUser.objects.filter(academicprofile__current_class__class_id=class_id)
+
+                context = {
+                    'users':users,
+                    'classes':self.get_context_data().get('classes'),
+                }
+
+                return render(self.request, self.template_name, context)
+
+            if search:
+                users = MyUser.objects.filter(Q(personalprofile__f_name__contains=search) | Q(personalprofile__l_name__contains=search)
+                                                    | Q(personalprofile__surname__contains=search) | Q(email__contains=search) )
+                context = {'users':users,
+                           'classes':self.get_context_data().get('classes')
+                           }
+                return render(self.request, self.template_name, context)
+            
+            else:
+                return redirect(self.request.get_full_path())
+

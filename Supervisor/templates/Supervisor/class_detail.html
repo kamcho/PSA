@@ -4,11 +4,11 @@
 
 
 {% block content %}
-<br><br><br><br>
+<br><br><br>
 
-<div class="">
-    <br>
-<div class="container" style="background-color: white;">
+<div style="background-color:rgba(29, 25, 46, 1);position: absolute; top: 0;width: 100%;">
+   <br><br>
+<div class="containr" style="background-color: white;padding: 30px; background-color:rgba(29, 25, 46, 1);">
     
     
     <h6><button type="button" class="btn btn-outline-primary" disabled>{{ class|title }}</button> </h6>
@@ -17,6 +17,7 @@
   </button>
 
    <br>
+   <a class="btn btn-primary" style="position: absolute;top: 70px;right: 30px;" href="{% url 'class-exam-analytics' class.class_id %}">DATALYTICS</a>
    <br>
 
    <form  method="post">
@@ -51,7 +52,7 @@
     <h6>We could not find Subjects for Grade {{ grade }}</h6>
  {% else %}
 
-    <div class="class-subject-view">
+    <div class="users-view" style="width: 100%;">
 
         <a href="{% url 'class-students-ranking' class.class_id %}">
             <div class="class-subject-card">
@@ -67,8 +68,8 @@
                     <div class="class-subject-card">
 
                         <h6>{{ subject }}</h6>
-                        <p>Highest {% get_class_highest class.class_id subject.id term %}</p>
-                        <p>Lowest  {% get_class_lowest  class.class_id subject.id term %}</p>
+                        <h6>Highest {% get_class_highest class.class_id subject.id term %}</h6>
+                        <h6>Lowest  {% get_class_lowest  class.class_id subject.id term %}</h6>
                         <p>Average {% get_class_average class.class_id subject.id term %}</p>
 
                     </div>

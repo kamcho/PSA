@@ -202,32 +202,29 @@
 
 
 <div class="subjects-select-view" >
-    <a href="{% url 'subject-view' 4 %}">
+    <a href="{% url 'subject-view' 4 %}" class="no">
 
-    <div class="subject-select-card">
-        <h6>Analyticss</h6>
-        <img src="{% static 'Supervisor\GOLD-6487-CareerGuide-Batch04-Images-GraphCharts-01-Line.jpg' %}" style="zoom: .45;">
-    </div>
-        </a>
+        <div class="subject-select-card" >
+            <h6>Analyticss</h6>
+            <img src="{% static 'Supervisor\GOLD-6487-CareerGuide-Batch04-Images-GraphCharts-01-Line.jpg' %}" style="width: 100%;height: auto;">
+        </div>
+    </a>
     <a href="{% url 'classes' %}">
         <div class="subject-select-card">
         <h6>Classes</h6>
-        <img src="{% static 'Supervisor\funny-alphabet-with-kids-abcd-vector-1303233.webp' %}" style="zoom:.24; background-repeat: no-repeat; background-position: center center;">
+        <img src="{% static 'Supervisor\funny-alphabet-with-kids-abcd-vector-1303233.webp' %}" style="background-repeat: no-repeat; background-position: center center; width: 100% !important;">
     </div>
     </a>
-    <a href="{% url 'teachers-view' %}">
+    
+    <a href="{% url 'classes' %}">
         <div class="subject-select-card">
+            <!-- <img src="{% static 'Supervisor\funny-alphabet-with-kids-abcd-vector-1303233.webp' %}" style="background-repeat: no-repeat; background-position: center center;"> -->
         <h6>Assignments</h6>
         <p>View teachers profiles and their class assignments results analytics.</p>
-        <ul>
-            <li>Teachers Profile</li>
-            <li>Class Assignments</li>
-            <li>Class Assignment Analytics</li>
-            <li>Class performance</li>
-            <li>Class Predictions</li>
-        </ul>
+        
     </div>
-    </a>
+</a>
+ 
 
 
 </div>
@@ -253,7 +250,7 @@
                     }
                 },
                 x: {
-                    beginAtZero: true,
+                    beginAtZero: false,
                     title: {
                         display: true,
                         text: 'Total Marks Distribution'

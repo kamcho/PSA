@@ -6,18 +6,19 @@
 {% block content %}
 <br><br><br><br>
 
-<div class="subject-select-content-container">
-
+<div class="bg-gradient">
+    <br><br><br>
     <div class="container">
 
 
-        <div class="subjects-select-view">
+
+        <div class="users-view">
             {% for class in classes %}
             <a href="{% url 'class-profile' class.class_id %}">
-                <div class="subject-select-card">
-                    <h6>{{ class }}</h6>
+                <div class="user-card">
+                    <h5>{{ class }}</h5>
                     <p>Grade {{ class.grade }}</p>
-                    <p>Class Size {{ class.class_size }}</p>
+                    <h6>Class Size {{ class.class_size }}</h6>
                 </div>
             </a>
         

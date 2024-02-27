@@ -1142,8 +1142,9 @@ def get_subjects(request):
     :return Json:
     """
     selected_grade = request.GET.get("grade")  # get grade from POST
+    print(selected_grade)
     try:
-        grade = SchoolClass.objects.get(class_name=selected_grade).grade
+        grade = SchoolClass.objects.get(class_id=selected_grade).grade
         # Get subjects names and ids
         subjects = Subject.objects.filter(grade=grade).values("id", "name")
         print(subjects, 'uui')

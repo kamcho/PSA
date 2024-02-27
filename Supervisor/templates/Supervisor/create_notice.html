@@ -1,0 +1,53 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br>
+
+<div class="bg-gradient">
+    <div class="container">
+        <br><br><br><br>
+        
+        <button class="btn btn-danger" style="color: white;position: absolute;top: 60px;right: 12%;" onclick="toggleDeletePopUp()">Delete</button>  
+        
+
+        <div class="form-view">
+        <h5 class="text-center" style="font-size: 30px;"> <i class="bi bi-send-check" > </i> Create Notice Update</h5>
+        <br>
+        
+     
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+            <br>
+            <div class="r">
+                
+                <label for="inputField1" class="form-label" >Title<strong style="color: crimson;">(required)</strong></label>
+                <input type="text" class="form-control"  name="title" placeholder="PGA MEETING" required style="border: 3px solid cornflowerblue;">
+            </div>
+            <br><br>
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" name="description" style="height: 200px;"></textarea>
+                <label for="floatingTextarea">Comments</label>
+              </div>
+            <br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                
+                    <label for="inputField1" class="form-label">Share File</label>
+                    <input type="file" class="form-control"  name="pdf" placeholder="Addition" style="border: 3px solid cornflowerblue;" required>
+                </div>
+            </div>
+            <br>
+            <button class="btn btn-info" style="color: white;">Save</button>        
+        <br>
+            </form>
+        </div>
+        <br><br>
+    </div>
+    </div>
+
+    
+
+{% endblock %}

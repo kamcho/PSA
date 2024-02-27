@@ -29,13 +29,13 @@
         </div>
     
     </div>
-    <br><br><br><br><br><br><br>
+    <br><br>
 
     {% if invoice.balance == 0 %}
 
 
     {% else %}
-<div class="text-center">
+<div class="text-center form-view">
     <h5>Pay Invoice</h5>
 
 
@@ -47,14 +47,14 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" name="phone" id="floatingInput" placeholder="{{ invoice.contact_info }}">
-                    <label for="floatingInput">{{ invoice.contact_info }}</label>
+                    <input type="text" class="form-control" name="phone" id="floatingInput" placeholder="{{ invoice.contact_info }}" required>
+                    <label for="floatingInput" style="color: crimson;">{{ invoice.contact_info }}*(required)</label>
                 </div>
             </div>
             <div class="col-md-6">    
                 <div class="form-floating mb-3">
-                <input type="number" class="form-control" name="amount" id="floatingInput" placeholder="payment for">
-                <label for="floatingInput">Amount</label>
+                <input type="number" class="form-control" name="amount" id="floatingInput" placeholder="payment for" required>
+                <label for="floatingInput" style="color: crimson;">Amount*(required)</label>
                 </div>
             </div>
             
@@ -66,6 +66,38 @@
 
 </div>
 {% endif %}
+<br><br>
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <th><h6><input type="checkbox"></h6></th>
+        <th><h6>Id</h6></th>
+         <th><h6>Date</h6></th>
+        <th><h6>Amount</h6></th>
+    
+        <th><h6>Balance</h6></th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for invoice in payments %}
+        <tr>
+          
+          <td><input type="checkbox"></td>
+          <td><a ><h6>{{ forloop.counter }}</h6></a></td>
+          <td>{{ invoice.date }}</td>
+
+          <td>{{ invoice.amount }}</td>
+          <td>{{ invoice.balance }}</td>
+      
+          
+        </tr>
+      {% endfor %}
+    </tbody>
+ </table>
+
 </div>
 
 {% endblock %}

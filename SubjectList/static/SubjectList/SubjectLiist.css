@@ -13,12 +13,12 @@
 .subjects-select-view{
 
     display: grid;
-    grid-template-columns: repeat(3, .7fr);
+    grid-template-columns: repeat(3, .6fr);
     margin:50px auto;
 
     row-gap: 20px;
     column-gap:20px;
-    width:93%;
+    width:90%;
     background-color:rgba(29, 25, 46, .8);
 
 

@@ -1,0 +1,90 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+
+<br><br><br><br>
+<div class="bg-gradient">
+
+    <div class="container">
+        <br><br>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="search" placeholder="search by name, email or admission" aria-label="Recipient's username" aria-describedby="button-addon2">
+                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
+            </div>
+
+            search by class
+            <select class="form-select"  aria-label="Default select example" name="class">
+                <option></option>
+                {% for class in classes %}
+                    <option value="{{ class.class_id.class_id }}">{{ class.class_id }}</option>
+                {% endfor %}
+                
+              </select>
+          </form>
+          <br><br>
+          
+          <button class="btn btn-primary">Add Selected</button>
+          <table class="table" style="background-color: white;">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="select-all"></th>
+                  <th><h6>User</h6></th>
+                  
+                  <th><h6>Class</h6></th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                
+                  {% for user in users %}
+                  
+                  <tr>
+
+                    <td><input type="checkbox" value="{{ user }}" name="user"></td>
+                    <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+                    <td>{{ user.academicprofile.current_class }} </td>
+                    
+                    
+                  </tr>
+                  {% endfor %}
+               
+              </tbody>
+           </table>
+        
+        
+
+    </div>
+
+
+</div>
+<script>
+    $(document).ready(function() {
+      // Check or uncheck all checkboxes when the "select-all" checkbox changes
+      $("#select-all").change(function() {
+        if(this.checked) {
+          // Check all checkboxes
+          $("input[name='user']").prop('checked', true);
+        } else {
+          // Uncheck all checkboxes
+          $("input[name='user']").prop('checked', false);
+        }
+      });
+  
+      // Check the "select-all" checkbox if all individual checkboxes are checked
+      $("input[name='user']").change(function() {
+        if ($("input[name='user']:checked").length === $("input[name='user']").length) {
+          $("#select-all").prop('checked', true);
+        } else {
+          $("#select-all").prop('checked', false);
+        }
+      });
+    });
+  </script>
+
+{% endblock %}

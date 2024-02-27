@@ -107,6 +107,8 @@ class InvoiceDetail(TemplateView):
         invoice_id = self.kwargs['id']
         try:
             invoice = Invoices.objects.get(id=invoice_id)
+            payments = InvoicePayments.objects.filter(invoice=invoice).order_by('-date')
+            context['payments'] = payments
             context['invoice'] = invoice
 
         except Invoices.DoesNotExist:
@@ -135,7 +137,7 @@ class InvoiceDetail(TemplateView):
                 
                 # transaction_callback(random_alphanumeric)
                 
-                return pay
+                return redirect(self.request.get_full_path())
 
             except Exception:
                 pass
@@ -584,8 +586,8 @@ class CreateTerm(TemplateView):
         if request.method == 'POST':
             year = request.POST.get('year')
             term = request.POST.get('term')
-            starts_at = request.POST.get('start')
-            ends_at = request.POST.get('end')
+            starts_at = request.POST.get('from')
+            ends_at = request.POST.get('to')
 
             try:
                 term = Terms.objects.get(year=year, term=term)
@@ -1185,7 +1187,7 @@ class SchoolFeesBalance(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
         try:
-            profiles = StudentsFeeAccount.objects.filter(balance__lt=50000)
+            profiles = StudentsFeeAccount.objects.filter(balance__gt=0)
             balances = profiles.aggregate(balances=Sum('balance'))['balances']
             
             context['balance'] = balances
@@ -1207,7 +1209,7 @@ class SchoolFeesBalance(TemplateView):
                 try:
                     if not limit:
                         limit = 0
-                    profiles = StudentsFeeAccount.objects.filter(balance__lt=limit)
+                    profiles = StudentsFeeAccount.objects.filter(balance__gte=limit)
                     balances = profiles.aggregate(balances=Sum('balance'))['balances']
                     if grade:
                         profiles = profiles.filter(user__academicprofile__current_class__grade=grade)

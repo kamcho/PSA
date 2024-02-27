@@ -1,0 +1,79 @@
+
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+<br><br><br><br>
+{% block content %}
+<div class="container">
+    <br><br><br><br>
+    <button class="btn btn-dark">{{ class.grade }} {{ class.class_name }}</button> <button class="btn btn-primary">{{ config }}</button>
+    <br><br>
+    <form method="post" style="width: 90%;margin: auto auto;">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <input type="number" class="form-control" placeholder="year" name="year" required>
+
+            <select class="form-select" aria-label="Default select example" name="term" required>
+                <option value="{{ term }}" selected>{{ term }}</option>
+                <option value="Term 1">Term 1</option>
+                <option value="Term 2">Term 2</option>
+                <option value="Term 3">Term 3</option>
+                
+        
+        
+              </select>
+            <button class="btn btn-dark" type="submit">SET</button>
+        </div>
+    </form><br><br>
+<div class="insight">
+    <div class="admin-2">
+        <div style="width: 85%;margin: 20px auto;">
+            <canvas id="myChart" ></canvas>
+        </div>
+
+       
+
+    </div>
+</div>
+
+<script>
+    var labels = {{ chart_data.labels|safe }};
+    var datasets = {{ chart_data.datasets|safe }};
+
+    var config = {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets,
+        },
+        options: {
+            scales: {
+                y: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'Number Of Students'
+                    }
+                },
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Total Marks Distribution'
+                    }
+                }
+            }
+        }
+    };
+
+    // Get the canvas element and render the chart
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, config);
+</script>
+
+
+</div>
+
+{% endblock %}

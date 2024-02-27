@@ -18,7 +18,7 @@
     display: grid;
     grid-template-columns: repeat(4, .4fr);
     margin: 0 auto;
-    width: 90%;
+    width: 95%;
 }
 .panel-card{
     background-color:rgba(10, 111, 129, 0.8) !important;
@@ -48,7 +48,7 @@
     display: grid;
     grid-template-columns: repeat(3, .4fr);
     text-align: center;
-    width: 85%;
+    width: 90%;
     margin: auto auto;
     padding: 40px;
     color: white;
@@ -67,7 +67,7 @@
     grid-template-columns: repeat(4, .5fr);
     margin: 0 auto;
     row-gap: 20px;
-    width: 90%;
+    width: 92%;
 }
 .user-card{
     width:90%;
@@ -87,9 +87,16 @@
     right: 10px;
     zoom: .8;
 }
+.background-image {
+    background: url('{% static "Supervisor/GOLD-6487-CareerGuide-Batch04-Images-GraphCharts-01-Line.jpg" %}');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+}
 .admin-2{
     margin: 20px auto;
-    width: 85%;
+    width: 90%;
     height: max-content;
     background-color:rgba(255, 255, 255, 1) !important;
 }
@@ -113,19 +120,19 @@
     color: purple;
 }
 .insight{
-    width: 85%;
+    width: 90%;
     margin: 0 auto;
     box-shadow: 2px 4px 20px 5px rgba(41, 39, 39, 0.09);
     background-color:rgba(29, 25, 46, .8) !important;
     border-width: 4px;
-    height: 680px;
+    height: 650px;
     
     
 }
 
 .bg-gradient{
     position: absolute;
-    top: 57px;
+    top: 59px;
     min-height: 100vh;
     height: max-content;
     /* background: radial-gradient(780px at 37.8% 100.3%, rgb(19, 55, 115) 2.2%, rgb(32, 7, 80) 20.2%, rgb(27, 88, 111) 58.6%, rgb(115, 88, 44) 75%, rgb(99, 19, 90) 89.6%, rgb(12, 51, 76) 96.1%) !important; */
@@ -205,7 +212,7 @@
     height: 200px;
     padding: 10px;
     
-    background-color: rgba(221, 14, 152, 0.1);
+    background-color: white;
     border-radius: 10px;
 }
 
@@ -365,7 +372,7 @@
     }
     .insight{
         width: 95%;
-        height: 400px;
+        height: 500px !important;
     }
     
     }
@@ -383,6 +390,9 @@
         .user-info{
             padding: 30px;
         }
+        .insight{
+            height: 500px;
+        }
 
 
     }
@@ -392,6 +402,12 @@
             display: inline;
             border: none;
             background-color: #132743 !important;
+        }
+        .insight{
+            height: 400px;
+        }
+        .class-subject-card{
+            height: 180px;
         }
 
 

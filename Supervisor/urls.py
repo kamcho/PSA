@@ -33,5 +33,10 @@ urlpatterns = [
     path('<str:uuid>/Review/', TestReview.as_view(), name='knec-test-review'),
     path('Classes/<str:class_id>/<str:subject>/<str:term>/Results/', ClassSubjectDetail.as_view(), name='class-subject-detail'),
     path('<str:class_id>/Promote/', Promote.as_view(), name='promote'),
+    path('<str:class_id>/ClassTestAnalytics/', ClassTestAnalytics.as_view(), name='class-exam-analytics'),
+    path('CreateNotice/', CreateNotice.as_view(),name='create-notice'),
+    path('Notice-Update/<str:notice_id>/', NoticeID.as_view(), name='notice-id'),
+    path('Create-Activity/', AddActivity.as_view(), name='create-activity'),
+    path('AddStudents/', AddStudents.as_view(), name='add-students'),
 
 ]
