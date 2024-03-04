@@ -38,25 +38,26 @@ class Exams(LoginRequiredMixin, IsStudent, TemplateView):
         """
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        grade = self.kwargs['grade']
 
         try:
             # Lists to store subject IDs
             subject_ids = []
 
             # Retrieve student test data
-            student_tests = StudentTest.objects.filter(user=user)
+            student_tests = StudentTest.objects.filter(user=user, subject__grade=grade)
             topical_subject_counts = student_tests.values('subject__id')
             topical_tests = topical_subject_counts.order_by('subject__id')
 
             # Retrieve class test data
-            class_tests = ClassTestStudentTest.objects.filter(user=user)
+            class_tests = ClassTestStudentTest.objects.filter(user=user, test__subject__grade=grade)
             class_subject_counts = class_tests.values('test__subject__id')
             my_class_tests = class_subject_counts.order_by('test__subject__id')
 
             
 
             # Retrieve general test data
-            general_tests = GeneralTest.objects.filter(user=user)
+            general_tests = GeneralTest.objects.filter(user=user, subject__grade=grade)
             general_subject_counts = general_tests.values('subject__id')
             my_general_tests = general_subject_counts.order_by('subject__id')
 
@@ -66,6 +67,7 @@ class Exams(LoginRequiredMixin, IsStudent, TemplateView):
                     subject_ids.append(subject_id['subject__id'])
 
             if my_general_tests:
+                
                 for subject_id in my_general_tests:
                     subject_ids.append(subject_id['subject__id'])
 
@@ -84,7 +86,7 @@ class Exams(LoginRequiredMixin, IsStudent, TemplateView):
                     general_subject_counts.count()
             )
             if total_tests_count == 0:
-                messages.warning(self.request, 'You have not taken any Examinations !')
+                messages.warning(self.request, f'You have not taken any online tests for grade {grade} !')
 
             # Retrieve the Subject objects with the common subject IDs
             subjects = Subject.objects.filter(id__in=subject_ids_set)
@@ -152,7 +154,7 @@ class ExamTopicView(LoginRequiredMixin, IsStudent, TemplateView):
             class_tests = ClassTestStudentTest.objects.filter(user=user, test__subject__id=subject_id)
 
             # Retrieve General Tests
-            general_tests = GeneralTest.objects.filter(user=user, subject__id=subject_id)
+            general_tests = GeneralTest.objects.filter(user=user, subject__id=subject_id, is_done=True)
 
             context['subject'] = subject_tests
             context['general'] = general_tests
@@ -556,6 +558,9 @@ class GeneralTestLobby(LoginRequiredMixin, IsStudent, TemplateView):
 
             try:
                 message = TopicExamNotifications.objects.get(user=user, uuid=test_id).delete()
+                test = self.get_context_data().get('test')
+                test.is_done=True
+                test.save()
 
             except:
                 pass
@@ -964,11 +969,11 @@ class SetTest(LoginRequiredMixin, IsGuardian, TemplateView):
                     test_id = uuid.uuid4()
                     date = datetime.datetime.now()
 
-                    message = 'The test you requested is now available, Good luck.'
+                    message = 'New Test Available. Complete it as soon as possible. Good luck.'
 
                     if exam_type == 'Topical':
                         topic = Topic.objects.get(id=topics[0])
-                        about = f'You have a new test. View more info below.(topical){topic}'
+                        about = f'You have a new test set by your parent/guardian. Complete it as soon as possible.. View more info below.(topical){topic}'
 
                         notification = TopicExamNotifications.objects.create(user=user, about=about,
                                                                              notification_type='retake',
@@ -987,30 +992,30 @@ class SetTest(LoginRequiredMixin, IsGuardian, TemplateView):
                                                                              subject=subject, message=message,
                                                                              )
 
-                    test = GeneralTest.objects.create(user=user, subject=subject, uuid=test_id)
-                    failed_quiz = StudentsAnswers.objects.filter(is_correct=False, quiz__topic__in=topics).order_by('?')[:3]
-                    quizes = TopicalQuizes.objects.filter(topic__in=topics)
-                    done_quiz = StudentsAnswers.objects.filter(quiz__topic__in=topics)
+                        test = GeneralTest.objects.create(user=user, subject=subject, test_size=test_size, uuid=test_id)
+                        failed_quiz = StudentsAnswers.objects.filter(is_correct=False, quiz__topic__in=topics).order_by('?')[:3]
+                        quizes = TopicalQuizes.objects.filter(topic__in=topics)
+                        done_quiz = StudentsAnswers.objects.filter(quiz__topic__in=topics)
 
-                    new_quiz = quizes.exclude(id__in=done_quiz).order_by('?')[:test_size - 3]
-                    failed_count = int(failed_quiz.count())
-                    new_count = int(new_quiz.count())
+                        new_quiz = quizes.exclude(id__in=done_quiz).order_by('?')[:test_size - 3]
+                        failed_count = int(failed_quiz.count())
+                        new_count = int(new_quiz.count())
 
-                    if failed_count >= 3 and new_count >= 12:
-                        test.quiz.add(*failed_quiz)
-                        test.quiz.add(*new_quiz)
+                        if failed_count >= 3 and new_count >= 12:
+                            test.quiz.add(*failed_quiz)
+                            test.quiz.add(*new_quiz)
 
-                    elif failed_count <= 3 and new_count >= 12:
+                        elif failed_count <= 3 and new_count >= 12:
 
-                        # new_quiz = quizes.exclude(uuid__in=done_quiz).order_by('?')[:(test_size-failed_count)]
-                        test.quiz.add(*failed_quiz)
-                        test.quiz.add(*new_quiz)
-                        quizzes = quizes.order_by('?')[:test_size]
-                        test.quiz.add(*quizzes)
+                            # new_quiz = quizes.exclude(uuid__in=done_quiz).order_by('?')[:(test_size-failed_count)]
+                            test.quiz.add(*failed_quiz)
+                            test.quiz.add(*new_quiz)
+                            quizzes = quizes.order_by('?')[:test_size]
+                            test.quiz.add(*quizzes)
 
-                    else:
-                        questions = TopicalQuizes.objects.filter(topic__in=topics).order_by('?')[:test_size]
-                        test.quiz.add(*questions)
+                        else:
+                            questions = TopicalQuizes.objects.filter(topic__in=topics).order_by('?')[:test_size]
+                            test.quiz.add(*questions)
 
                     return redirect('guardian-home')
                 except Exception as e:

@@ -24,6 +24,7 @@
             <th><h6>Progress</h6></th>
               <th><h6>Average</h6></th>
             <th><h6>Expiry</h6></th>
+            <th><h6>Date</h6></th>
 
 
 
@@ -37,14 +38,15 @@
                 <td>{{ test.uuid|class_test_progress }}</td>
                 <td>{{ test.uuid|class_test_average }}</td>
 
-<!--                if  tes}-->
-                    <td style="color:crimson;">
-                      {{ test.expiry|date:'Y-m-d' }}
-                      <br>
-                    </td>
-<!--                {% }-->
-<!--                  <td style="color:green;">{{ test.expiry|date:'Y-m-d' }}</td>-->
-<!--              %}-->
+                {% if test.expiry <= today %}
+                <td style="color:crimson;">
+                    {{ test.expiry|date:'Y-m-d' }}
+                    <br>
+                </td>
+            {% else %}
+                <td style="color:green;">{{ test.expiry|date:'Y-m-d' }}</td>
+            {% endif %}
+            <td>{{ test.date }}</td>
 
             </tr>
          {% endfor %}

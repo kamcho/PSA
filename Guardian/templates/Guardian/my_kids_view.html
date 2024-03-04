@@ -4,7 +4,7 @@
 
 
 {% block content %}
-<div  class="subject-select-content-container">
+<div  class="bg-gradient">
 
     {% if not kids %}
     <div class="container">
@@ -14,9 +14,9 @@
     </div>
 
     {% else %}
-<div class="subjects-select-view  align-items-center justify-content-center">
-    {% for kid in kids %}
-    <a href="{% url 'task-view-select' kid %}">
+<div class="subjects-select-view  align-items-center justify-content-center" >
+    {% for kid in kids.kids.all %}
+    <a href="{% url 'students-profile' kid %}">
         <div class="subject-select-card">
 
             <div class="">
@@ -24,7 +24,7 @@
                 <label for=""><small class="text-muted">Names</small></label>
                 
                 <div class="mb-8">
-                    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="{{ kid.f_name|title }} {{ kid.l_name.0|title }}. {{ kid.surname|title }}">
+                    <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="{{ kid.personalprofile.f_name|title }} {{ kid.personalprofile.l_name.0|title }}. {{ kid.personalprofile.surname|title }}">
                   </div>
                <h6></h6>        
 

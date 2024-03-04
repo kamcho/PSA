@@ -9,6 +9,7 @@ from django.db import DatabaseError
 from django.db.models import Count
 from django.views.generic import TemplateView
 from Exams.models import *
+from Guardian.models import MyKids
 from Teacher.models import *
 from Users.models import PersonalProfile
 
@@ -25,21 +26,19 @@ class IsStudent(UserPassesTestMixin):
             if self.request.user.role == 'Teacher':
                 return True
             elif self.request.user.role == 'Guardian':
-                student = MyUser.objects.get(email=user_email)
-                user = self.request.user.uuid
-                # Get a user with the passed email
-                student = PersonalProfile.objects.get(user__email=user_email)
+                
+                return MyUser.objects.get(email=user_email) and  MyUser.objects.get(email=user_email)
 
-                return student.ref_id == user  # limits viewership to students in watch list only
+
+            # Attempt to get the student's profile using the provided email
+          
+                student = MyKids.objects.get(kids=email)
             else:
                 return False
-        except PersonalProfile.ObjectDoesNotExist:
-
-            profile = PersonalProfile.objects.create(user__email=user_email)
+        except Exception:
             # Any exceptions occurrence limits view
             return False
-        except Exception:
-            return False
+        
 
 
 class OverallAnalytics(LoginRequiredMixin, IsStudent, TemplateView):

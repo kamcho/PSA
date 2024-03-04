@@ -42,15 +42,15 @@
 
         </div>
       </a>
-      <a href="#">
+      <a href="{% url 'notices' %}">
         <div class="event-card">
-          <h6><i class="bi bi-speaker"></i> KNEC Announcements</h6>
+          <h6><i class="bi bi-speaker"></i>School Announcements</h6>
           <hr class="centered-hr">
           <br>
 
           <div class="">
 
-            <small>Click here to view updates from KNEC/KICD/CBC on new education matters.
+            <small>Click here to view updates from the school administration on new education matters.
 
             </small>
             <button class="btn btn-dark">View</button>
@@ -114,9 +114,9 @@
           <th>
             <h6>Grade</h6>
           </th>
-          <th>
+          <!-- <th>
             <h6>Topics</h6>
-          </th>
+          </th> -->
           <th>
             <h6>Progress</h6>
           </th>
@@ -130,7 +130,7 @@
         <tr>
           <td>{{ subject.subject__name }}</td>
           <td>{{ subject.subject__grade }}</td>
-          <td>{{ subject.subtopic_count }} / {{ subject.subject__topics }}</td>
+          <!-- <td>{{ subject.subtopic_count }} / {{ subject.subject__topics }}</td> -->
           <td>
             <div class="progress">
               <div class="progress-bar" role="progressbar"

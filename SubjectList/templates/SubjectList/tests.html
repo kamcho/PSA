@@ -41,7 +41,7 @@
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="heading{{ forloop.counter }}">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
-                        {{ test.subject }} - Grade {{ test.subject.grade }}.  {{ test.topic }}
+                        {{ test.subject }} - Grade {{ test.subject.grade }}. {% if test.topic %} {{ test.topic }} {% endif %}
                     </button>
                     </h2>
                     <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#accordionExample">
@@ -52,11 +52,11 @@
 
 
 
-                                {% if message.notification_type == 'general'  %}
+                                {% if test.notification_type == 'general'  %}
                                 <a class="btn btn-info" href="{% url 'general-test' test.uuid %}">Proceed</a>
 
                                 {% else %}
-                                    <a href="{% url 'start' test.topic test.uuid %}"><button class="btn btn-info">View Test</button></a>
+                                    <a href="{% url 'start' test.topic test.uuid %}"><button class="btn btn-primary">View Test</button></a>
 
 
                                 {% endif %}

@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="subject-select-content-container">
+<div class="bg-gradient">
     {% if not subject %}
 
     {% else %}
@@ -30,11 +30,15 @@
             <br>
             {% if media == 'text' %}
                 <div class="study-content">
+                    {% if subject.file1 %}
                     <embed src="{{subject.file1.url}}" type="application/pdf" width="95%" height="800px">
+                    {% endif %}
                 </div>
             {% else %}
                 <div class="study-content">
+                    {% if subject.file2 %}
                     <video src="{{subject.file2.url}}" width="95%" preload="auto" controls>
+                    {% endif %}
                     </video>
                 </div>
             {% endif %}
@@ -42,13 +46,17 @@
     <br>
     {% if media == 'text' %}
         <div class="study-content">
+            {% if subject.file1 %}
             <embed src="{{subject.file1.url}}" type="application/pdf" width="95%" height="800px">
+            {% endif %}
         </div>
 
     {% else %}
 
         <div class="study-content">
+            {% if subject.file2 %}
             <video src="{{subject.file2.url}}" width="95%" preload="auto" controls>
+                {% endif %}
               
             </video>
         </div>

@@ -4,8 +4,23 @@
 
 {% block content %}
 
-    {% if not subjects %}
 
+    {% if not subjects %}
+    <br><br><br>
+    <form>
+        <div class="dropdown" style="padding-left:25px;">
+            <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Grade {{ grade }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="{% url 'exams'  4  %}">4</a></li>
+                <li><a class="dropdown-item" href="{% url 'exams'  5  %}">5</a></li>
+                <li><a class="dropdown-item" href="{% url 'exams'  6  %}">6</a></li>
+                <li><a class="dropdown-item" href="{% url 'exams'  7  %}">7</a></li>
+            </ul>
+        </div>
+    </form>
     {% else %}
    
     <div class="subject-select-content-container">
@@ -16,6 +31,21 @@
 <!--                <a href="{% url 'overall-analytics' user %}"><button class="btn btn-warning">Analytics</button></a>-->
 <!--                </div>-->
 <!--            </div>-->
+<br><br>
+<form class="container">
+    <div class="dropdown" style="padding-left:25px;">
+        <button class="btn btn-secondary dropdown-toggle" name="select" type="button" id="dropdownMenuButton1"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            Grade {{ grade }}
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="{% url 'exams'  4  %}">4</a></li>
+            <li><a class="dropdown-item" href="{% url 'exams'  5  %}">5</a></li>
+            <li><a class="dropdown-item" href="{% url 'exams'  6  %}">6</a></li>
+            <li><a class="dropdown-item" href="{% url 'exams'  7  %}">7</a></li>
+        </ul>
+    </div>
+</form>
 
         <div class="subjects-select-view">
 

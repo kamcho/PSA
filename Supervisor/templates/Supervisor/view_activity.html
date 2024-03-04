@@ -1,0 +1,96 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% load static %}
+{% block content %}
+
+<br><br><br><br>
+<div class="bg-gradient" style="color: white;">
+    {% if user.role == 'Supervisor' %}
+    <button class="btn btn-danger" style="color: white;position: absolute;top: 60px;right: 12%;" onclick="toggleDeletePopUp()">Delete</button>  
+    {% endif %}
+    <br><br>
+    <div class="container" style="padding-left: 50px;">
+        <h5>{{ activity.title|title }}</h5>
+    <br><br>
+    <p>{{ activity.description }}</p>
+    </div>
+    
+    <div class="contaier">
+        <div class="activity-profiles">
+            {% for student in activity.students.all %}
+
+            <div class="student-card">
+                <div class="student-img">
+                <img class="student-img"  src="{% static 'Supervisor\GOLD-6487-CareerGuide-Batch04-Images-GraphCharts-01-Line.jpg' %}">
+            </div>
+                <p style="color: coral;" class="name">{{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}</p>
+            </div>
+
+        {% endfor %}
+        </div>
+    </div>
+    
+
+
+    <div class="contaner">
+        <div class="activity-profiles" >
+            {% for file in activity.files.all %}
+            <a href="{{ file.file.url }}">
+                <div class="file">
+
+               
+    
+                    <img src="{{ file.file.url }}" class="file">
+                </div>
+            </a>
+            
+    
+            {% endfor %}
+        </div>
+    </div>
+    
+    
+
+
+
+
+
+
+</div>
+<form method="post">
+    {% csrf_token %}
+    <div class="delete-pop-up">
+        <br>
+        <h5 style="font-family: cursive; color: coral;" class="text-center">Delete {{ course }} from system </h5>
+        <br>
+        
+        <div class="center-input">
+            <p style="color: crimson;">You are trying to delete this object from the system. Please not that this cannot be undone</p>
+        <p>Type <strong style="color: red;">delete</strong> to confirm</p>
+            <div class="col-md-6">
+                <input type="text" class="form-control"  name="option" placeholder="" >
+            </div>
+            <br>
+           
+            <br><br><br>
+            <button class="btn btn-danger" name="delete">DELETE</button>
+        </div>
+        
+        
+    </div>
+</form>
+<script>
+    function toggleDeletePopUp() {
+        var popUpDiv = document.querySelector('.delete-pop-up');
+        var containerDiv = document.querySelector('.container');
+
+        // Toggle the display of the pop-up
+        popUpDiv.style.display = (popUpDiv.style.display === 'none' || popUpDiv.style.display === '') ? 'block' : 'none';
+
+
+        // Toggle the opacity of the container
+        containerDiv.style.opacity = (containerDiv.style.opacity === '0.23' || containerDiv.style.opacity === '') ? '.2' : '0.23';
+    }
+</script>
+
+{% endblock %}

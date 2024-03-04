@@ -205,7 +205,20 @@
 .class-subject-view{
     display: grid;
     grid-template-columns: repeat(4, .4fr);
+    width: 90%;
+    margin: 20px auto;
     row-gap: 20px;
+}
+.analytic-card{
+    width: 93%;
+    height: 250px;
+    border-radius: 5px;
+    padding:15px;
+    box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.2);
+    background-color:rgba(29, 25, 46, .9) !important;
+    color: white;
+    
+
 }
 .class-subject-card{
     width: 95%;
@@ -328,12 +341,93 @@
     flex-direction: column;
     align-items: center;
 }
+.activity-profiles{
+    display: grid;
+    grid-template-columns: repeat(3, .6fr);
+    background-color: rgba(29, 25, 46, .8);
+    width: 95%;
+    margin: 30px auto;
+    padding: 20px;
+    row-gap: 20px;
+}
+.name{
+    margin: 55px auto;
+    text-align: center;
+}
+.activity-images{
+    display: grid;
+    grid-template-columns: repeat(3, .6fr);
+    background-color: rgba(29, 25, 46, .8);
+    width: 95%;
+    margin: 0 auto;
+    padding: 30px;
+    row-gap: 20px;
+}
+.student-card{
+    width: 85%;
+    height: 250px;
+    background-color:#feffff;
+    border-radius: 10px;
+    margin: 10px auto;
+}
+.student-img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.file{
+    width: 95%;
+    height: 250px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.report{
+    margin: 0 auto;
+    width: 80%;
+}
+.bio{
+    display: grid;
+    grid-template-columns: 50% 30% 20%;
+    
+}
+.grade-system{
+    display: grid;
+    grid-template-columns: 65% 35%;
+    column-gap: 30px;
+}
+@media print {
+    body {
+        font-size: 18px;
+        line-height: 1.6;
+    }
+
+   
+    .report{
+        color: rgb(255, 14, 14) !important;
+    }
+    .bio{
+        display: grid;
+        grid-template-columns: 60% 40%;
+    }
+
+    /* Add more print-specific styles as needed */
+}
 
 
 @media (max-width: 1200px) {
     .users-view{
         grid-template-columns: repeat(3,.7fr);
         width: 93%;
+    }
+    .class-subject-view{
+
+        grid-template-columns: repeat(3, .6fr);
     }
     .panel{
         grid-template-columns: repeat(3,.7fr);
@@ -353,6 +447,23 @@
         width: 230px;
         height: 230px;
     }
+
+}
+
+@media (max-width: 1100px) {
+    .activity-profiles{
+        grid-template-columns: repeat(2,.6fr);
+    }
+
+
+
+}
+
+@media (max-width: 950px) {
+    .class-subject-view{
+        grid-template-columns: repeat(2, .7fr);
+    }
+
 
 }
 
@@ -387,6 +498,13 @@
             padding: 10px;
             overflow-y: scroll;
         }
+        .student-card{
+            width: 92%;
+            height: 230px;
+        }
+        .file{
+            height: 200px;
+        }
         .user-info{
             padding: 30px;
         }
@@ -403,8 +521,25 @@
             border: none;
             background-color: #132743 !important;
         }
+        .class-subject-view{
+            display: inline;
+            margin: 10px auto;
+        }
+        .analytic-card{
+            margin: 20px auto;
+        }
         .insight{
             height: 400px;
+        }
+        .student-img{
+            height: 130px;
+            width: 130px;
+        }
+        .student-card{
+            height: 210px;
+        }
+        .file{
+            height: 150px;
         }
         .class-subject-card{
             height: 180px;

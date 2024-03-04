@@ -1,13 +1,10 @@
 {% extends 'Supervisor/base.html' %}
 {% load custom_filters %}
 
-
-
 {% block content %}
 
 <br><br><br><br>
 <div class="bg-gradient">
-
     <div class="container">
         <br><br>
 
@@ -18,51 +15,79 @@
                 <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
             </div>
 
-            search by class
-            <select class="form-select"  aria-label="Default select example" name="class">
-                <option></option>
+            <label for="class">Search by class</label>
+            <select class="form-select" aria-label="Default select example" name="class" id="class">
+                <option value=""></option>
                 {% for class in classes %}
                     <option value="{{ class.class_id.class_id }}">{{ class.class_id }}</option>
                 {% endfor %}
-                
-              </select>
-          </form>
-          <br><br>
-          
-          <button class="btn btn-primary">Add Selected</button>
-          <table class="table" style="background-color: white;">
-              <thead>
+            </select>
+        </form>
+        <br><br>
+        {% if students %}
+        <div class="text-center course-container" >
+    
+                <h6>Students.</h6>
+                <div class="text-center course-view">
+        
+                    {% for student in students %}
+                        <a class="text-center"><h6><i class="bi bi-user"></i> {{ student.personalprofile.f_name }} {{ student.personalprofile.l_name.0 }} {{ student.personalprofile.surname }}</h6></a>
+                    {% endfor %}
+                    
+                    <a href="{% url 'add-files' %}"><button class="btn btn-outline-secondary">Next</button></a>
+                </div>
+            
+        </div>
+        {% endif %}
+        <br>        
+        <form method="post">
+            {% csrf_token %}
+            <button class="btn btn-primary" name="add">Add Selected</button>
+        
+        
+        <table class="table" style="background-color: white;">
+            <thead>
                 <tr>
-                  <th><input type="checkbox" id="select-all"></th>
-                  <th><h6>User</h6></th>
-                  
-                  <th><h6>Class</h6></th>
-                  
+                    <th><input type="checkbox" id="select-all"></th>
+                    <th><h6>User</h6></th>
+                    <th><h6>Class</h6></th>
+                    <th>.</th>
                 </tr>
-              </thead>
-              <tbody>
-                
-                  {% for user in users %}
-                  
-                  <tr>
-
-                    <td><input type="checkbox" value="{{ user }}" name="user"></td>
-                    <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
-                    <td>{{ user.academicprofile.current_class }} </td>
+            </thead>
+            <tbody>
+                {% for user in users %}
                     
-                    
-                  </tr>
-                  {% endfor %}
-               
-              </tbody>
-           </table>
-        
-        
+                    <tr>
+                        {% if user.id|stringformat:"s" in request.session.students %}
 
+                            <td><input type="checkbox" value="{{ user.id }}" name="user" checked></td>
+                            <td><a href="{% url 'students-profile' user.id %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+                            <td>{{ user.academicprofile.current_class }}</td>
+                            <td style="color: crimson;">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <button class="btn btn-danger" name="delete" value="{{ user.id }}">
+                                        <i class="bi bi-x"></i>remove
+                                    </button>
+                                    
+                                </form>
+                            </td>
+                        {% else %}
+                            <td><input type="checkbox" value="{{ user.id }}" name="user"></td>
+                            <td><a href="{% url 'students-profile' user.id %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+                            <td>{{ user.academicprofile.current_class }}</td>
+                            <td>.</td>
+                        {% endif %}
+                    </tr>
+                    
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
     </div>
-
-
 </div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 <script>
     $(document).ready(function() {
       // Check or uncheck all checkboxes when the "select-all" checkbox changes

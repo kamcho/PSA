@@ -14,5 +14,6 @@ urlpatterns = [
     path('Quiz/<str:email>/<str:name>/', KidTestDetail.as_view(), name='kid-tests-detail'),
     path('View/<str:email>/<str:grade>/progress/', LearnerProgress.as_view(), name='learner-learning-progress'),
     path('<str:name>/<str:grade>/<str:email>/syllabus-coverage/', LearnerSyllabus.as_view(), name='learners-syllabus'),
+    path('ManageKids/', AddKid.as_view(), name='manage-kids')
 
 ]

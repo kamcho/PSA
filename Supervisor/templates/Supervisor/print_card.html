@@ -1,0 +1,111 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+
+<br><br><br><br>
+
+<div class="container">
+    <button onclick="printDiv('report')" class="btn btn-danger" style="position: fixed; right: 14.5%;top: 10%;"><i class="bi bi-printer"> </i> Print</button> 
+
+<div class="report" id="report">
+    <div class="school-info">
+        <h5>Excel Academy Grassland</h5>
+        <h6>Nakuru - Free Area</h6>
+        <h6>P.O.Box 20100-07</h6>
+        <p>+254 742 134 431</p>
+
+    </div>
+    <div class="bio">
+        <div>
+            <h6  class="text-cente" >Names:<strong style="text-decoration: underlne;text-underline-offset: 10px; text-decoration-thickness: 2px;">{{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}</strong></h6>
+        </div>
+        <p>ADM No. <strong style="text-decoration: uderline;text-underline-offset: 10px; text-decoration-thickness: 2px;">B/14/177</strong></p>
+        
+        <h6 style="font-family: cursive;">Grade :<strong style="text-decoration: underine;text-underline-offset: 10px; text-decoration-thickness: 2px;">{{ grade }}</strong></p>
+        <h6>{{ student.personalprofile.gender }}</h6>
+        <h6>Rank {{ rank }}</h6>
+        <h6>{{ term }}</h6>
+    </div>
+    <div class="grade-system" style="background-color: white !important;">
+        <table style="background-color: white !important;">
+            <thead>
+                <tr>
+                    <th><h6>Subject</h6></th>
+                    <th><h6>Score</h6></th>
+                    <th><h6>Grade</h6></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                    {% for subject in results %}
+                    <tr>
+                        <td>{{ subject.subject }} </td>
+                        <td>{{subject.score }}</td>
+                        <td>{{ subject.comments }}</td>
+                    </tr>
+                    {% endfor %}
+
+                
+            </tbody>
+
+        </table>
+
+        <table style="width: 95%;">
+            <thead style="background-color: white !important;">
+                <tr >
+              
+                    <th><h6>Score</h6></th>
+                    <th><h6>Grade</h6></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                
+                    <tr>
+                        <td style="color: cornflowerblue; ">76-100</td>
+                        <td>EE Exceeded Expectations</td>
+                    </tr>
+                    <tr>
+                        <td style="color: cornflowerblue; ">51-75</td>
+                        <td>ME Met Expectations</td>
+                    </tr>
+                    <tr>
+                        <td style="color: cornflowerblue; ">26-50</td>
+                        <td>AE Approaching Expectations</td>
+                    <tr>
+                        <tr>
+                        <td style="color: cornflowerblue; ">0-25</td>
+                        <td>BE Below Expectations</td>
+                    </tr>
+                    
+
+                
+            </tbody>
+
+        </table>
+
+        
+
+    </div>
+
+    
+    
+
+    
+</div>
+<script>
+    function printDiv(divId) {
+        var printContent = document.getElementById(divId).innerHTML;
+        var originalContent = document.body.innerHTML;
+
+        document.body.innerHTML = printContent;
+
+        window.print();
+
+        document.body.innerHTML = originalContent;
+    }
+</script>
+{% endblock %}

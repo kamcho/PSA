@@ -1,20 +1,18 @@
 import datetime
+from distutils.log import Log
+from email.mime import base
 import json
-from re import search
-from turtle import up
-from typing import Any
 from django.contrib.auth.hashers import make_password
 
 from itertools import groupby
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from django.db.models import F, IntegerField, Count, Sum, Max
+from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib import messages
 from django.db import IntegrityError, transaction
 from django.db.models import Q
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -23,12 +21,12 @@ from django.views.generic import TemplateView
 
 from Analytics.views import check_role
 from Finance.models import MpesaPayouts
-from Supervisor.models import Updates
-from Teacher.models import StudentList, TeacherProfile
+from Supervisor.models import ExtraCurricular, FileModel, Updates
+from Teacher.models import StudentList
 from Term.models import ClassTermRanking, CurrentTerm, Exam
-from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, StudentsFeeAccount, TeacherPaymentProfile
-from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest, TopicalQuizes, TopicalQuizAnswers
-from SubjectList.models import Subject, Topic, Subtopic, Course
+from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, TeacherPaymentProfile
+from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest
+from SubjectList.models import Subject, Subtopic, Course
 
 def get_marks_distribution_data(grade, term, year):
     # Replace 'YourGradeModelField' with the actual field name representing the grade in your SchoolClass model
@@ -47,7 +45,7 @@ def get_marks_distribution_data(grade, term, year):
         marks_histogram[marks_range] = marks_histogram.get(marks_range, 0) + 1
 
     return marks_histogram
-class SupervisorHomeView(TemplateView):
+class SupervisorHomeView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/supervisor_home.html'
 
     def get_context_data(self, **kwargs):
@@ -106,6 +104,7 @@ class SupervisorHomeView(TemplateView):
         print('term89', current_term)
         context['current_term'] = current_term
         context['chart_data'] = chart_data
+        
         return context
     
     def post(self, *args, **kwargs):
@@ -119,7 +118,6 @@ class SupervisorHomeView(TemplateView):
 
     # Preparing data for the bar chart
             labels = list(grade_6_data.keys())
-            print('current\n\n', labels)
             datasets = [
                 {
                     'label': 'Grade 4',
@@ -165,9 +163,12 @@ class SupervisorHomeView(TemplateView):
             }
 
             return render(self.request, self.template_name, context)
+        
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
 
-class ClassTestAnalytics(TemplateView):
+class ClassTestAnalytics(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/class_test_analytics.html'
 
     def get_context_data(self, **kwargs) :
@@ -175,6 +176,15 @@ class ClassTestAnalytics(TemplateView):
         class_id= self.kwargs['class_id']
         class_ins = SchoolClass.objects.get(class_id=class_id)
         context['class'] = class_ins
+        if self.request.user.role == 'Student':
+            # get the current logged in user(learner) current grade and associated Subjects
+            context['base_html'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor', 'Finance']:
+            context['base_html'] = 'Supervisor/base.html'
 
         grade_data = get_marks_distribution_data(class_ins.grade, 'Term 1', '2024')
         context['config'] = 'Year 2024 Term 1'
@@ -231,6 +241,10 @@ class ClassTestAnalytics(TemplateView):
                 'labels': labels,
                 'datasets': datasets,
             }
+            if self.request.user.role == 'Teacher':
+                base_html = 'Teacher/teachers_base.html'
+            elif self.request.user.role in ['Supervisor']:
+                base_html = 'Supervisor/base.html'
             
             context = {
                 'chart_data':chart_data,
@@ -243,14 +257,15 @@ class ClassTestAnalytics(TemplateView):
                 'student_lst': self.get_context_data().get('student_lst'),
                 'term':term,
                 'year':year,
-                'current_term':self.get_context_data().get('current_term')
+                'current_term':self.get_context_data().get('current_term'),
+                'base_html':base_html
 
             }
 
             return render(self.request, self.template_name, context)
 
 
-class SupervisorDashboard(TemplateView):
+class SupervisorDashboard(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/admin_dashboard.html'
 
     def get_context_data(self, **kwargs) :
@@ -264,10 +279,13 @@ class SupervisorDashboard(TemplateView):
 
 
         return context
+    
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
 
 
-class CreateUser(TemplateView):
+class CreateUser(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/create_user.html'
 
     def get_context_data(self, **kwargs) :
@@ -275,6 +293,8 @@ class CreateUser(TemplateView):
         classes = SchoolClass.objects.all()
         context['classes'] = classes
         return context
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
     def post(self, request, *args, **kwargs):
         if request.method == 'POST':
@@ -324,7 +344,7 @@ class CreateUser(TemplateView):
 
 
 
-class StudentsView(TemplateView):
+class StudentsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/students_view.html'
 
     def get_context_data(self, **kwargs):
@@ -354,9 +374,12 @@ class StudentsView(TemplateView):
                 
                 
                 return redirect(self.request.get_full_path())
+            
+    def test_func(self):
+        return self.request.user.role not in ['Student', 'Guardian']
         
 
-class TeachersView(TemplateView):
+class TeachersView(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/teachers_view.html'
 
     def get_context_data(self, **kwargs):
@@ -372,6 +395,7 @@ class TeachersView(TemplateView):
             else:
                 users  = MyUser.objects.filter(role='Teacher', is_active=True)
             context['users'] = users
+        
         except Exception:
             messages.error(self.request, 'We could not fetch Teachers from the database')
         return context
@@ -393,7 +417,7 @@ class TeachersView(TemplateView):
             return redirect(request.get_full_path())
         
 
-class TeachersProfile(TemplateView):
+class TeachersProfile(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/teachers_profile.html'
 
     def get_context_data(self, **kwargs):
@@ -406,7 +430,7 @@ class TeachersProfile(TemplateView):
 
         return context
     
-class TeachersInfo(TemplateView):
+class TeachersInfo(LoginRequiredMixin,TemplateView):
     template_name = 'Supervisor/teacher_info.html'
 
     def get_context_data(self, **kwargs):
@@ -421,7 +445,7 @@ class TeachersInfo(TemplateView):
         context['teacher'] = user
 
         return context
-class TeachersFinancials(TemplateView):
+class TeachersFinancials(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/teacher_financials.html'
 
     def get_context_data(self, **kwargs):
@@ -459,14 +483,14 @@ class StudentProfile(LoginRequiredMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
-        elif self.request.user.role in ['Supervisor', 'Finance']:
+        elif self.request.user.role in ['Supervisor', 'Finance', 'Receptionist']:
             context['base_html'] = 'Supervisor/base.html'
         return context
     
 
 
     
-class ManageStudent(TemplateView):
+class ManageStudent(UserPassesTestMixin, LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/manage_student.html'
 
     def get_context_data(self, **kwargs):
@@ -518,11 +542,14 @@ class ManageStudent(TemplateView):
                 user.save()
                 messages.success(request, f'You have succesfully restored {email} and all acount related data')
                 return redirect(self.request.get_full_path())
+            
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
                 
             
 
-class ArchivedUsers(TemplateView):
+class ArchivedUsers(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/archived_users.html'
 
     def get_context_data(self, **kwargs):
@@ -532,10 +559,13 @@ class ArchivedUsers(TemplateView):
 
         return context
 
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
+
 
             
 
-class StudentExamProfile(TemplateView):
+class StudentExamProfile(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/students_exam_profile.html'
 
     def get_context_data(self, **kwargs):
@@ -552,12 +582,24 @@ class StudentExamProfile(TemplateView):
         context['term1'] = term1
         context['term2'] = term2
         context['term3'] = term3
+        if self.request.user.role == 'Student':
+            # get the current logged in user(learner) current grade and associated Subjects
+            context['base_html'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor',  'Receptionist']:
+            context['base_html'] = 'Supervisor/base.html'
         
 
         context['scores'] = scores
         context['grade'] = grade
         context['user'] = user
         return context
+    
+    # def test_func(self):
+    #     return self.request.user.role == 'Supervisor'
     
     def post(self, *args, **kwargs):
       
@@ -581,7 +623,7 @@ class StudentTaskSelect(TemplateView):
         return context
 
 
-class StudentTestsView(TemplateView):
+class StudentTestsView(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/students_test_view.html'
 
     def get_context_data(self, **kwargs):
@@ -600,8 +642,11 @@ class StudentTestsView(TemplateView):
         return context
 
 
-class StudentTestDetailView(TemplateView):
+class StudentTestDetailView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/students_test_detail.html'
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -674,16 +719,21 @@ class StudentTestDetailView(TemplateView):
             return redirect(self.request.get_full_path())
         
 
-class ClassesView(TemplateView):
+class ClassesView(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/classes.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         classes = SchoolClass.objects.all().order_by('grade')
         context['classes'] = classes
+        if self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor']:
+            context['base_html'] = 'Supervisor/base.html'
+
         return context     
     
-class ClassDetail(TemplateView):
+class ClassDetail(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/class_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -700,6 +750,11 @@ class ClassDetail(TemplateView):
         term = CurrentTerm.objects.filter().first()
         context['term'] = term.term
         context['grade'] = year
+
+        if self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor']:
+            context['base_html'] = 'Supervisor/base.html'
         
         
         return context
@@ -709,11 +764,16 @@ class ClassDetail(TemplateView):
             year = request.POST.get('year')
             term = request.POST.get('term')
             subjects = Subject.objects.filter(grade=year)
+            if self.request.user.role == 'Teacher':
+                base_html = 'Teacher/teachers_base.html'
+            elif self.request.user.role in ['Supervisor']:
+                base_html = 'Supervisor/base.html'
             context = {
                 'term':term,
                 'grade':year,
                 'subjects':subjects,
-                'class':self.get_context_data().get('class')
+                'class':self.get_context_data().get('class'),
+                'base_html':base_html,
             }
 
 
@@ -722,7 +782,7 @@ class ClassDetail(TemplateView):
 
 
 
-class ClassStudentsRanking(TemplateView):
+class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
     template_name='Supervisor/class_students_ranking.html'
 
     def get_context_data(self, **kwargs):
@@ -732,6 +792,10 @@ class ClassStudentsRanking(TemplateView):
         grade = self.request.session.get('year', None)
         term = self.request.session.get('term', None)
         stream = self.request.session.get('stream', False)
+        if self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor']:
+            context['base_html'] = 'Supervisor/base.html'
         
         if not grade:
             grade = class_instance.grade
@@ -803,6 +867,10 @@ class ClassStudentsRanking(TemplateView):
             grade = request.POST.get('year')
             term = request.POST.get('term')
             stream = request.POST.get('stream')
+            if self.request.user.role == 'Teacher':
+                base_html = 'Teacher/teachers_base.html'
+            elif self.request.user.role in ['Supervisor']:
+                base_html = 'Supervisor/base.html'
 
             if stream == 'stream':
                 request.session['stream'] = grade
@@ -822,10 +890,28 @@ class ClassStudentsRanking(TemplateView):
         return redirect(request.get_full_path())
 
 
+
 def rank(marks_object):
         
     return marks_object
-class ClassSubjectDetail(TemplateView):
+
+class PrintReport(LoginRequiredMixin, TemplateView):
+    template_name = 'Supervisor/print_card.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        email = self.kwargs['email']
+        rank = self.kwargs['rank']
+        grade = self.kwargs['grade']
+        term = self.kwargs['term']
+        results = Exam.objects.filter(user__email=email, subject__grade=grade, term__term=term)
+        context['results'] = results
+        context['rank'] = rank
+        context['student'] = MyUser.objects.get(email=email)
+
+        return context
+    
+class ClassSubjectDetail(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/class_subject_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -838,147 +924,12 @@ class ClassSubjectDetail(TemplateView):
         context['tests'] = scores
         context['class'] = class_name
         return context
-class TestTaskView(TemplateView):
+class TestTaskView(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/test_type_select.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-
-
-class KNECExamConfig(TemplateView):
-    """
-        A view to set test configurations of a given test
-    """
-    template_name = 'Supervisor/knec_config.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(KNECExamConfig, self).get_context_data(**kwargs)
-        try:
-            subjects = Course.objects.all()  # Get all subjects
-            tests = KNECGradeExams.objects.all()  # Get all exams
-            context['session_data'] = self.request.session.get('knec_config', None)
-            context['tests'] = tests
-            context['subjects'] = subjects
-        except Exception:
-            messages.error(self.request, 'An error occurred, if problem persists contact support')
-        return context
-
-    def post(self, request):
-        if request.method == "POST":
-            date = datetime.datetime.now().strftime('%Y')
-            user = request.user
-
-            # Get data from form
-            p_subject = request.POST.get('subject')
-            grade = request.POST.get('grade')
-            term = request.POST.get('term')
-            test_size = request.POST.get('test_size')
-            try:
-                subject = Subject.objects.get(name=p_subject, grade=grade)  # Get subject by id
-
-                # Try and check if an exam matching the same criteria exists
-                test = KNECGradeExams.objects.filter(grade=grade, subject__id=subject.id, term=term, year=date).first()
-                if test:
-                    test_id = test.uuid
-                else:
-                    # create if none is found
-                    knec_test = KNECGradeExams.objects.create(teacher=user, grade=grade, subject=subject, term=term,
-                                                              test_size=test_size, year=date, date=timezone.now())
-                    test_id = knec_test.uuid
-
-                # Add data to session
-                knec_config = {'subject': subject.id, 'grade': grade, 'term': term, 'year': date}
-                request.session['knec_config'] = knec_config
-
-                return redirect('knec-add-quiz', subject, test_id)
-
-            except Exception:
-                messages.error(self.request, 'An error occurred but we are fixing it')
-
-                return redirect(request.get_full_path())
-
-
-class KNECAddQuiz(TemplateView):
-    """
-        Add a question to the test
-    """
-    template_name = 'Supervisor/knec_add_quiz.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        try:
-            test_id = self.kwargs['uuid']
-            subject_id = self.request.session.get('knec_config')['subject']
-            test = KNECGradeExams.objects.get(uuid=test_id)  # get exam
-            context['subject'] = test.subject  # get subject
-
-            context['term'] = self.request.session.get('knec_config')['term']
-            context['test_id'] = test_id
-
-            context['count'] = test.quiz.all().count()  # get total number of questions added
-        except Exception:
-            # Hanlde any exceptions
-            messages.error(self.request, 'An error occurred, were fixing it')
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        if request.method == "POST":  # Corrected method name to uppercase
-            url_subject = self.kwargs['subject']
-            test_id = self.kwargs['uuid']
-
-            # get data from form
-            quiz = request.POST.get('quiz')
-            subject = request.POST.get('subject')
-            topic = request.POST.get('topic')
-            sub_topic = request.POST.get('subtopic')
-
-            if quiz and sub_topic and subject and topic:  # ensure all data is available
-
-                # Parse data and add it to session
-                data = {'quiz': quiz, 'subject': subject, 'topic': topic, 'subtopic': sub_topic}
-                request.session['quiz'] = data
-                return redirect('knec-add-selection', subject, test_id)
-            else:
-                return redirect('knec-add-quiz', url_subject, test_id)
-
-
-class KNECAddSelection(TemplateView):
-    """
-        View to add choices to previous added question
-    """
-    template_name = 'Supervisor/knec_add_selection.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(KNECAddSelection, self).get_context_data(**kwargs)
-        context['quiz'] = self.request.session.get('quiz')  # get question from session
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        if self.request.method == 'POST':
-            # get data from url
-            subject = self.kwargs['subject']
-            test_id = self.kwargs['uuid']
-
-            # get data from form
-            selection1 = self.request.POST.get('selection1')
-            selection2 = self.request.POST.get('selection2')
-            selection3 = self.request.POST.get('selection3')
-            selection4 = self.request.POST.get('selection4')
-
-            if selection1 and selection2 and selection3 and selection4:
-                # Parse data and add to session
-                self.request.session['selection_info'] = {'selection1': selection1,
-                                                          'selection2': selection2,
-                                                          'selection3': selection3,
-                                                          'selection4': selection4
-                                                          }
-                return redirect('save-knec-quiz', subject, test_id)
-
-            else:
-                return redirect('knec-add-selection', subject, test_id)
 
 
 def parse_quiz(request):
@@ -995,124 +946,13 @@ def parse_quiz(request):
     return sub_topic, topic, quiz, selection1, selection2, selection3, selection4
 
 
-def save_selection(test_quiz, selection1, selection2, selection3, selection4):
-    # Bulk create questions
-    quiz_answers = [
-        KnecQuizAnswers(quiz=test_quiz, choice=selection1, is_correct=True),
-        KnecQuizAnswers(quiz=test_quiz, choice=selection2, is_correct=False),
-        KnecQuizAnswers(quiz=test_quiz, choice=selection3, is_correct=False),
-        KnecQuizAnswers(quiz=test_quiz, choice=selection4, is_correct=False),
-    ]  # Parse data
-    try:
-        with transaction.atomic():
-            KnecQuizAnswers.objects.bulk_create(quiz_answers)  # Bulk create
-    except Exception:
-        pass
-    return None
 
 
-class SaveQuiz(TemplateView):
-    template_name = 'Supervisor/save_quiz.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(SaveQuiz, self).get_context_data(**kwargs)
-        try:
-            quiz = self.request.session.get('quiz')
-            context['quiz'] = quiz
-            context['selection'] = self.request.session.get('selection_info')
-            context['subject'] = Subtopic.objects.get(subject=quiz['subject'])  # get subtopic
-        except Exception:
-            messages.error(self.request, 'An error occurred and you are required to restart this process again')
-
-        return context
-
-    def post(self, request, **kwargs):
-        # handle POST requests
-        if request.method == 'POST':
-            test_id = self.kwargs['uuid']
-            subject = self.kwargs['subject']
-            try:
-
-                sub_topic, topic, quizz, selection1, selection2, selection3, selection4 = parse_quiz(request)  # get data from session
-                db_sub_topic = Subtopic.objects.get(id=sub_topic)  # get subtopic
-
-                # Create question
-                test_quiz = KnecQuizzes.objects.create(subject=db_sub_topic.subject, topic=db_sub_topic.topic,
-                                                       subtopic=db_sub_topic,
-                                                       quiz=quizz)
-                save_selection(test_quiz, selection1, selection2, selection3, selection4)  # create choices
-
-                # Get test and add question to it
-                knec_test = KNECGradeExams.objects.get(uuid=test_id)
-                knec_test.quiz.add(test_quiz)
-
-            except Exception:
-                # Handle any errors
-                messages.error(self.request, 'An error occurred, Contact support')
-
-                return redirect(request.get_full_path())
-
-
-
-        return redirect('knec-add-quiz', subject, test_id)
-
-
-class TestReview(TemplateView):
-    """
-        A view to review test info and questions
-    """
-    template_name = 'Supervisor/test_review.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TestReview, self).get_context_data(**kwargs)
-        try:
-            test_id = self.kwargs['uuid']
-            test = KNECGradeExams.objects.get(uuid=test_id)  # get knec exams
-            quiz_uuids = [quiz.quiz for quiz in test.quiz.all()]
-            context['quizzes'] = test.quiz.all()  # get all questions in that test
-        except Exception:
-            messages.error(self.request, 'Ann error occurred, Contact support')
-
-        return context
-
-
-class SchoolSelect(TemplateView):
-    """
-         A view to view all schools
-    """
-    template_name = 'Supervisor/school_select.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        try:
-            schools = Schools.objects.all()  # get all schools
-            context['schools'] = schools
-
-        except Exception:
-            messages.error(self.request, 'An error occurred')
-        return context
-
-
-class SchoolTaskSelect(TemplateView):
-    """
-        View tasks operation possible
-    """
-    template_name = 'Supervisor/school_task_select.html'
-
-    def get_context_data(self, **kwargs):
-        uuid = self.kwargs['uuid']
-        try:
-            context = super(SchoolTaskSelect, self).get_context_data(**kwargs)
-            school = Schools.objects.get(uuid=uuid)  # get a specific school
-            context['school'] = school
-        except Exception:
-            messages.error(self.request, 'An error occurred were fixing it')
-
-        return context
-
-
-class ManageClassTeacher(TemplateView):
+class ManageClassTeacher(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/class_teacher.html'
+
+    def test_func(self) :
+        return self.request.user.role == 'Supervisor'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -1137,8 +977,11 @@ class ManageClassTeacher(TemplateView):
 
 
 
-class Promote(TemplateView):
+class Promote(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/promote.html'
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
     def get_context_data(self, **kwargs):
 
@@ -1165,8 +1008,11 @@ class Promote(TemplateView):
             return redirect(self.request.get_full_path())
         
 
-class CreateNotice(TemplateView):
+class CreateNotice(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/create_notice.html'
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
@@ -1179,6 +1025,26 @@ class CreateNotice(TemplateView):
 
             return redirect('notice-id', update.id)
         
+
+class Notices(TemplateView):
+    template_name = 'Supervisor/notices.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        context['updates'] = Updates.objects.all().order_by('-date')
+
+        if self.request.user.role == 'Student':
+            # get the current logged in user(learner) current grade and associated Subjects
+            context['base_html'] = 'Users/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor', 'Finance','Receptionist']:
+            context['base_html'] = 'Supervisor/base.html'
+
+        return context
 
 class NoticeID(TemplateView):
     template_name = 'Supervisor/notice_id.html'
@@ -1217,8 +1083,11 @@ class NoticeID(TemplateView):
                 return redirect(self.request.get_full_path())
             
 
-class AddActivity(TemplateView):
+class AddActivity(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Supervisor/create_activity.html'
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
 
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
@@ -1236,7 +1105,7 @@ class AddActivity(TemplateView):
 
     
 
-class AddStudents(TemplateView):
+class AddStudents(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/add_students.html'
 
     def get_context_data(self, **kwargs):
@@ -1244,30 +1113,192 @@ class AddStudents(TemplateView):
         context = super().get_context_data(**kwargs)
         context['users'] = MyUser.objects.filter(role='Student')
         context['classes'] = StudentList.objects.filter(user=self.request.user)
+        students = MyUser.objects.filter(id__in=self.request.session.get('students', []))
+        if students:
+            context['students'] = students
+
+        
+            
+
+        
         return context
     
     def post(self, *args, **kwargs):
         if self.request.method == 'POST':
             class_id = self.request.POST.get('class')
             search = self.request.POST.get('search')
-            if class_id:
-                users = MyUser.objects.filter(academicprofile__current_class__class_id=class_id)
-
-                context = {
-                    'users':users,
-                    'classes':self.get_context_data().get('classes'),
-                }
-
-                return render(self.request, self.template_name, context)
-
-            if search:
-                users = MyUser.objects.filter(Q(personalprofile__f_name__contains=search) | Q(personalprofile__l_name__contains=search)
-                                                    | Q(personalprofile__surname__contains=search) | Q(email__contains=search) )
-                context = {'users':users,
-                           'classes':self.get_context_data().get('classes')
+            if 'add' in self.request.POST:
+                students = self.request.POST.getlist('user')
+                existing_students = set(self.request.session.get('students', []))
+    
+    # Filter out duplicate values
+                new_students = list(set(students) - existing_students)
+                
+                # Append new values to the existing list
+                updated_students = existing_students.union(new_students)
+                
+                # Update the session key with the combined list
+                self.request.session['students'] = list(updated_students)
+                context = {'users':self.get_context_data().get('users'),
+                           'classes':self.get_context_data().get('classes'),
+                           'students':MyUser.objects.filter(id__in=self.request.session.get('students', []))
+                           
                            }
+                # context['students'] = self.request.session.get('students',None)
+                
                 return render(self.request, self.template_name, context)
-            
-            else:
-                return redirect(self.request.get_full_path())
+            elif 'delete' in self.request.POST:
+                id_to_delete = self.request.POST.get('delete')
+                if id_to_delete in self.request.session['students']:
+            # Remove the id_to_delete from the list
+                    self.request.session['students'].remove(id_to_delete)
+                    self.request.session.modified = True 
+                    context = {'users':self.get_context_data().get('users'),
+                           'classes':self.get_context_data().get('classes'),
+                           'students':MyUser.objects.filter(id__in=self.request.session.get('students', []))
+                           
+                           }
 
+                    return render(self.request, self.template_name, context)
+                else:
+                    return redirect(self.request.get_full_path())
+
+            else:
+                if class_id:
+                    users = MyUser.objects.filter(academicprofile__current_class__class_id=class_id)
+
+                    context = {
+                        'users':users,
+                        'classes':self.get_context_data().get('classes'),
+                        'students':self.get_context_data().get('students'),
+                    }
+
+                    return render(self.request, self.template_name, context)
+
+                if search:
+                    users = MyUser.objects.filter(Q(personalprofile__f_name__contains=search) | Q(personalprofile__l_name__contains=search)
+                                                        | Q(personalprofile__surname__contains=search) | Q(email__contains=search) )
+                    context = {'users':users,
+                            'classes':self.get_context_data().get('classes'),
+                            }
+                    return render(self.request, self.template_name, context)
+                
+                else:
+                    return redirect(self.request.get_full_path())
+
+
+class AddFiles(TemplateView):
+    template_name = 'Supervisor/add_files.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        context['students'] = MyUser.objects.filter(id__in=self.request.session.get('students', []))
+        context['activity'] = self.request.session.get('activity', [])
+
+        if self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
+
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            uploaded_files = self.request.FILES.getlist('files')
+            title = self.get_context_data().get('activity')
+            description = self.get_context_data().get('activity')
+            students = self.get_context_data().get('students')
+
+            activity = ExtraCurricular.objects.create(
+                user=self.request.user,
+                title = title['title'],
+                description = description['description']
+            )
+            activity.students.add(*students)
+
+            # Save each file to the database and associate it with the activity
+            for file in uploaded_files:
+                file_instance = FileModel.objects.create(file=file)
+                
+                activity.files.add(file_instance)
+
+            return redirect('view-activity', activity.id)
+
+
+
+class ViewActivities(LoginRequiredMixin, TemplateView):
+    template_name = 'Supervisor/view_activities.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        context['activities'] = ExtraCurricular.objects.all().order_by('-date')
+
+        return context
+    
+class ViewActivity(LoginRequiredMixin, TemplateView):
+    template_name = 'Supervisor/view_activity.html'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        activity_id = self.kwargs['activity_id']
+        activity = ExtraCurricular.objects.get(id=activity_id)
+        context['activity'] = activity
+        if self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role == 'Supervisor':
+            context['base_html'] = 'Supervisor/base.html'
+        elif self.request.user.role == 'Guardian':
+            context['base_html'] = 'Guardian/baseg.html'
+        elif self.request.user.role == 'Student':
+            context['base_html'] = 'Users/base.html'
+        
+
+
+
+        return context
+
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            command = self.request.POST.get('option').lower()
+            if command == 'delete':
+                activity = self.get_context_data().get('activity')
+                activity.delete()
+
+                return redirect('activities')
+            messages.error(self.request, 'Invalid Command')
+            
+            return redirect(self.request.get_full_path())
+        
+class ExamMode(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
+    template_name = 'Supervisor/enable_exam_mode.html'
+
+    def test_func(self):
+        return self.request.user.role == 'Supervisor'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        mode = CurrentTerm.objects.all().first()
+        context['mode'] = mode
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            command = self.request.POST.get('action')
+            mode = self.get_context_data().get('mode')
+            if command == 'enable':
+                inp = True
+            else:
+                inp = False
+
+            mode.mode = inp
+            mode.save()
+
+
+
+            return redirect(self.request.get_full_path())

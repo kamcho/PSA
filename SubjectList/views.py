@@ -270,7 +270,7 @@ class Tests(LoginRequiredMixin, IsStudent, TemplateView):
         else:
             messages.error(self.request, 'You have not set your grade. Contact @support')
             assignments = []
-        if not test1 or assignments:
+        if not test1 and not assignments:
             messages.info(self.request, 'You do not have any undone tests.')
 
         context['tests'] = list(test1) + list(assignments)
@@ -1128,7 +1128,7 @@ class MyProgress(LoginRequiredMixin, IsStudent, TemplateView):
                 topic_count=Count('topic', distinct=True))
 
             if not subject_progress:
-                messages.warning(self.request, 'You do not have any saved Learning history.')
+                messages.warning(self.request, f'You do not have any saved Learning history for grade {grade}.')
 
             context['subject'] = subject_progress
 

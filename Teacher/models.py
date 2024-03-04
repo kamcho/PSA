@@ -11,6 +11,9 @@ class TeacherProfile(models.Model):
     user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     subject = models.ManyToManyField(Subject)
 
+    def subjects_for_grade(self, grade):
+        return self.subject.filter(grade=grade)
+
     def __str__(self):
         return str(self.user)
 

@@ -1,0 +1,72 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+<div class="container">
+    <br><br><br><br>
+    <h5><small>title.</small>{{ activity.title|title }}</h5>
+    <br>
+    Activity Description
+    <p>{{ activity.description }}</p>
+
+
+    Students
+    {% for student in students %}
+        <p>
+            <i class="bi bi-person-circle"></i>
+            {{ student.personalprofile.f_name }} {{ student.personalprofile.l_name }} {{ student.personalprofile.surname }}
+        </p>
+    {% endfor %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Upload Files</label>
+            <input type="file" class="form-control" id="exampleFormControlInput1" name="files" multiple>
+        </div>
+        <br>
+        <div id="file-preview"></div>
+        <br>
+        <button type="submit" class="btn btn-primary">Upload & Finish</button>
+    </form>
+    
+    
+      
+    <br><br>
+    
+
+    <script>
+        $(document).ready(function () {
+            // Handle file input change event
+            $('#exampleFormControlInput1').change(function () {
+                // Clear previous previews
+                $('#file-preview').empty();
+    
+                // Display a preview for each selected file
+                for (let i = 0; i < this.files.length; i++) {
+                    const file = this.files[i];
+                    
+                    // Check if the file is an image
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+    
+                        reader.onload = function (e) {
+                            // Set width and height to 150px for image previews
+                            const imgElement = $('<img>').attr('src', e.target.result).attr('width', '150').attr('height', '150');
+                            $('#file-preview').append(imgElement);
+                        };
+    
+                        reader.readAsDataURL(file);
+                    } else {
+                        const fileName = $('<p>').text(file.name);
+                        $('#file-preview').append(fileName);
+                    }
+                }
+            });
+        });
+    </script>
+
+</div>
+
+
+{% endblock %}

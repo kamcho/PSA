@@ -4,7 +4,7 @@ from .views import Exams, ExamTopicView,  ExamSubjectDetail, TestDetail,\
 
 urlpatterns = [
 
-    path('', Exams.as_view(), name='exams'),
+    path('<str:grade>/', Exams.as_view(), name='exams'),
     path('<str:subject>/TopicInfo', ExamTopicView.as_view(), name='exam-topic-id'),
     path('<str:subject>/<str:topic>/Info', ExamSubjectDetail.as_view(), name='exam-subject-id'),
     path('Test/<str:instance>/<str:uuid>/Revision/', TestDetail.as_view(), name='test-detail'),

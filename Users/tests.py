@@ -1,3 +1,4 @@
-from django.test import TestCase
+import random
 
-# Create your tests he
+
+print(random.randrange(4000, 10000000, 3))

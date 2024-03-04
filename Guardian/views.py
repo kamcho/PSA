@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from Exams.models import StudentTest, StudentsAnswers, ClassTestStudentTest, \
     GeneralTest
+from Guardian.models import MyKids
 from SubjectList.models import Progress, Topic, Subject
 from Users.models import MyUser, PersonalProfile, AcademicProfile
 
@@ -33,7 +34,7 @@ class GuardianHome(LoginRequiredMixin, IsGuardian, TemplateView):
         user = self.request.user  # get user
         try:
             # Get learners linked to logged in guardian
-            my_kids = PersonalProfile.objects.filter(ref_id=user.uuid)  # get linked kids account
+            my_kids = MyKids.objects.get(user = user)  # get linked kids account
             if not my_kids:
                 messages.error(self.request, f'We could not find any students in your watch list.'
                                              f' Add a user from your profile page.')
@@ -79,7 +80,7 @@ class MyKidsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         user = self.request.user
         try:
             # Get learners linked to logged in guardian
-            my_kids = PersonalProfile.objects.filter(ref_id=user.uuid)
+            my_kids = MyKids.objects.get(user=user)
             context['kids'] = my_kids
             if not my_kids:
                 messages.warning(self.request, f'We could not find any students in your watch list.'
@@ -189,16 +190,18 @@ class TaskSelection(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def test_func(self):
         email = self.kwargs.get('email')
         user = self.request.user
+       
 
         # Check if the user has a 'Guardian' or 'Teacher' role
         if user.role == 'Guardian':
+            email = MyUser.objects.get(email=email)
 
 
             # Attempt to get the student's profile using the provided email
             try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
+                student = MyKids.objects.get(kids=email)
+                return True
             except Exception:
-                messages.error(self.request, 'You can"t view this student')
                 return False
 
             # Ensure the student is associated with the logged-in user
@@ -233,6 +236,7 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             topical_subject_counts = student_tests.values('subject__id')
             topical_tests = topical_subject_counts.order_by('subject__id')
             print(student_tests)
+
 
             # Retrieve class test data
             class_tests = ClassTestStudentTest.objects.filter(user=user, test__subject__grade=grade)
@@ -319,15 +323,18 @@ class KidTests(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
+            email = MyUser.objects.get(email=email)
+
+
+            # Attempt to get the student's profile using the provided email
             try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
+                student = MyKids.objects.get(kids=email)
+                return True
             except Exception:
-                messages.error(self.request, 'You can"t view this student')
                 return False
 
             # Ensure the student is associated with the logged-in user
-            if student.ref_id == user.uuid:
-                return True
+           
         elif user.role in ['Teacher', 'Supervisor']:
             return True
 
@@ -388,16 +395,17 @@ class KidExamTopicView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         # Check if the user has a 'Guardian' or 'Teacher' role
         if user.role == 'Guardian':
 
+            email = MyUser.objects.get(email=email)
+
+
             # Attempt to get the student's profile using the provided email
             try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
-            except Exception:
-                messages.error(self.request, 'You can"t view this student')
-                return False
-
-            # Ensure the student is associated with the logged-in user
-            if student.ref_id == user.uuid:
+                student = MyKids.objects.get(kids=email)
                 return True
+            except Exception:
+                return False
+            # Ensure the student is associated with the logged-in user
+           
         elif user.role in ['Teacher', 'Supervisor']:
             return True
 
@@ -412,9 +420,10 @@ class KidExamSubjectDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView
         subject = self.kwargs['subject']
         topic = self.kwargs['topic']
         user = self.kwargs['email']
-        user = MyUser.objects.filter(email=user).first()
+        user = MyUser.objects.get(email=user)
         try:
-            subject = StudentTest.objects.filter(user=user, subject__name=subject, topic__name=topic)
+            subject = StudentTest.objects.filter(user=user, subject__id=subject, topic__name=topic)
+            print(subject)
             context['subject'] = subject
 
 
@@ -455,15 +464,15 @@ class KidExamSubjectDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
-            except Exception:
-                messages.error(self.request, 'You can"t view this student')
-                return False
+            email = MyUser.objects.get(email=email)
 
-            # Ensure the student is associated with the logged-in user
-            if student.ref_id == user.uuid:
+
+            # Attempt to get the student's profile using the provided email
+            try:
+                student = MyKids.objects.get(kids=email)
                 return True
+            except Exception:
+                return False
         elif user.role in ['Teacher', 'Supervisor']:
             return True
 
@@ -518,15 +527,15 @@ class KidTestDetail(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
-            except Exception:
-                messages.error(self.request, 'You can"t view this student')
-                return False
+            email = MyUser.objects.get(email=email)
 
-            # Ensure the student is associated with the logged-in user
-            if student.ref_id == user.uuid:
+
+            # Attempt to get the student's profile using the provided email
+            try:
+                student = MyKids.objects.get(kids=email)
                 return True
+            except Exception:
+                return False
         elif user.role in ['Teacher', 'Supervisor']:
             return True
 
@@ -599,15 +608,15 @@ class KidTestRevision(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
-            except Exception:
-                messages.error(self.request, 'You can"t view this student')
-                return False
+            email = MyUser.objects.get(email=email)
 
-            # Ensure the student is associated with the logged-in user
-            if student.ref_id == user.uuid:
+
+            # Attempt to get the student's profile using the provided email
+            try:
+                student = MyKids.objects.get(kids=email)
                 return True
+            except Exception:
+                return False
         elif user.role in ['Teacher', 'Supervisor']:
             return True
 
@@ -672,15 +681,15 @@ class LearnerProgress(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
-            try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
-            except Exception:
-                messages.error(self.request, 'You can"t view this student')
-                return False
+            email = MyUser.objects.get(email=email)
 
-            # Ensure the student is associated with the logged-in user
-            if student.ref_id == user.uuid:
+
+            # Attempt to get the student's profile using the provided email
+            try:
+                student = MyKids.objects.get(kids=email)
                 return True
+            except Exception:
+                return False
         elif user.role in ['Teacher', 'Supervisor']:
             return True
 
@@ -701,10 +710,14 @@ class LearnerSyllabus(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
         if user.role == 'Guardian':
 
             # Attempt to get the student's profile using the provided email
+            email = MyUser.objects.get(email=email)
+
+
+            # Attempt to get the student's profile using the provided email
             try:
-                student = PersonalProfile.objects.get(ref_id=user.uuid, user__email=email)
+                student = MyKids.objects.get(kids=email)
+                return True
             except Exception:
-                messages.error(self.request, 'You can"t view this student')
                 return False
 
             # Ensure the student is associated with the logged-in user
@@ -757,3 +770,44 @@ class LearnerSyllabus(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
 
         return context
+
+
+class AddKid(TemplateView):
+    template_name = 'Guardian/add_kid.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        create, profile = MyKids.objects.get_or_create(user=user)
+        context['profile'] = create
+
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            try:
+                
+                adm_no = self.request.POST.get('adm_no')
+                name = self.request.POST.get('name').lower()
+                print(name, adm_no)
+
+                learner = MyUser.objects.get(adm_no=adm_no)  # get users profile
+                # Ensure users first name matches the value of first name and ensure that the user is a student.
+                if learner.personalprofile.f_name.lower() == name and  learner.role == 'Student':
+                    profile = self.get_context_data().get('profile')
+                    profile.kids.add(learner)
+
+                    messages.success(self.request, f'Succesfully added {adm_no} to your watch list')
+                
+                else:
+                    messages.error(self.request, 'Sorry, we could not find a User matching your search!!.\
+                                    Ensure that the user is a student and has updated his/her names.')
+                    
+            except Exception as e :
+                messages.error(self.request, str(e))
+
+
+            return redirect(self.request.get_full_path())
+
+

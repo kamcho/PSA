@@ -1,0 +1,34 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br>
+    <br><br><br>
+    <div class="container">
+
+        {% if mode.mode %}
+        To disable exam results inputs from teachers Disable exam mode.
+            
+            <br><br>
+            <form method="post">
+                {% csrf_token %}
+                
+                <button class="btn btn-warning" name="action" value="disable">Disable</button>
+
+            </form>
+        {% else %}
+        To enable teachers to input exam results  enable exam mode
+        <br><br>
+            <form method="post">
+                {% csrf_token %}
+                <button class="btn btn-primary" name="action" value="enable">Enable</button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+{% endblock %}

@@ -25,6 +25,7 @@
             <th><h6>Class</h6></th>
             <th><h6>School</h6></th>
             <th><h6>Status</h6></th>
+            <th><h6>Add Fee</h6></th>
           </tr>
         </thead>
         <tbody>
@@ -44,6 +45,7 @@
               <td style="color: crimson;">Excel Academy</td>
                 <td style="color: crimson;">Disabled</td>
               {% endif %}
+              <td><a href="{% url 'add-fee-payment' user %}"><i class="bi bi-cash"></i></a></td>
             </tr>
             {% endfor %}
          

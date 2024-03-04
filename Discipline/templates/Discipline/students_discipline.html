@@ -8,8 +8,25 @@
     {{ profile.user.personalprofile.f_name }} {{ profile.user.personalprofile.l_name }} {{ profile.user.personalprofile.surname }}
   </button>
   <button class="btn btn-success">{{ profile.points }}</button>
+
+  <br><br>
+  <div class="users-view" style="width: 100%; padding: 0%;">
+  {% for event in events %}
+  <a href="{% url 'view-activity' event.id %}">
+    <div class="user-card">
+      <h6>{{ event.title }}</h6>
+      <p>{{ event.description }}</p>
+    </div>
+  </a>
+  
+    
+
+  {% endfor %}
+</div>
   {% if incidents %}
 
+
+  
   
 
 

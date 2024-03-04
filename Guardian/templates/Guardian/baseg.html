@@ -11,6 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <link  rel="stylesheet" type="text/css" href="{% static 'Users/styles.css' %}">
   <link  rel="stylesheet" type="text/css" href="{% static 'Guardian/Guardian.css' %}">
+  <link  rel="stylesheet" type="text/css" href="{% static 'Supervisor/Supervisor.css' %}">
 
   <link  rel="stylesheet" type="text/css" href="{% static 'SubjectList/SubjectLiist.css' %}">
 
@@ -23,7 +24,7 @@
 </head>
 <body class="base-html">
 
-    <nav class="navbar navbar-dark fixed-top" id="top-bar" style="background-color:purple;">
+    <nav class="navbar navbar-dark fixed-top" id="top-bar">
     <div class="container-fluid">
       <a class="navbar-brand" href="#" style="color:white;">Excel</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
@@ -47,6 +48,9 @@
        <li>
               <a class="nav-link" href="{% url 'my-kids' %}"><i class="bi bi-house" style="color:black;"> </i>Home</a>
           </li>
+          <li>
+            <a class="nav-link" href="{% url 'manage-kids' %}"><i class="bi bi-code" style="color:black;"> </i>Manage Kids</a>
+        </li>
 
 
 
@@ -56,13 +60,11 @@
         <li>
             <a class="nav-link" href="{% url 'update-profile'  %}"><i class="bi bi-person-circle" style="color:black;"> </i>Profile</a>
           </li>
-       <!-- <li>
+        <li>
         <a class="nav-link" href="{% url 'allchats'   %}" ><i class="bi bi-headset" > </i>Contact Us</a>
       </li>
 
-      <li>
-        <a class="nav-link" href="{% url 'subscription'   %}" ><i class="bi bi-headset" > </i>subscription</a>
-      </li> -->
+     
 
 
 

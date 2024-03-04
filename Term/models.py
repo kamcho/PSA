@@ -43,6 +43,14 @@ class Exam(models.Model):
     def __str__(self):
         return str(self.user)
 
+class GradeModel(models.Model):
+    upper_limit = models.PositiveIntegerField()
+    lower_limit = models.PositiveIntegerField()
+    grade = models.PositiveIntegerField()
+    comments = models.CharField(max_length=30)
+
+    def __str__(self):
+        return str(self.comments)
 
 class Grade(models.Model):
     grade = models.PositiveIntegerField()

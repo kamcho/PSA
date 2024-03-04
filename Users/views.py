@@ -170,7 +170,7 @@ class MyProfile(LoginRequiredMixin, TemplateView):
             context['base_html'] = 'Guardian/baseg.html'
         elif self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
-        elif self.request.user.role in ['Supervisor', 'Finance']:
+        elif self.request.user.role in ['Supervisor', 'Finance','Receptionist']:
             context['base_html'] = 'Supervisor/base.html'
         
         else:
@@ -327,6 +327,9 @@ class LoginRedirect(LoginRequiredMixin, TemplateView):
                     return redirect('teachers-home')
                 elif role in ['Supervisor', 'Finance']:
                     return redirect('supervisor-home')
+                elif role == 'Receptionist':
+                    return redirect('students-view')
+                
                 
                 else:
 
@@ -362,7 +365,7 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 context['base_html'] = 'Guardian/baseg.html'
             elif self.request.user.role == 'Teacher':
                 context['base_html'] = 'Teacher/teachers_base.html'
-            elif self.request.user.role == 'Supervisor':
+            elif self.request.user.role in ['Supervisor', 'Receptionist']:
                 context['base_html'] = 'Supervisor/base.html'
 
         except:
@@ -431,9 +434,9 @@ class FinishSetup(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                     return redirect('teachers-home')
                 elif request.user.role in ['Supervisor', 'Finance']:
                     return redirect('supervisor-home')
-                else:
-                    messages.error(request, 'Role not found')
-                    return redirect(request.get_full_path())
+                elif request.user.role == 'Receptionist':
+                    
+                    return redirect('students-view')
             
         else:
             return redirect(request.get_full_path())
@@ -487,23 +490,23 @@ class StudentsHome(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
             # Check if a user has any saved progress
             if last_subject:
                 # Get the order of the last topic in the last subject
-                number = last_subject.topic.last().order
-                next_topic_id = int(number) + 1
+                # number = last_subject.topic.last().order
+                # next_topic_id = int(number) + 1
 
-                # Retrieve the next topic in the same subject
-                next_topic = Topic.objects.filter(subject=last_subject.subject, order=next_topic_id).first()
+                # # Retrieve the next topic in the same subject
+                # next_topic = Topic.objects.filter(subject=last_subject.subject, order=next_topic_id).first()
 
                 # Retrieve subjects and related information for the user
                 subject = progress_queryset.filter(subject__isnull=False) \
                     .values('subject__name', 'subject__id','subject__grade','subject__topics', 'subject__topics').annotate(subtopic_count=Count('subtopic', distinct=True))
 
                 # Populate the context with data
-                context['next'] = next_topic
-                context['last_subject'] = last_subject
-                context['subjects'] = subject
+                # context['next'] = next_topic
+            context['last_subject'] = last_subject
+            context['subjects'] = subject
             grade = academic_profile.current_class.grade
-            if grade is None:
-                raise AttributeError
+                # if not grade :
+                #     raise AttributeError
 
             context['grade'] = grade
 

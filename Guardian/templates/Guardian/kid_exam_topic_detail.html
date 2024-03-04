@@ -15,12 +15,11 @@
 <br>
 
 
-
+Grade {{ subject.0.subject__grade }}
      <table class="table">
         <thead>
           <tr>
-            <th>Topic</th>
-              <th>Grade</th>
+            <th><h6>Topic</h6></th>
               <th>Type</th>
             <th>Average</th>
             <th>Count</th>
@@ -30,7 +29,6 @@
         {% for topic in subject %}
           <tr>
               <td><a href="{% url 'kid-exam-subject-id'  email subject_name topic.topic__name %}">{{ topic.topic__name}}</a></td>
-              <td><span class="badge bg-info text-light">{{ topic.subject__grade }}</span></td>
               <td>Topical</td>
               <td ><span  class="badge bg-secondary text-light">{{ email|topical_average:topic.topic__name }}</span></td>
               <td><span class="badge bg-dark text-light">{{ email|topical_average_count:topic.topic__name }} </span></td>

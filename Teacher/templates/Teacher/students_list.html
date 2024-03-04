@@ -3,26 +3,29 @@
 
 
 <br><br><br>
-    <div class="container">
+    <div class="bg-gradient" style="color: white;">
         <br>
         {% if not students %}
         <p>There are currently no students in this class. If you did not edit the url contact @support</p>
         {% else %}
 
-        <h5>{{ students.0.current_class.grade }} {{ students.0.current_class.class_name }}</h5>
+        <h5 class="container">{{ students.0.current_class.grade }} {{ students.0.current_class.class_name }}</h5>
 
         <br><br>
+        <div class="users-view" >
         {% for student in students %}
-
+            <div class="user-card">
             <p><i class="bi bi-person-circle"> </i>
                 {% if student.user.personalprofile.f_name %}
-                <a href="{% url 'students-profile' student %}"> {{ student.user.personalprofile.surname|title }} {{ student.user.personalprofile.l_name.0|title }}. {{ student.user.personalprofile.f_name|title }}</a></p>
+                <a href="{% url 'students-profile' student %}" style="color: white !important;"> {{ student.user.personalprofile.surname|title }} {{ student.user.personalprofile.l_name.0|title }}. {{ student.user.personalprofile.f_name|title }}</a></p>
                 {% else %}
 
-                <a href="{% url 'students-profile' student %}"> {{ student }}</a></p>
+                <a href="{% url 'students-profile' student %}" style="color: white !important;"> {{ student }}</a></p>
 
                 {% endif %}
+            </div>
         {% endfor %}
+    </div>
     </div>
 
 

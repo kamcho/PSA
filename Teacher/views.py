@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import Any
 from django.conf import settings
@@ -170,10 +171,11 @@ class TestsView(IsTeacher, LoginRequiredMixin, TemplateView):
         class_id = self.kwargs['class']  # get class name
         try:
             # Get class tests where author is the logged in user for specific class
-            tests = ClassTest.objects.filter(teacher=user, class_id__class_id=class_id)
+            tests = ClassTest.objects.filter(teacher=user, class_id__class_id=class_id).order_by('-date')
 
             context['tests'] = tests
             context['class'] = class_id
+            context['today'] = datetime.date.today()
             context['subject'] = subject
             print(tests, class_id, subject)
         except Exception as e:
@@ -325,7 +327,7 @@ class InitialiseCreateTest(IsTeacher, LoginRequiredMixin, TemplateView):
         class_id = self.kwargs['class']
         subject_id = self.kwargs['subject']
         try:
-            student_list = StudentList.objects.get(user=self.request.user, subject=subject_id, class_id__class_name=class_id)
+            student_list = StudentList.objects.get(user=self.request.user, subject=subject_id, class_id__class_id=class_id)
             # get class list
             print(student_list)
             context['class'] = student_list
@@ -362,6 +364,7 @@ class InitialiseCreateTest(IsTeacher, LoginRequiredMixin, TemplateView):
 
             # Get data from form
             class_id = self.request.POST.get('class-id')
+            
             exam_type = self.request.POST.get('exam-type')
             selection_type = self.request.POST.get('selection-type')
             size = self.request.POST.get('test-size')
@@ -371,6 +374,7 @@ class InitialiseCreateTest(IsTeacher, LoginRequiredMixin, TemplateView):
                 # Parse data to a dict and add to session
                 test_data = {'subject': subject, 'exam_type': exam_type, 'date': date,
                              'selection_type': selection_type, 'size': size, 'class_id': class_id}
+                print(class_id,'class-id')
                 self.request.session['test_data'] = test_data
 
                 return redirect('test-topic-select')
@@ -617,6 +621,7 @@ class SaveTest(IsTeacher, LoginRequiredMixin, TemplateView):
         context = super(SaveTest, self).get_context_data(**kwargs)
 
         try:
+            print(self.request.session.get('test_data', {}).get('date', None))
             # Retrieve data from the session, providing default values if not present
             ids = self.request.session.get('selected', [])
             class_id = self.request.session.get('test_data', {}).get('class_id', None)
@@ -660,7 +665,7 @@ class SaveTest(IsTeacher, LoginRequiredMixin, TemplateView):
             size = self.request.session.get('test_data', {}).get('size', None)
             date = self.request.session.get('test_data', {}).get('date', None)
             class_id = self.request.session.get('test_data', {}).get('class_id', None)
-            class_id = SchoolClass.objects.get(class_name=class_id)  # get class by name
+            class_id = SchoolClass.objects.get(class_id=class_id)  # get class by name
 
 
             ids = self.request.session.get('selected', [])
@@ -678,14 +683,18 @@ class SaveTest(IsTeacher, LoginRequiredMixin, TemplateView):
                     subject=subject_instance,
                     test_size=size,
                     date=timezone.now(),
-                    expiry=timezone.now(),
+                    expiry=date,
                     class_id=class_id
                 )
                 test.save()
                 test.quiz.add(*ids)
+                messages.success(self.request, 'Test creations was successful')
                 # Clear session data
-                del self.request.session['test_data']
-                del self.request.session['selected']
+                try:
+                    del self.request.session['test_data']
+                    del self.request.session['selected']
+                except:
+                    pass
 
                 message = f'{subject_instance.name} test is now available. Please finish before {date}.'
                 about = f'{subject_instance.name} class-test is now available.'
@@ -707,12 +716,11 @@ class SaveTest(IsTeacher, LoginRequiredMixin, TemplateView):
                 # Clear session data
 
 
-                return redirect('teachers-home')
+                return redirect('class-test-analytics', test.uuid)
 
             except Exception as e:
                 # Handle missing required data
-                messages.error(self.request, 'We encountered an error while processing your request.'
-                                             ' Please contact @support')
+                messages.error(self.request, str(e))
                 error_message = str(e)  # Get the error message as a string
                 error_type = type(e).__name__
 
@@ -1048,16 +1056,25 @@ class DashBoard(IsTeacher, LoginRequiredMixin, TemplateView):
         try:
             # get student list, subjects and all classes
             my_class = StudentList.objects.filter(user=self.request.user)
+            if not my_class:
+                messages.info(self.request,'You do not have any classes attached. Add a class below')
+            # print(my_class)
+            try:
+                t_profile = TeacherProfile.objects.get(user=self.request.user)
+                subjects = t_profile.subject.all()
+                context['subjects'] = subjects
+            except:
+                pass
             
-            subjects = Subject.objects.all()
+            # subjects = Subject.objects.filter(subject_id__in=my_class)
             streams = SchoolClass.objects.all()
-            context['subjects'] = subjects
+            
             context['classes'] = my_class
             context['streams'] = streams
 
         except Exception as e:
             # Handle any exceptions
-            messages.error(self.request, 'An error occurred when processing your request. Please contact @support.')
+            messages.error(self.request, str(e))
             error_message = str(e)  # Get the error message as a string
             error_type = type(e).__name__
 
@@ -1090,7 +1107,7 @@ class DashBoard(IsTeacher, LoginRequiredMixin, TemplateView):
                     class_id = request.POST.get('class_id')
 
                     subject = Subject.objects.get(id=subject)  # get subject by id
-                    class_id = SchoolClass.objects.get(class_name=class_id)  # get class by name
+                    class_id = SchoolClass.objects.get(class_id=class_id)  # get class by name
                     my_class = StudentList.objects.filter(user=user, subject=subject, class_id=class_id)
                     if not my_class:
                         # Create new student list if none is found
@@ -1102,8 +1119,9 @@ class DashBoard(IsTeacher, LoginRequiredMixin, TemplateView):
                     # Handle POST requests to delete classes from teaching profile
                     subject = request.POST.get('del_subject')
                     class_id = request.POST.get('del_name')
+                    print(class_id, subject)
                     my_class = StudentList.objects.filter(user=user, subject__name=subject,
-                                                          class_id__class_name=class_id).first()
+                                                          class_id__class_id=class_id).first()
                     if my_class:
                         my_class.delete()  # delete object from db
                         messages.info(request, f'Successfully delete {class_id} from Watch List')
@@ -1111,7 +1129,7 @@ class DashBoard(IsTeacher, LoginRequiredMixin, TemplateView):
 
             except Exception as e:
                 # Handle multiple objects returned
-                messages.error(self.request, 'An error occurred when processing your request. Please contact @support.')
+                messages.error(self.request, str(e))
                 error_message = str(e)  # Get the error message as a string
                 error_type = type(e).__name__
 
@@ -1140,13 +1158,18 @@ def get_subjects(request):
         returns all subjects in a given grade
     :param request:
     :return Json:
+    pri
     """
+    print(request.user)
     selected_grade = request.GET.get("grade")  # get grade from POST
-    print(selected_grade)
+    # print(selected_grade)
+    teachers_profile = TeacherProfile.objects.get(user=request.user)
+    subjects = teachers_profile.subject.all().values_list('id')
+    print('subjects:', subjects)
     try:
         grade = SchoolClass.objects.get(class_id=selected_grade).grade
         # Get subjects names and ids
-        subjects = Subject.objects.filter(grade=grade).values("id", "name")
+        subjects = Subject.objects.filter(grade=grade,id__in=subjects).values("id", "name")
         print(subjects, 'uui')
         return JsonResponse({"subjects": list(subjects)})
     except (Exception, SchoolClass.DoesNotExist):
@@ -1219,11 +1242,13 @@ class SubjectSelect(IsTeacher, LoginRequiredMixin, TemplateView):
                     # Handles adding subjects to teaching profile
                     # get selected subject(s)
                     subject = self.request.POST.getlist('subjects')
+                    print('processing')
                     # get subject instance of selected subjects
-                    # subject_instance = Subject.objects.filter(id__in=subject)
+                    subject_instance = Subject.objects.filter(id__in=subject)
                     # get teaching profile from cache
                     teaching_profile = self.get_context_data().get('teaching_profile')
-                    teaching_profile.subject.add(*subject)  # add selected subjects to profile
+                    print(teaching_profile)
+                    teaching_profile.subject.add(*subject_instance)  # add selected subjects to profile
 
                 elif 'purge' in self.request.POST:
                     # Handles deletion of subjects from teaching profile
@@ -1239,7 +1264,7 @@ class SubjectSelect(IsTeacher, LoginRequiredMixin, TemplateView):
                 messages.error(self.request, 'Invalid subject id')
 
             except Exception as e:
-                messages.error(self.request, 'An error occurred when processing your request. Please contact @support.')
+                messages.error(self.request, str(e))
                 error_message = str(e)  # Get the error message as a string
                 error_type = type(e).__name__
 

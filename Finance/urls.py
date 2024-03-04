@@ -31,6 +31,7 @@ urlpatterns = [
     path('<str:email>/FeeProfile/', StudentsFeeProfile.as_view(), name='student-fee-profile'),
     path('StudentsFeeBalances/', SchoolFeesBalance.as_view(), name='school-fees-balances'),
     path('<str:class_id>/FeeBalances/', ClassFeeBalances.as_view(),name='class-balances'),
+    path('AddFeePayment/<str:email>/', AddFeePayment.as_view(), name='add-fee-payment'),
 
 
 

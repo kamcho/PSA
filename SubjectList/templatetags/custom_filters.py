@@ -433,7 +433,7 @@ def get_student_latest_score(user, subject):
     if exam:
         score = exam.score
     else:
-        score = random.randint(45, 100)
+        score = 'N/A'
 
 
     return score

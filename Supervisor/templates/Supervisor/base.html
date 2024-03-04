@@ -59,25 +59,41 @@
                   </a>
                 </li>
                 <li>
+                  <a class="nav-link" href="{% url 'classes' %}">
+                    <i class="bi bi-bank" style=""> </i>Classes
+                  </a>
+                </li>
+                <li>
+                  <a class="nav-link" href="{% url 'students-view' %}">
+                    <i class="bi bi-people" style=""> </i>Students
+                  </a>
+                </li>
+                <li>
                   <a class="nav-link" href="{% url 'admin-dashboard' %}">
                     <i class="bi bi-speedometer2" style=""> </i>Admin
                   </a>
                 </li>
+               
                 <li>
-                  <a class="nav-link" href="{% url 'create-course' %}">
-                    <i class="bi bi-layout-sidebar-inset" > </i>Course
+                  <a class="nav-link" href="{% url 'exam-mode' %}">
+                    <i class="bi bi-pen" > </i>Exam Mode
                   </a>
                 </li>
                 <li>
                   <a class="nav-link" href="{% url 'create-notice' %}">
-                    <i class="bi bi-layout-sidebar-inset" > </i>Create Notice
+                    <i class="bi bi-speaker" > </i>Create Notice
                   </a>
                 </li>
                 <li>
-                  <a class="nav-link" href="{% url 'create-activity' %}">
-                    <i class="bi bi-layout-sidebar-inset" > </i>Extra Curricular
+                  <a class="nav-link" href="{% url 'activities' %}">
+                    <i class="bi bi-controller"> </i><i class="bi bi-dice-5"> </i>Extra Curricular
                   </a>
                 </li>
+                <!-- <li>
+                  <a class="nav-link" href="{% url 'add-fee-payment' user  %}">
+                    <i class="bi bi-cash"> </i><i class="bi bi-dice-5"> </i>Add Fee
+                  </a>
+                </li> -->
                 <li>
                   <a class="nav-link" href="{% url 'class-teacher' %}">
                     <i class="bi bi-clipboard-check" > </i>Manage Class Teachers
@@ -102,7 +118,22 @@
                   <i class="bi bi-plus" > </i>Create Invoice
                 </a>
               </li>
-
+            {% elif user.role == 'Receptionist' %}
+            <li>
+              <a class="nav-link" href="{% url 'students-view' %}">
+                <i class="bi bi-person" > </i>Students
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" href="{% url 'teachers-view' %}">
+                <i class="bi bi-plus" > </i>Teachers
+              </a>
+            </li>
+            <li>
+              <a class="nav-link" href="{% url 'students-view' %}">
+                <i class="bi bi-plus" > </i>Guardians
+              </a>
+            </li>
             {% endif %}
                 <li>
                   <a class="nav-link" href="{% url 'school-fees-balances' %}">

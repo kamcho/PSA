@@ -1,4 +1,4 @@
-{% extends 'Supervisor/base.html' %}
+{% extends base_html %}
 {% load custom_filters %}
 
 
@@ -9,6 +9,7 @@
 
 <div class="container">
     <button id="downloadPdf" class="btn btn-danger" style="position: fixed; right: 14.5%;top: 10%;">Download PDF</button>
+    <!-- <button onclick="printDiv('tab')" class="btn btn-danger" style="position: fixed; right: 14.5%;top: 10%;">Download PDF</button> -->
     <br><br>
     <form method="post">
         {% csrf_token %}
@@ -69,6 +70,8 @@
 
         <br>
         <br>
+
+        
        
         <table class="container table" id="tab">
             <caption>
@@ -93,15 +96,17 @@
                 <th><h6>Marks</h6></th>
                 {% if stream %}
                     <th><h6>Class</h6></th>
+                    <th><h6>Print</h6></th>
                 {% else %}
                 {% endif %}
+                
               </tr>
             </thead>
             <tbody>
             {% for user in students %}
               <tr>
                 <td>{{ user.rank }}</td>
-                    <td><a href="">{{ user.user__personalprofile__f_name }} {{ user.user__personalprofile__l_name.0 }} {{ user.user__personalprofile__surname }}</a></td>
+                    <td><a href="">{{ user.user__personalprofile__f_name }} {{ user.user__personalprofile__l_name }} {{ user.user__personalprofile__surname }}</a></td>
                
                 
                 {% for subject in subjects %}
@@ -111,8 +116,10 @@
                 <td>{{ user.total_score }}</td>
                 {% if stream %}
                     <td><h6>{{ user.user__academicprofile__current_class__class_name }}</h6></td>
+                    <td><a href="{% url 'print-report' user.user__email grade term user.rank %}"><h6><i class="bi bi-printer" ></i></h6></a></td>
                 {% else %}
                 {% endif %}
+                
               </tr>
             {% endfor %}
             </tbody>
@@ -131,5 +138,23 @@
         });
     });
   </script>
+  <button onclick="printDiv('contentToPrint')">Print</button>
+
+  <script>
+      function printDiv(divId) {
+          var printContent = document.getElementById(divId).innerHTML;
+          var originalContent = document.body.innerHTML;
+
+          document.body.innerHTML = printContent;
+
+          window.print();
+
+          document.body.innerHTML = originalContent;
+      }
+  </script>
+
+
+
+
 
 {% endblock %}

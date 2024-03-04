@@ -30,15 +30,14 @@
     <div class="profile-card" style="margin: 0 auto;">
         <div class="test-progress">
         {% for subject in subjects %}
-            
-            <div>
+            <div>{% with  user|get_student_latest_score:subject.id  as score %}
                 {{ subject.course.abbreviation }}
                 <br><br>
-                <div class="d-flex" style="height: {{ user|get_student_latest_score:subject.id }}px; color: rgb(0, 0, 0);">
-                    <div class="vr" style="width: 10px;"></div>      
+                <div class="d-flex" style="height: {{ score }}px; color: rgb(0, 0, 0);">
+                    <div class="vr" style="width: 10px;"></div>    <br><br>     
                 </div>
-                
-                
+                <div>{{ score }}</div>
+                {% endwith %}
             </div>
         {% endfor %}
         </div>
@@ -48,7 +47,9 @@
             <p>Grade {{ user.academicprofile.current_class|title }}</p>
             <p>Adm No C14/177</p>
             <p>Discipline Score <button class="btn btn-info" style="color: white;">{{ user.studentdisciplinescore.points }}</button></p>
+            {% if user.role != 'Teacher' %}
             <p>School Fees Balance <button  class="btn btn-info" style="color: white;">{{ user.studentsfeeaccount.balance }}</button></p>
+            {% endif %}
             {% if user.is_active %}
                 <p style="color:green">Active</p>
             {% else %}
@@ -66,8 +67,9 @@
     <a   href="{% url 'students-exam-profile' user %}">
         <div class="user-card" style="height: 200px !important;">
             <h5>Exams</h5>
+            <h6 >Excel Learning</h6>
             
-            <h6 >I AM Learning</h6>
+            
             <br>
             <p>To view a students online learning progress and exams click here
                 
@@ -75,10 +77,12 @@
 
         </div>
     </a>
+    {% if user.role != 'Student' %}
         <a href="{% url 'task-view-select' user %}">
         <div class="user-card" style="height: 200px !important;">
             <h5>E-Learning</h5>
             <h6 >I AM Learning</h6>
+            
             <br>
 
             <p>To view students school graded exams, click here                
@@ -86,6 +90,7 @@
   
         </div>
     </a>
+    {% endif %}
 
 
 
@@ -98,14 +103,15 @@
         </div>
     </a>
     
-
-    <a href="{% url 'student-fee-profile' user %}">
+    {% if request.user.role != 'Teacher' %}
+    <a href="{% url 'student-fee-profile' user %}" >
         <div class="user-card" style="height: 200px !important;">
             Fees
     
             <p>View and Manage School Fees Payments</p>
         </div>
     </a>
+    {% endif %}
     
 
 </div>

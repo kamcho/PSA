@@ -1,4 +1,6 @@
 
+import imp
+from importlib.metadata import PathDistribution
 import logging
 from django.db import transaction
 
@@ -1136,8 +1138,11 @@ class ManageFeeTransaction(TemplateView):
         return context
     
 
-class StudentsFeeProfile(TemplateView):
+class StudentsFeeProfile(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'Finance/student_fee_profile.html'
+
+    def test_func(self):
+        return self.request.user.role != 'Teacher'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
@@ -1187,7 +1192,7 @@ class SchoolFeesBalance(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs) 
         try:
-            profiles = StudentsFeeAccount.objects.filter(balance__gt=0)
+            profiles = StudentsFeeAccount.objects.filter(balance__lt=0)
             balances = profiles.aggregate(balances=Sum('balance'))['balances']
             
             context['balance'] = balances
@@ -1209,7 +1214,11 @@ class SchoolFeesBalance(TemplateView):
                 try:
                     if not limit:
                         limit = 0
-                    profiles = StudentsFeeAccount.objects.filter(balance__gte=limit)
+                    if int(limit) < 0:
+                        profiles = StudentsFeeAccount.objects.filter(balance__lte=limit,balance__lt=0).order_by('balance')
+                    else:
+
+                        profiles = StudentsFeeAccount.objects.filter(balance__gte=limit).order_by('-balance')
                     balances = profiles.aggregate(balances=Sum('balance'))['balances']
                     if grade:
                         profiles = profiles.filter(user__academicprofile__current_class__grade=grade)
@@ -1233,7 +1242,7 @@ class SchoolFeesBalance(TemplateView):
                     return render(self.request, self.template_name, context )
                 except Exception as e:
                     # Handle DatabaseError if needed
-                    messages.error(self.request, 'An error occurred. We are fixing it!')
+                    messages.error(self.request, str(e))
                     error_message = str(e)  # Get the error message as a string
                     error_type = type(e).__name__
 
@@ -1362,3 +1371,43 @@ class ClassFeeBalances(UserPassesTestMixin, TemplateView):
                 }
             )
             return False
+        
+
+class AddFeePayment(TemplateView):
+    template_name = 'Finance/add_fee_payment.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        email = self.kwargs['email']
+        context['student'] = MyUser.objects.get(email=email)
+
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            try:
+                if 'mpesa' in self.request.POST:
+                    transaction_id = self.request.POST.get('transaction_id')
+                    student = self.get_context_data().get('student')
+                    phone = self.request.POST.get('phone')
+                    adm_no = self.request.POST.get('adm_no')
+                    paid_on = self.request.POST.get('date')
+                    amount = self.request.POST.get('amount')
+
+                    payment = StudentFeeMpesaTransaction.objects.create(receipt=transaction_id, amount=amount,
+                                                                        phone=phone, adm_no=adm_no,date=paid_on)
+                    
+                elif 'bank' in self.request.POST:
+                    pass
+                    
+            except Exception as e:
+                messages.error(self.request, str(e))
+                return redirect(self.request.get_full_path())
+
+
+
+        return redirect('students-view')
+
+
+

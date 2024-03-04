@@ -1,0 +1,55 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<br><br><br><br>
+
+<div class="container">
+
+    <br><br>
+   
+    
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th><h6>User</h6></th>
+            
+            <th><h6>Title</h6></th>
+            <th><h6>Date</h6></th>
+          </tr>
+        </thead>
+        <tbody>
+          
+            {% for activity in activities %}
+            
+            <tr>
+              
+              <td><a href="{% url 'view-activity' activity.id %}"><h6>{{ activity.user.personalprofile.f_name }} {{ activity.user.personalprofile.l_name }} {{ activity.user.personalprofile.surname }}</h6></a></td>
+              <td><a href="{% url 'view-activity' activity.id %}"><h6>{{ activity.title }}</h6></a> </td>
+              <td><a href="{% url 'view-activity' activity.id %}"><h6>{{ activity.date }}</h6></a></td>
+              
+             
+            </tr>
+            {% endfor %}
+         
+        </tbody>
+     </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

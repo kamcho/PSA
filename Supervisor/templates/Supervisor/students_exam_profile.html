@@ -50,7 +50,6 @@
                           <tr>
                             <th><h6>Subject</h6></th>
                             <th><h6>Score</h6></th>
-                            <th><h6>Grade</h6></th>
                             <th><h6>Comments</h6></th>
                           </tr>
                         </thead>
@@ -59,8 +58,7 @@
                             <tr>
                               <td><a href=""><h6>{{ score.subject }}</h6></a></td>
                               <td>{{ score.score }}</td>
-                              <td>A</td>
-                              <td><i class="bi bi-check-all" style="font-size: 17px;">{{ score.comments }}</i> </td>
+                              <td>{{ score.comments }}</td>
                             </tr>
                           {% endfor %}
                         </tbody>
@@ -91,7 +89,7 @@
 </div>
 <br><br>
 
-<div class="container course-container" style="width: 100% !important;">
+<div class="container form-view" >
   <h5 style="text-align: left !important;">Grade {{ grade }} Term 2</h5>
   <br>
   {% if term2 %}
@@ -106,12 +104,11 @@
           <div id="collapseTerm2" class="accordion-collapse collapse">
               <div class="accordion-body">
                 
-                    <table class="table" style="width: 80% !important;">
+                    <table class="table">
                       <thead>
                         <tr>
                           <th><h6>Subject</h6></th>
                           <th><h6>Score</h6></th>
-                          <th><h6>Grade</h6></th>
                           <th><h6>Comments</h6></th>
                         </tr>
                       </thead>
@@ -120,8 +117,7 @@
                           <tr>
                             <td><a href=""><h6>{{ score.subject }}</h6></a></td>
                             <td>{{ score.score }}</td>
-                            <td>A</td>
-                            <td><i class="bi bi-check-all" style="font-size: 17px;">{{ score.comments }}</i> </td>
+                            <td>{{ score.comments }}</td>
                           </tr>
                         {% endfor %}
                       </tbody>
@@ -152,18 +148,17 @@
 </div>
 <br><br>
 
-<div class="container form-view">
+<div class="container form-view" style="background-color: white;">
   <h5>Grade {{ grade }} Term 3</h5>
   <br>
   {% if term3 %}
   <h6>Term Average {% get_user_term_average user grade 'Term 3' %}</h6>
-  <table class="table">
+ 
     <table class="table">
       <thead>
         <tr>
           <th><h6>Subject</h6></th>
           <th><h6>Score</h6></th>
-          <th><h6>Grade</h6></th>
           <th><h6>Comments</h6></th>
         </tr>
       </thead>
@@ -172,12 +167,10 @@
           <tr>
             <td><a href=""><h6>{{ score.subject }}</h6></a></td>
             <td>{{ score.score }}</td>
-            <td>A</td>
-            <td><i class="bi bi-check-all" style="font-size: 17px;">{{ score.comments }}</i> </td>
+            <td>{{ score.comments }}</td>
           </tr>
         {% endfor %}
       </tbody>
-  </table>
   </table>
   {% else %}
   <div class="accordion" id="accordionTerm3Unavailable">

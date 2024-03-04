@@ -1,13 +1,12 @@
-from email.policy import default
+
 from enum import unique
-from unittest.util import _MAX_LENGTH
+import random
 from django.db import models
 
 # Create your models here.
 import uuid
 
 from django.db import models
-from datetime import datetime,timedelta
 
 from django.urls import reverse
 from django.contrib.auth.models import (
@@ -29,6 +28,7 @@ class MyUserManager(BaseUserManager):
 
             email=email,
             role=role,
+            # adm_no=adm_no,
 
 
 
@@ -49,6 +49,7 @@ class MyUserManager(BaseUserManager):
             role='Admin',
             # uuid=uuid.uuid4(),
             password=password,
+            # adm_no=adm_no
 
         )
         user.is_admin = True
@@ -64,11 +65,16 @@ class MyUser(AbstractBaseUser):
         Guardian = "Guardian"
         Supervisor = "Supervisor"
         Finance = "Finance"
+        Receptionist = "Receptionist"
 
 
     base_role = Role.Student
+    # adm_no = models.CharField(max_length=15, unique=True, default=uuid.uuid4)
+
     email = models.EmailField(unique=True)
-    uuid = models.CharField(max_length=100, default=uuid.uuid4, unique=True)
+    adm_no = models.CharField(max_length=100, default=random.randint(15784, 999999))
+    uuid = models.CharField(max_length=100, default=str(uuid.uuid4), unique=True)
+    
     role = models.CharField(max_length=15, choices=Role.choices, default=base_role)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -147,6 +153,19 @@ class SupervisorManager(BaseUserManager):
 class Supervisor(MyUser):
     base_role = MyUser.Role.Supervisor
     partner = SupervisorManager()
+
+    class Meta:
+        proxy = True
+
+class ReceptionistManager(BaseUserManager):
+    def get_queryset(self, *args, **kwargs):
+        result = super().get_queryset(*args, **kwargs)
+        return result.filter(role=MyUser.Role.Receptionist)
+
+
+class Receptionist(MyUser):
+    base_role = MyUser.Role.Receptionist
+    partner = ReceptionistManager()
 
     class Meta:
         proxy = True

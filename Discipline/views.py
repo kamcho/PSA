@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 from django.contrib import messages
 from Discipline.models import ClassIncident, IncidentBooking, StudentDisciplineScore
+from Supervisor.models import ExtraCurricular
 from Users.models import MyUser
 # Create your views here.
 
@@ -132,8 +133,12 @@ class StudentsDisciplineProfile(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         email = self.kwargs['email']
+        l_user = MyUser.objects.get(email=email)
         incidents = IncidentBooking.objects.filter(user__email=email)
         context['incidents'] = incidents
+        curricular = ExtraCurricular.objects.filter(students=l_user)
+        context['events'] = curricular
+        print(curricular)
         if not incidents:
             messages.info(self.request, 'This student does not have any Indiscipline incidents.')
         

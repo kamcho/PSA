@@ -55,59 +55,59 @@
           <div class="offcanvas-body">
             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="color:black;">
               {% if user.is_authenticated %}
-        {% if user.mysubjects.selected == "False" %}
-       <li>
-              <a class="nav-link" href=""><i class="bi bi-book"> </i>Subject-select</a>
-          </li>
-       {% else %}
+       
 
 
           <li>
               <a class="nav-link" href="{% url 'student-home' %}" ><i class="bi bi-house" > </i>Home</a>
           </li>
+          <li>
+            <a class="nav-link" href="{% url 'students-exam-profile' user.email %}" ><i class="bi bi-ui-checks" > </i>Exams</a>
+        </li>
+          
 
           <li>
-            <a class="nav-link" href="{% url 'pending-tests' %}" ><i class="bi bi-house" > </i>Tests</a>
+            <a class="nav-link" href="{% url 'pending-tests' %}" ><i class="bi bi-layers" > </i>New Tests</a>
         </li>
 
        <li>
            <a class="nav-link" href="{% url 'notifications' %}">
-            <button  style="background-color:purple;" class="btn  position-relative">
-              Messages
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                <!-- {{ messages.count }}+ -->
-                <span class="visually-hidden">unread messages</span>
-              </span>
-            </button>
-            </a>
+            
+              <i class="bi bi-chat"></i> Messages
+              </a>
+              
        </li>
-       <li>
-              <a class="nav-link" href="{% url 'exams' %}" ><i class="bi bi-clipboard-check"> </i>Exams</a>
-          </li>
+       
                 <li>
-              <a class="nav-link" href="{% url 'assignments' %}" ><i class="bi bi-clipboard-check"> </i>Assignments</a>
+              <a class="nav-link" href="{% url 'assignments' %}" ><i class="bi bi-easel"> </i>Assignments</a>
           </li>
         {% if not grade %}
+        <li>
+          <a class="nav-link" href="{% url 'exams' 4 %}" ><i class="bi bi-clipboard-check"> </i>E-Results</a>
+      </li>
        <li>
-            <a class="nav-link" href="{% url 'progress' '4' %}"><i class="bi bi-journal-check" > </i>Progress</a>
+            <a class="nav-link" href="{% url 'progress' '4' %}"><i class="bi bi-clipboard2-pulse" > </i>Progress</a>
           </li>
        {% else %}
+       <li>
+        <a class="nav-link" href="{% url 'exams' grade %}" ><i class="bi bi-clipboard-check"> </i>Results</a>
+    </li>
         <li>
-            <a class="nav-link" href="{% url 'progress'  grade %}"><i class="bi bi-journal-check" style=""> </i>Progress</a>
+            <a class="nav-link" href="{% url 'progress'  grade %}"><i class="bi bi-clipboard2-pulse" style=""> </i>Progress</a>
           </li>
        {% endif %}
       
 
 
         <li>
-            <a class="nav-link" href="{% url 'students-profile' user.email  %}" ><i class="bi bi-person-circle" > </i>Profile</a>
+            <a class="nav-link" href="{% url 'students-profile' user.email  %}" ><i class="bi bi-person-check" > </i>Profile</a>
           </li>
         <li>
             <a class="nav-link" href="{% url 'support'   %}" ><i class="bi bi-headset" > </i>Contact Us</a>
           </li>
-          <li>
+          <!-- <li>
             <a class="nav-link" href="{% url 'subject-view' 4   %}" ><i class="bi bi-graph-up-arrow" > </i>Analytics</a>
-          </li>
+          </li> -->
 
 
 
@@ -115,7 +115,6 @@
             <a class="nav-link" href="{% url 'logout' %}" ><i class="bi bi-box-arrow-left" > </i>Sign out</a>
           </li>
 
-{% endif %}
         {% else %}
         <li class="nav-item">
           <a class="nav-link" href="{% url 'login' %}" ><i class="bi bi-box-arrow-right" > </i>Sign In</a>

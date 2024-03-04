@@ -4,13 +4,16 @@ from typing import Any
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 from SubjectList.models import Subject
-from Term.models import CurrentTerm, Exam, Grade, Terms
+from django.contrib.auth.mixins import UserPassesTestMixin
+
+from Term.models import CurrentTerm, Exam, Grade, GradeModel, Terms
 from django.contrib.messages import success,error
 from Users.models import AcademicProfile, MyUser, StudentsFeeAccount
 # Create your views here.
 
 
-class AddSubjectScore(TemplateView):
+
+class AddSubjectScore(UserPassesTestMixin,TemplateView):
     template_name = 'Term/add_score.html'
 
     def get_context_data(self, **kwargs):
@@ -19,9 +22,10 @@ class AddSubjectScore(TemplateView):
         subject_id= self.kwargs['subject']
         subject = Subject.objects.get(id=subject_id)
         term = CurrentTerm.objects.all().last()
+        context['term'] = term
         excluded = Exam.objects.filter(subject=subject, term=term.term).values_list('user__email')
 
-        students = AcademicProfile.objects.filter(current_class__class_name=class_id).exclude(user__email__in=excluded)
+        students = AcademicProfile.objects.filter(current_class__class_id=class_id).exclude(user__email__in=excluded)
         if not students:
             success(self.request, 'You have entered marks for all students')
         context['subject'] = subject
@@ -32,17 +36,24 @@ class AddSubjectScore(TemplateView):
         if request.method == 'POST':
             email = request.POST.get('user')
             user = MyUser.objects.get(email=email)
-            score = request.POST.get('score')
+            score = int(request.POST.get('score'))
+
             try:
+                grading = GradeModel.objects.filter(upper_limit__gte=score, lower_limit__lte=score).first()
                 term = CurrentTerm.objects.all().last()
                 subject = self.get_context_data().get('subject')
-                exam = Exam.objects.create(user=user, subject=subject, score=score, term=term.term)
+                exam = Exam.objects.create(user=user, subject=subject, score=score, comments=grading.comments , term=term.term)
                 success = (self.request, f'Succesfully added marks for {user}. score = {score}')
                 request.session['exclude'] = email
             except Exception as e:
-                error(request, 'Marks already exists')
+                error(request, str(e))
 
         return redirect(request.get_full_path())
+    
+    def test_func(self):
+        term = CurrentTerm.objects.first()
+        return term.mode and self.request.user.role in ['Teacher', 'Supervisor']
+
 
 
     

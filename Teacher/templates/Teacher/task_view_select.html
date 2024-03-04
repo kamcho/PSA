@@ -1,11 +1,11 @@
 {% extends 'Teacher/teachers_base.html' %}
 {% block content %}
 
-<div class="subject-select-content-container">
+<div class="bg-gradient">
 <br><br><br>
 <div class="container">
     {% if term.mode %}
-    <a href="{% url 'add-score' class subject.id %}"><button class="btn btn-info">Add Score</button></a>
+    <a href="{% url 'add-score' class.class_id subject.id %}"><button class="btn btn-info">Add Score</button></a>
 
     {% else %}
     {% endif %}
@@ -24,7 +24,7 @@
 
 
 <div >
-    <div class="teacher-task-view">
+    <div class="subjects-select-view">
         <a href="{% url 'students-list' class.class_id %}">
             <div class="subject-select-card">
             <h6><i class="bi bi-people"></i> StudentList</h6>
@@ -35,6 +35,18 @@
                 {% for student in students %}
                     <small><i class="bi bi-person-circle"></i>  {{ student }} </small><br>
                 {% endfor %}
+            </div>
+            <br>
+            </div>
+        </a>
+        <a href="{% url 'class-profile' class.class_id %}">
+            <div class="subject-select-card">
+            <h6><i class="bi bi-pen"></i>Class Exam Perfomance</h6>
+            <h6><span class="badge bg-info text-light">{{ class }}</span></h6>
+       
+            <br>
+            <div class="subject-select-in-card">
+                View perfomance insights and analytics for this class.
             </div>
             <br>
             </div>

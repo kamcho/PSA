@@ -63,7 +63,7 @@
             <li>
 
               <a class="nav-link" href="{% url 'my-classes' %}" style="color:black !important;"><i
-                  class="bi bi-people"></i>Classes</a>
+                  class="bi bi-people"></i>My Classes</a>
 
             </li>
             
@@ -88,7 +88,7 @@
             </li>
             <li>
               <a class="nav-link" href="{% url 'classes' %}"><i class="bi bi-shield"
-                  style="color:whit;"> </i>Class Exams</a>
+                  style="color:whit;"> </i>School Metrics</a>
             </li>
             <li>
               <a class="nav-link" href="{% url 'create-questions' %}"><i class="bi bi-clipboard-check"
@@ -105,15 +105,12 @@
             </li>
 
             <li>
-              <a class="nav-link" href="{% url 'teachers-profile' user.email  %}"><i class="bi bi-person-circle" style=""> </i>Profile</a>
+              <a class="nav-link" href="{% url 'update-profile'  %}"><i class="bi bi-person-circle" style=""> </i>Profile</a>
             </li>
 
+          
             <li>
-              <a class="nav-link" href="{% url 'subscriptions'  %}"><i class="bi bi-person-circle" style="">
-                </i>Subscriptions</a>
-            </li>
-            <li>
-              <a class="nav-link" href="{% url 'contact'   %}"><i class="bi bi-headset"> </i>Contact Us</a>
+              <a class="nav-link" href="{% url 'contact'   %}"><i class="bi bi-headset"> </i>Contact Admin</a>
             </li>
 
 

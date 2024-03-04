@@ -13,6 +13,26 @@ def generate_access_token():
     # return access_token from response
     if response.status_code == 200:
         access_token = response.json()['access_token'] 
+
+
+        url = 'https://sandbox.safaricom.co.ke/pulltransactions/v1/query'
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {access_token}'
+        }
+
+        payload = {
+            'ShortCode': '600990',
+            'StartDate': '2020-08-04 08:36:00',
+            'EndDate': '2020-08-16 10:10:00',
+            'OffSetValue': '0'
+        }
+
+        response = requests.post(url, headers=headers, json=payload)
+
+        print(response.text)
+
         
         return access_token
     else:
@@ -22,33 +42,5 @@ def generate_access_token():
 # Set your access token
 access_token = generate_access_token()
 
-# Set the checkout ID of the checkout session
-checkout_id = "ws_CO_03112023143012628742255668"
 
-# Make the request to the Daraja API
-headers = {
-    "Authorization": f"Bearer {access_token}"
-}
-
-response = requests.post(
-    "https://sandbox.safaricom.co.ke/mpesa/checkout/v1/query",
-    headers=headers,
-    json={
-        "CheckoutID": checkout_id
-    }
-)
-
-# Check the response status code
-if response.status_code == 200:
-    # The request was successful
-    data = response.json()
-
-    # Get the transaction ID
-    transaction_id = data["TransactionID"]
-
-    # Print the transaction ID
-    print("Transaction ID:", transaction_id)
-print(response)
-else:
-    # The request failed
-    print("Error querying transaction:", response.text)
+print(access_token)

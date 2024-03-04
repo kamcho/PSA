@@ -8,22 +8,22 @@
 
 <div class="bg-gradient">
     
-<div class="container">
+    <div class="container">
     <br><br>
 
     <div style="color: white;">
         <h5>{{ subject.name }} {{ subject.grade }}</h5>
         <a class="btn btn-dark" style="color: white;" href="{% url 'questions' subject.id %}">View Questions</a>
     </div>
-    <br><br><br><br>
+    </div>
+    <br>
 
     <div class="class-subject-view">
         <a>
             <div class="analytic-card">
                 <div class="analytic-title text-center">
                     Most Passed
-
-                    <h6>Total Questions {{ total }}</h6>
+                    <h6>Total Attempts {{ total }}</h6>
                     <h6>Passed Total {{ correct }}</h6>
                     <h6>Failed Total {{ failed }}</h6>
 
