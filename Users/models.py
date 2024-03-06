@@ -56,7 +56,12 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+class Schools(models.Model):
+    name = models.CharField(max_length=300, unique=True)
+    school_id = models.UUIDField(default=uuid.uuid4, unique=True)
 
+    def __str__(self):
+        return self.name
 class MyUser(AbstractBaseUser):
     class Role(models.TextChoices):
         Student = "Student"
@@ -72,7 +77,8 @@ class MyUser(AbstractBaseUser):
     # adm_no = models.CharField(max_length=15, unique=True, default=uuid.uuid4)
 
     email = models.EmailField(unique=True)
-    adm_no = models.CharField(max_length=100, default=random.randint(15784, 999999))
+    adm_no = models.CharField(max_length=100)
+    school = models.ForeignKey(Schools, null=True, on_delete=models.CASCADE)
     uuid = models.CharField(max_length=100, default=str(uuid.uuid4), unique=True)
     
     role = models.CharField(max_length=15, choices=Role.choices, default=base_role)
@@ -100,6 +106,8 @@ class MyUser(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
 
 
 class TeacherManager(BaseUserManager):
@@ -185,16 +193,17 @@ class Finance(MyUser):
 
 class SchoolClass(models.Model):
     class_id = models.UUIDField(default=uuid.uuid4, unique=True)
+    school = models.ForeignKey(Schools, null=True, on_delete=models.CASCADE)
     grade = models.PositiveIntegerField()
     class_name = models.CharField(max_length=100)
     class_size = models.PositiveIntegerField(default=30)
-    class_teacher = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    class_teacher = models.ForeignKey(MyUser, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return str(self.grade) + ' ' + str(self.class_name)
     
     class Meta:
-        unique_together = ('grade', 'class_name')
+        unique_together = ('grade', 'class_name', 'school')
     
     
 
@@ -244,10 +253,5 @@ class StudentsFeeAccount(models.Model):
 
 
 
-class Schools(models.Model):
-    name = models.CharField(max_length=300, unique=True)
-    school_id = models.UUIDField(default=uuid.uuid4, unique=True)
 
-    def __str__(self):
-        return self.name
 

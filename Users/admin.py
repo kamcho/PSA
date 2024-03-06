@@ -17,7 +17,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email','adm_no','role', 'is_active')
+        fields = ('email','adm_no', 'school', 'role', 'is_active')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -44,7 +44,7 @@ class AdminCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('email','adm_no', 'is_active','role', )
+        fields = ('email','adm_no','school', 'is_active','role', )
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -84,7 +84,7 @@ class AdminChangeForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ( 'email','adm_no', 'is_active', 'is_admin','role' )
+        fields = ( 'email','adm_no', 'school', 'is_active', 'is_admin','role' )
 
 
 class UserAdmin(BaseUserAdmin):
@@ -98,7 +98,7 @@ class UserAdmin(BaseUserAdmin):
     list_display = ( 'email', 'is_active')
     list_filter = ('is_active',)
     fieldsets = (
-        (None, {'fields': ('email', 'adm_no', 'password','role')}),
+        (None, {'fields': ('email', 'adm_no','school', 'password','role')}),
 
         ('Permissions', {'fields': ('is_admin',)}),
     )
@@ -107,7 +107,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ( 'email','role', 'is_active', 'password1', 'password2'),
+            'fields': ( 'email','role','school', 'is_active', 'password1', 'password2'),
         }),
     )
     search_fields = ('email',)
@@ -120,6 +120,7 @@ admin.site.register(MyUser, UserAdmin)
 admin.site.register(PersonalProfile)
 admin.site.register(AcademicProfile)
 admin.site.register(SchoolClass)
+admin.site.register(Schools)
 admin.site.register(TeacherPaymentProfile)
 admin.site.register(StudentsFeeAccount)
 # admin.site.unregister(Group)

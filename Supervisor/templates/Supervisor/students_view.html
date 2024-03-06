@@ -5,13 +5,23 @@
 <br><br><br><br>
 
 <div class="container">
+  {% if user.role == 'Supervisor' %}
     <a href="{% url 'create-user' %}"><button class="btn btn-warning">Add Student</button></a>
+  {% endif %}
+ 
+
 
     <br><br>
     <form method="post">
       {% csrf_token %}
       <div class="input-group mb-3">
           <input type="text" class="form-control" name="search" placeholder="search by name, email or admission" aria-label="Recipient's username" aria-describedby="button-addon2">
+          <select class="form-select"  aria-label="Default select example" name="school" >
+            <option value="All">All Schools</option>
+            {% for school in schools %}
+              <option value="{{ school.school_id }}">{{ school.name }}</option>
+            {% endfor %}
+          </select>
           <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search/Reset</button>
       </div>
     </form>
@@ -21,7 +31,7 @@
         <thead>
           <tr>
             <th><h6>User</h6></th>
-            
+            <th><h6>ADM No</h6></th>
             <th><h6>Class</h6></th>
             <th><h6>School</h6></th>
             <th><h6>Status</h6></th>
@@ -35,14 +45,16 @@
             <tr>
               {% if user.is_active %}
               <td><a href="{% url 'students-profile' user %}"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+              <td>{{ user.adm_no }}</td>
               <td>{{ user.academicprofile.current_class }} </td>
-              <td>Excel Academy</td>
+              <td>{{ user.school }}</td>
               
                 <td style="color: cornflowerblue;">Active</td>
               {% else %}
               <td><a href="{% url 'students-profile' user %}" style="color: crimson;"><h6>{{ user.personalprofile.f_name }} {{ user.personalprofile.l_name }} {{ user.personalprofile.surname }}</h6></a></td>
+              <td style="color: crimson;">{{ user.adm_no }}</td>
               <td style="color: crimson;">{{ user.academicprofile.current_class }} </td>
-              <td style="color: crimson;">Excel Academy</td>
+              <td style="color: crimson;">{{ user.school }}</td>
                 <td style="color: crimson;">Disabled</td>
               {% endif %}
               <td><a href="{% url 'add-fee-payment' user %}"><i class="bi bi-cash"></i></a></td>

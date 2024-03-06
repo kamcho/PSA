@@ -1,0 +1,75 @@
+{% extends 'Supervisor/base.html' %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+<br><br><br>
+
+<div class="bg-gradient">
+
+    <br><br>
+    <div class="container" style="background-color: white;">
+
+        <br><br>
+        <h5 style="font-family: cursive;text-align: center;text-shadow:cornflowerblue;">Create Class </h5>
+        <br>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                
+                    <label for="inputField1" class="form-label">Class Name</label>
+                    <input type="text" class="form-control" id="inputField1" name="name" placeholder="4 Yellow" required>
+                </div>
+               
+                <div class="col-md-6">
+                    <label for="inputField2" class="form-label">Grade</label>
+                    <input type="number" class="form-control" id="inputField2" name="grade" placeholder="4" required>
+                </div>
+            </div>
+            <br>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <select class="form-select"  aria-label="Default select example" name="school" required>
+                        {% for school in schools %}
+                            <option value="{{ school.school_id }}">{{ school.name }}</option>
+                        {% endfor %}
+                        
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <select class="form-select"  aria-label="Default select example" name="teacher" required>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher }}">{{ teacher.personalprofile.f_name }} {{ teacher.personalprofile.l_name }}</option>
+                        {% endfor %}
+                        
+                    </select>
+                </div>
+            </div>
+            
+          
+           
+            <div class="">
+                <label for="inputField4" class="form-label">Class Size</label>
+                <input type="number" class="form-control" id="inputField4" name="size" placeholder="30">
+            </div>
+            
+        
+            
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <div>.</div>
+        </form>
+
+
+
+
+
+
+    </div>
+
+
+</div>
+
+{% endblock %}

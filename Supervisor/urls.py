@@ -19,6 +19,7 @@ urlpatterns = [
     path('StudentsOptions/<str:email>/', StudentTaskSelect.as_view(), name='students-task-slect'),
     path('StudentsTestView/<str:email>/', StudentTestsView.as_view(), name='students-test-view'),
     path('StudentsTestDetailView/<str:test_type>/<str:email>/<str:test_id>/Test', StudentTestDetailView.as_view(), name='students-test-detail-view'),
+    path('CreateClass/', CreateClass.as_view(), name='create-class'),
     path('Classes/', ClassesView.as_view(), name='classes'),
     path('Classes/<str:class_id>/Info', ClassDetail.as_view(), name='class-profile'),
     path('Classes/<str:class_id>/Ranking/', ClassStudentsRanking.as_view(), name='class-students-ranking'),

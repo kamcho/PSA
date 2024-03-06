@@ -19,6 +19,7 @@
     
     <div class="badge bg-dark">
         <h5 >{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h5>
+        <small style="color: cornflowerblue;">{{ user.school }}</small>
         {% if request.user.role == 'Student' %}
             <a class="btn btn-info" href="{% url 'update-profile' %}">Edit Profile</a>
       
@@ -44,6 +45,7 @@
 
         <div class="user-info">
             <h6>{{ user.personalprofile.f_name|title }} {{ user.personalprofile.l_name.0|title }}. {{ user.personalprofile.surname|title }}</h6>
+            <p>{{ user.school }}</p>
             <p>Grade {{ user.academicprofile.current_class|title }}</p>
             <p>Adm No C14/177</p>
             <p>Discipline Score <button class="btn btn-info" style="color: white;">{{ user.studentdisciplinescore.points }}</button></p>

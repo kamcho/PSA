@@ -90,22 +90,30 @@
                 <th><h6>RANK</h6></th>
                 <th><h6 >STUDENT</th></h6></th>
                 {% for subject in subjects %}
-                    <th><h6>{{ subject }}</h6></th>
+                    <th><h6>{{ subject.course.abbreviation }}</h6></th>
                 {% endfor %}
                 
                 <th><h6>Marks</h6></th>
                 {% if stream %}
                     <th><h6>Class</h6></th>
-                    <th><h6>Print</h6></th>
+                    
                 {% else %}
+
                 {% endif %}
+                <th><h6>Print</h6></th>
                 
               </tr>
             </thead>
             <tbody>
             {% for user in students %}
               <tr>
-                <td>{{ user.rank }}</td>
+                {% if user.rank|add:0 <= 5 %}
+                    <td style="color:coral;">{{ user.rank }}</td>
+                {% elif user.rank > 5 and user.rank <= 10 %}
+                    <td style="color:cornflowerblue;">{{ user.rank }}</td>
+                {% else %}
+                    <td >{{ user.rank }}</td>
+                {% endif %}
                     <td><a href="">{{ user.user__personalprofile__f_name }} {{ user.user__personalprofile__l_name }} {{ user.user__personalprofile__surname }}</a></td>
                
                 
@@ -116,9 +124,10 @@
                 <td>{{ user.total_score }}</td>
                 {% if stream %}
                     <td><h6>{{ user.user__academicprofile__current_class__class_name }}</h6></td>
-                    <td><a href="{% url 'print-report' user.user__email grade term user.rank %}"><h6><i class="bi bi-printer" ></i></h6></a></td>
+                    
                 {% else %}
                 {% endif %}
+                <td><a href="{% url 'print-report' user.user__email grade term user.rank %}"><h6><i class="bi bi-printer" ></i></h6></a></td>
                 
               </tr>
             {% endfor %}
@@ -138,7 +147,6 @@
         });
     });
   </script>
-  <button onclick="printDiv('contentToPrint')">Print</button>
 
   <script>
       function printDiv(divId) {

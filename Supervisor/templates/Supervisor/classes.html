@@ -7,18 +7,35 @@
 <br><br><br><br>
 
 <div class="bg-gradient">
-    <br><br><br>
-    <div class="container">
+    <br><br>
+    <form method="post">
+        {% csrf_token %}
+    <div class="container" >
+        <div class="container dropdown" style="padding-left: 70px;">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+               {% if school %}School - {{ school }} {% else %}Schools -  All {% endif %}
+            </button>
+            
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><button class="dropdown-item" value="all" name="school">All</button></li>
+                {% for school in schools %}
+                    <li><button class="dropdown-item" value="{{ school.school_id }}" name="school">{{ school }}</button></li>
+                {% endfor %}
+              
+            </ul>
+          </div>
+        </form>
 
 
-
+          <br><br>
         <div class="users-view">
             {% for class in classes %}
             <a href="{% url 'class-profile' class.class_id %}">
-                <div class="user-card">
+                <div class="user-card" style="height: 200px;">
                     <h5>{{ class }}</h5>
                     <p>Grade {{ class.grade }}</p>
                     <h6>Class Size {{ class.class_size }}</h6>
+                    <small class="text-muted">{{ class.school }}</small>
                 </div>
             </a>
         

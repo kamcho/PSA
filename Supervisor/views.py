@@ -24,7 +24,7 @@ from Finance.models import MpesaPayouts
 from Supervisor.models import ExtraCurricular, FileModel, Updates
 from Teacher.models import StudentList
 from Term.models import ClassTermRanking, CurrentTerm, Exam
-from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, TeacherPaymentProfile
+from Users.models import AcademicProfile, MyUser, PersonalProfile, SchoolClass, Schools, TeacherPaymentProfile
 from Exams.models import ClassTestStudentTest, GeneralTest, StudentTest
 from SubjectList.models import Subject, Subtopic, Course
 
@@ -305,10 +305,11 @@ class CreateUser(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
                 surname = request.POST.get('surname')
                 role = request.POST.get('role')
                 gender = request.POST.get('gender')
+                sv_school = self.request.user.school
                 print(role,f_name)
                 if role == 'Student':
                     class_id = request.POST.get('class')
-                    user = MyUser.objects.create(email=email, role=role, password=make_password('defaultpwd'))
+                    user = MyUser.objects.create(email=email, role=role, school=sv_school, password=make_password('defaultpwd'))
                     profile = PersonalProfile.objects.get(user=user)
                     print(class_id, '\n\n\n\n\n\n')
                     class_id = SchoolClass.objects.get(class_id=class_id)
@@ -349,9 +350,11 @@ class StudentsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(StudentsView, self).get_context_data(**kwargs)
+        
         try:            
             
             users = MyUser.objects.filter(role='Student')
+            context['schools'] = Schools.objects.all()
             context['users'] = users
             if not users:
                 messages.error(self.request, 'We could not fetch students from the database')
@@ -364,11 +367,26 @@ class StudentsView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     def post(self,*args, **kwargs):
         if self.request.method == 'POST':
             params = self.request.POST.get('search')
+            school = self.request.POST.get('school')
+            if school == 'All':
+                
             
-            if params:
-                users = MyUser.objects.filter(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
-                                                    | Q(personalprofile__surname__contains=params) | Q(email__contains=params) )
-                context = {'users':users}
+                if params:
+                    users = MyUser.objects.filter(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
+                                                    | Q(personalprofile__surname__contains=params) | Q(email__contains=params), role='Student')
+                    context = {'users':users, 'scools':self.get_context_data().get('schools')}
+                    return render(self.request, self.template_name, context)
+                else:
+                    return redirect(self.request.get_full_path())
+                
+                    
+            elif school != 'All':
+                users= MyUser.objects.filter(school__school_id=school, role='Student')
+                if params:
+                    users = users(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
+                                                    | Q(personalprofile__surname__contains=params) | Q(email__contains=params))
+           
+                context = {'users':users, 'schools':self.get_context_data().get('schools')}
                 return render(self.request, self.template_name, context)
             else:
                 
@@ -385,15 +403,9 @@ class TeachersView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         try:
-            params = self.request.session.get('params', None)
-            if params:
-                users = PersonalProfile.objects.filter(Q(f_name__contains=params) | Q(l_name__contains=params)
-                                                    | Q(surname__contains=params) | Q(user__email__contains=params) ).values_list('user__email')
-                users = MyUser.objects.filter(email__in=users, role='Teacher')
-                if not users:
-                    messages.warning(self.request, 'We could not find any users matching your query')
-            else:
-                users  = MyUser.objects.filter(role='Teacher', is_active=True)
+            context['schools'] = Schools.objects.all()
+        
+            users  = MyUser.objects.filter(role='Teacher', is_active=True)
             context['users'] = users
         
         except Exception:
@@ -404,17 +416,31 @@ class TeachersView(LoginRequiredMixin, TemplateView):
         if request.method == 'POST':
 
             params = request.POST.get('search')
-            if params:
-
+            school = self.request.POST.get('school')
+            if school == 'All':
                 
-                self.request.session['params'] = params
+            
+                if params:
+                    users = MyUser.objects.filter(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
+                                                    | Q(personalprofile__surname__contains=params) | Q(email__contains=params), role='Teacher')
+                    context = {'users':users, 'scools':self.get_context_data().get('schools')}
+                    return render(self.request, self.template_name, context)
+                else:
+                    return redirect(self.request.get_full_path())
+                
+                    
+            elif school != 'All':
+                users= MyUser.objects.filter(school__school_id=school, role='Teacher')
+                if params:
+                    users = users(Q(personalprofile__f_name__contains=params) | Q(personalprofile__l_name__contains=params)
+                                                    | Q(personalprofile__surname__contains=params) | Q(email__contains=params))
+           
+                context = {'users':users, 'schools':self.get_context_data().get('schools')}
+                return render(self.request, self.template_name, context)
             else:
-                try:
-                    del self.request.session['params']
-                except KeyError:
-                    pass
                 
-            return redirect(request.get_full_path())
+                
+                return redirect(self.request.get_full_path())
         
 
 class TeachersProfile(LoginRequiredMixin, TemplateView):
@@ -718,20 +744,70 @@ class StudentTestDetailView(LoginRequiredMixin, UserPassesTestMixin, TemplateVie
 
             return redirect(self.request.get_full_path())
         
+class CreateClass(TemplateView, LoginRequiredMixin):
+    template_name = 'Supervisor/create_class.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['schools'] = Schools.objects.all()
+        context['teachers'] = MyUser.objects.filter(role='Teacher')
+
+        return context
+    
+    def post(self, *args, **kwargs):
+        if self.request.method == "POST":
+            class_name = self.request.POST.get('name')
+            grade = self.request.POST.get('grade')
+            class_size = self.request.POST.get('size')
+            class_teacher = self.request.POST.get('teacher')
+            school = self.request.POST.get('school')
+            class_teacher = self.get_context_data().get('teachers').get(email=class_teacher)
+            school = self.get_context_data().get('schools').get(school_id=school)
+            try:
+                school_class = SchoolClass.objects.create(class_name=class_name, grade=grade, class_size=class_size,
+                                                           class_teacher=class_teacher, school=school)
+                
+                messages.success(self.request, f'{class_name} Has Been Added To Classes')
+            except Exception as e:
+                messages.error(self.request, str(e))
+            return redirect(self.request.get_full_path())
+
+            
 
 class ClassesView(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/classes.html'
+
+    
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         classes = SchoolClass.objects.all().order_by('grade')
         context['classes'] = classes
+        context['schools'] = Schools.objects.all()
         if self.request.user.role == 'Teacher':
             context['base_html'] = 'Teacher/teachers_base.html'
         elif self.request.user.role in ['Supervisor']:
             context['base_html'] = 'Supervisor/base.html'
 
         return context     
+
+    def post(self, *args, **kwargs):
+        if self.request.method == 'POST':
+            school = self.request.POST.get('school')
+            if school != 'all':
+                grade = self.request.POST.get('grade')
+                classes = SchoolClass.objects.filter(Q(grade=grade)|Q(school__school_id=school))
+
+                context = {
+                    'classes':classes,
+                    'base_html':self.get_context_data().get('base_html'),
+                    'schools':self.get_context_data().get('schools'),
+                    'school':self.get_context_data().get('schools').get(school_id=school)
+                }
+
+                return render(self.request, self.template_name, context)
+            else:
+                return redirect(self.request.get_full_path())
     
 class ClassDetail(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/class_detail.html'
@@ -797,44 +873,19 @@ class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
         elif self.request.user.role in ['Supervisor']:
             context['base_html'] = 'Supervisor/base.html'
         
-        if not grade:
-            grade = class_instance.grade
-        if not term:
-            term = CurrentTerm.objects.all().first()
-        if stream:
-            # file = ClassTermRanking.objects.filter(class_id__class_id=class_id, grade=grade, term__term=term).last()
-            # context['file'] = file
-
-            context['class_id'] = class_instance
-            class_id = SchoolClass.objects.filter(grade=class_instance.grade)
-            context['classes'] = class_id
-            class_id = class_id.values_list('class_id')
-            print(class_id)
-
         
+        file = ClassTermRanking.objects.filter(class_id__class_id=class_id, grade=grade, term__term=term).last()
+        context['file'] = file
 
-            scores = (
-            Exam.objects
-            .filter(user__academicprofile__current_class__class_id__in=class_id, subject__grade=grade, term__term=term)
-            .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname', 'user__academicprofile__current_class__class_name')  # Group by the user
-            .annotate(total_score=Sum('score'))
-            .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
-        )
-            context['stream'] = True
-
-        else:
-            file = ClassTermRanking.objects.filter(class_id__class_id=class_id, grade=grade, term__term=term).last()
-            context['file'] = file
-
-            context['class_id'] = class_instance
-        
-            scores = (
-            Exam.objects
-            .filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term)
-            .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname')  # Group by the user
-            .annotate(total_score=Sum('score'))
-            .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
-        )
+        context['class_id'] = class_instance
+    
+        scores = (
+        Exam.objects
+        .filter(user__academicprofile__current_class__class_id=class_id, subject__grade=grade, term__term=term)
+        .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname')  # Group by the user
+        .annotate(total_score=Sum('score'))
+        .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
+    )
         ranked_students = []
         current_rank = 0
 
@@ -872,19 +923,27 @@ class ClassStudentsRanking(LoginRequiredMixin, TemplateView):
             elif self.request.user.role in ['Supervisor']:
                 base_html = 'Supervisor/base.html'
 
-            if stream == 'stream':
-                request.session['stream'] = grade
-            else:
-                request.session['stream'] = None
+            if not grade:
+                pass
+            # grade = class_instance.grade
+            if not term:
+                term = CurrentTerm.objects.all().first()
+            # if stream:
+                # file = ClassTermRanking.objects.filter(class_id__class_id=class_id, grade=grade, term__term=term).last()
+                # context['file'] = file
 
-
-                
-            
-            request.session['year'] = grade
-            request.session['term'] = term
-            
-
-
+                # context['class_id'] = class_instance
+                # class_id = SchoolClass.objects.filter(grade=class_instance.grade)
+                # context['classes'] = class_id
+                # class_id = class_id.values_list('class_id')
+                # scores = (
+                # Exam.objects
+                # .filter(user__academicprofile__current_class__class_id__in=class_id, subject__grade=grade, term__term=term)
+                # .values('user__personalprofile__f_name', 'user__email', 'user__personalprofile__l_name', 'user__personalprofile__surname', 'user__academicprofile__current_class__class_name')  # Group by the user
+                # .annotate(total_score=Sum('score'))
+                # .order_by('-total_score', 'user')  # Order by total_score descending, user ascending
+            # )
+                # context['stream'] = True
 
 
         return redirect(request.get_full_path())
@@ -923,6 +982,10 @@ class ClassSubjectDetail(LoginRequiredMixin, TemplateView):
         scores = Exam.objects.filter(user__academicprofile__current_class__class_id=class_id, subject__id=subject, term__term=term).order_by('-score')
         context['tests'] = scores
         context['class'] = class_name
+        if self.request.user.role == 'Teacher':
+            context['base_html'] = 'Teacher/teachers_base.html'
+        elif self.request.user.role in ['Supervisor']:
+            context['base_html'] = 'Supervisor/base.html'
         return context
 class TestTaskView(LoginRequiredMixin, TemplateView):
     template_name = 'Supervisor/test_type_select.html'
